@@ -10,7 +10,7 @@
 }
 
 .navbar h1 {
-    margin-bottom: 10px; /* Ajoutez un espacement en bas du titre */
+    margin-bottom: 15px; /* Ajoutez un espacement en bas du titre */
 }
 
 .navbar ul {
@@ -34,3 +34,7 @@
 .navbar a:hover {
     color: #ddd; /* Ajoutez la couleur de survol souhaitée */
 }
+.navbar a.active {
+    text-decoration: underline; /* Couleur de surbrillance pour la classe active */
+}
+
