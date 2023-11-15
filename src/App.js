@@ -4,9 +4,12 @@ import Homepage from './Home/Homepage';
 import Attractions from './Attractions/AttractionsPage';
 import Spectacle from './SpectaclePage/SpectaclePage';
 import MagicAITrip from './MagicTripAI/MagicAITripPage';
+import {Provider} from "react-redux";
+import store from "./redux/store";
 
 const App = () => {
     return (
+        <Provider store={store}>
         <Router>
             <div>
                 <Routes>
@@ -17,6 +20,7 @@ const App = () => {
                 </Routes>
             </div>
         </Router>
+        </Provider>
     );
 };
 

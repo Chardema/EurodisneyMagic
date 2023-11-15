@@ -1,97 +1,155 @@
-import React, { useState, useEffect } from 'react';
-import Slider from 'react-slick';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
-import DRSDiscoveryland from './../img/Disneyland Railroad Discoveryland Station.jpg';
-import DRSFrontierland from './../img/Disneyland Railroad Frontierland Depot.jpg';
-import DRSMainStreet from './../img/MainstreetStation.jpg'
-import Orbitron from './../img/Orbitron.jpg';
-import MeetMickey from './../img/MeetMickey.jpg';
-import FrontierLandPg from './../img/FrontierlandPlayground.jpg';
-import GalionPirate from './../img/PirateGalleon.jpg'
-import DRSFantasyland from './../img/FantasylandRailRoad.jpg';
-import DR from './../img/DisneylandRailroad.jpg'
-import Pirates from './../img/Pirateofthecarribean.jpg'
-import PP from './../img/Pavillon Princesse.jpg'
-import IndianaJones from './../img/IndianaJonesetletempleduperil.jpg';
-import CabaneRobinson from './../img/CabaneRobinson.JPG';
-import PhantomManor from './../img/Phantommanor.jpg'
-import ISW from './../img/its a small world.jpg'
-import StarTours from './../img/Startour.jpg'
-import HSM from './../img/Hyperspacemountain.jpg'
-import MN from './../img/Nautilus.jpg'
-import Caroussel from './../img/Carroussellancelot.jpg'
-import BTM from './../img/BTM.jpg';
-import PPF from './../img/Peterpanflight.jpg'
-import DFE from './../img/Dumboflying.jpg'
-import PEA from './../img/Passagealadin.jpg'
-import autopia from './../img/Autopia.jpg'
-import BlancheNeige from './../img/BlancheNeige.jpg'
-import AdventureIsle from './../img/AdventureIsle.jpg'
-import StartPort from './../img/Startport.jpg'
-import Alice from './../img/Alicelabyrinthe.jpg'
-import Buzz from './../img/buzz lightyear.jpg'
-import MHTC from './../img/TeaCup.jpg'
-import RRSG from './../img/ShootinGallery.jpg'
-import TD from './../img/Tanière dragon.jpg'
-import MickeyPhil from './../img/orchestrephilarmagique.jpg'
-import PaysConte from '../img/PaysConte.jpg'
-import ThunderMesa from './../img/ThunderMesa.jpg'
-import Pinocchio from './../img/Pinocchio.jpg'
-import Casey from './../img/CaseyJr.jpg'
-import MSV from './../img/Mainstreetvehicles.jpg'
+import Slider from 'react-slick';
+import {
+    setRawRideData,
+    setFilteredRideData,
+    setClosedRideData,
+    setSearchTerm
+} from '../redux/actions'; // Assurez-vous que le chemin est correct
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import ThemeParkInfo from './../ThemeParkInfo';
-import './Homepage.css';
-import Navbar from './../Navbar/Navbar';
-import useInterval from './../useInterval';// Assurez-vous d'importer useInterval depuis le fichier correspondant
+import Navbar from './../Navbar/Navbar'; // Assurez-vous que le chemin est correct
+import useInterval from './../useInterval'; // Assurez-vous que le chemin est correct
+import './Homepage.css'; // Assurez-vous que le chemin est correct
 
-const attractionImages = {
-    'Disneyland Railroad Discoveryland Station': DRSDiscoveryland,
-    'Disneyland Railroad Fantasyland Station': DRSFantasyland,
-    'Disneyland Railroad Main Street Station': DRSMainStreet,
-    'Disneyland Railroad': DR,
-    'Orbitron®': Orbitron,
-    'Meet Mickey Mouse': MeetMickey,
-    'Frontierland Playground': FrontierLandPg,
-    'Disneyland Railroad Frontierland Depot': DRSFrontierland,
-    'Pirate Galleon': GalionPirate,
-    'Indiana Jones™ and the Temple of Peril':IndianaJones,
-    'La Cabane des Robinson':CabaneRobinson,
-    'Big Thunder Mountain':BTM,
-    "Mad Hatter's Tea Cups":MHTC,
-    'Les Voyages de Pinocchio':Pinocchio,
-    'Casey Jr. – le Petit Train du Cirque':Casey,
-    'Phantom Manor': PhantomManor,
-    'Star Wars Hyperspace Mountain':HSM,
-    'Star Tours: The Adventures Continue*':StarTours,
-    'Thunder Mesa Riverboat Landing':ThunderMesa,
-    "Alice's Curious Labyrinth":Alice,
-    "Buzz Lightyear Laser Blast":Buzz,
-    'Main Street Vehicles':MSV,
-    "Peter Pan's Flight": PPF,
-    'Princess Pavilion':PP,
-    'Dumbo the Flying Elephant':DFE,
-    "Le Passage Enchanté d'Aladdin":PEA,
-    'Autopia®': autopia,
-    'Le Carrousel de Lancelot ': Caroussel,
-    'Les Mystères du Nautilus' :MN,
-    'La Tanière du Dragon': TD,
-    "Rustler Roundup Shootin' Gallery":RRSG,
-    'Adventure Isle': AdventureIsle,
-    'Welcome to Starport: A Star Wars Encounter': StartPort,
-    "Blanche-Neige et les Sept Nains®": BlancheNeige,
-    "Mickey’s PhilharMagic": MickeyPhil,
-    'Pirates of the Caribbean': Pirates,
-    '"it\'s a small world"': ISW,
-    "Le Pays des Contes de Fées": PaysConte
+// Fonction pour importer les images dynamiquement
+const importImage = (imageName) => {
+    try {
+        return require(`./../img/${imageName}`);
+    } catch (err) {
+        console.error(err);
+        // Retourne une image par défaut en cas d'erreur
+        return require(`./../img/default.jpg`);
+    }
+};
+const formatImageName = (name) => {
+    return name
+            .replace(/®/g, '') // Supprime le symbole ®
+            .replace(/™/g, '') // Supprime le symbole ™
+            .replace(/:/g, '') // Supprime les deux-points
+            .replace(/é/g, 'e') // Remplace é par e
+            .replace(/è/g, 'e') // Remplace è par e
+            .replace(/'/g, '') // Remplace è par e
+            // Ajoutez ici d'autres remplacements si nécessaire
+            .replace(/[^a-zA-Z0-9]/g, '') // Supprime les autres caractères non alphanumériques
+        + '.jpg';
 };
 
-function Homepage() {
-    const [rawRideData, setRawRideData] = useState([]);
-    const [filteredRideData, setFilteredRideData] = useState([]);
-    const [closedRideData, setClosedRideData] = useState([]);
+
+
+
+
+// Liste des noms d'attractions
+const attractionNames = [
+    'Disneyland Railroad Discoveryland Station',
+    'Disneyland Railroad Fantasyland Station',
+    'Disneyland Railroad Main Street Station',
+    'Disneyland Railroad',
+    'Orbitron®',
+    'Meet Mickey Mouse',
+    'Frontierland Playground',
+    'Disneyland Railroad Frontierland Depot',
+    'Pirate Galleon',
+    'Indiana Jones™ and the Temple of Peril',
+    'La Cabane des Robinson',
+    'Big Thunder Mountain',
+    "Mad Hatter's Tea Cups",
+    'Les Voyages de Pinocchio',
+    'Casey Jr. – le Petit Train du Cirque',
+    'Phantom Manor',
+    'Star Wars Hyperspace Mountain',
+    'Star Tours: The Adventures Continue*',
+    'Thunder Mesa Riverboat Landing',
+    "Alice's Curious Labyrinth",
+    "Buzz Lightyear Laser Blast",
+    'Main Street Vehicles',
+    "Peter Pan's Flight",
+    'Princess Pavilion',
+    'Dumbo the Flying Elephant',
+    "Le Passage Enchanté d'Aladdin",
+    'Autopia®',
+    'Le Carrousel de Lancelot ',
+    'Les Mystères du Nautilus',
+    'La Tanière du Dragon',
+    "Rustler Roundup Shootin' Gallery",
+    'Adventure Isle',
+    'Welcome to Starport: A Star Wars Encounter',
+    "Blanche-Neige et les Sept Nains®",
+    "Mickey’s PhilharMagic",
+    'Pirates of the Caribbean',
+    '"it\'s a small world"',
+    "Le Pays des Contes de Fées",
+    "Pirates' Beach"
+];
+const attractionImages = attractionNames.reduce((acc, name) => {
+    const imageName = formatImageName(name);
+    acc[name] = importImage(imageName);
+    return acc;
+}, {});
+const Homepage = () => {
+    const dispatch = useDispatch();
+    const { rawRideData, filteredRideData, closedRideData, searchTerm } = useSelector(state => state);
     const [lastUpdate, setLastUpdate] = useState(null);
+    const [parkHours, setParkHours] = useState(null);
+    const now = new Date();
+
+    const fetchData = useCallback(async () => {
+        try {
+            const response = await axios.get('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/live');
+            const rideTimes = response.data;
+
+            if (Array.isArray(rideTimes.liveData)) {
+                dispatch(setRawRideData(rideTimes.liveData));
+                setLastUpdate(new Date());
+            } else {
+                dispatch(setRawRideData([]));
+                setLastUpdate(null);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    useInterval(() => {
+        fetchData();
+    }, 60000);
+    //Récupérer les horraires du Parc
+    useEffect(() => {
+        const fetchParkHours = async () => {
+            try {
+                const response = await axios.get('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/schedule');
+                setParkHours(response.data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des horaires du parc :", error);
+            }
+        };
+
+        fetchParkHours();
+    }, []);
+
+    //Filtre des attractions
+    useEffect(() => {
+        const openAttractions = rawRideData
+            .filter(ride => ride.status === 'OPERATING' && ride.entityType !== 'SHOW');
+        const closedAttractions = rawRideData
+            .filter(ride => ride.status === 'CLOSED' && ride.entityType !== 'SHOW');
+        const filteredAttractions = openAttractions
+            .filter(ride => ride.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        dispatch(setFilteredRideData(filteredAttractions));
+        dispatch(setClosedRideData(closedAttractions));
+    }, [rawRideData, searchTerm, dispatch]);
+
+
+    const handleSearchChange = useCallback((event) => {
+        dispatch(setSearchTerm(event.target.value));
+    }, [dispatch]);
 
     const sliderSettings = {
         dots: false,
@@ -101,21 +159,21 @@ function Homepage() {
         slidesToScroll: 3,
         responsive: [
             {
-                breakpoint: 1024, // Large desktop
+                breakpoint: 1024,
                 settings: {
                     slidesToShow: 3,
                     slidesToScroll: 3,
                 },
             },
             {
-                breakpoint: 768, // Tablet
+                breakpoint: 768,
                 settings: {
                     slidesToShow: 2,
                     slidesToScroll: 2,
                 },
             },
             {
-                breakpoint: 480, // Mobile
+                breakpoint: 480,
                 settings: {
                     slidesToShow: 1,
                     slidesToScroll: 1,
@@ -124,74 +182,85 @@ function Homepage() {
         ],
     };
 
-    // Utilisez le hook useInterval pour effectuer un appel API à intervalles réguliers
-    useInterval(() => {
-        fetchData();
-    }, 60000); // Actualisez les données toutes les 60 secondes (ajustez selon vos besoins)
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get(
-                'https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/live'
-            );
-            const rideTimes = response.data;
-
-            if (Array.isArray(rideTimes.liveData)) {
-                console.log('Nouvelles données :', rideTimes.liveData);
-                setRawRideData(rideTimes.liveData);
-                setLastUpdate(new Date());
-            } else {
-                setRawRideData([]);
-                setLastUpdate(null);
-            }
-        } catch (error) {
-            console.error(error);
-        }
+    const formatDate = (dateString) => {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Intl.DateTimeFormat('fr-FR', options).format(new Date(dateString));
     };
-
-    useEffect(() => {
-        const openAttractions = rawRideData.filter(
-            (ride) => ride.status === 'OPERATING' || (ride.status && ride.status === 'OPERATING')
-        );
-        const closedAttractions = rawRideData.filter(
-            (ride) => ride.status === 'CLOSED' || (ride.status && ride.status == 'CLOSED')
-        );
-        const filteredAttractions = openAttractions.filter((ride) => ride.entityType !== 'SHOW');
-        setClosedRideData(closedAttractions);
-        setFilteredRideData(filteredAttractions);
-    }, [rawRideData]);
 
     return (
         <div className="Home">
             <Navbar />
-        <div className="container">
-            <p className="lastUpdate">{lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}</p>
-            <ThemeParkInfo setRawRideData={setRawRideData} />
-            <div className="sliderContainer">
-                <div className="OpenAttractionSlider">
-                    <h2>Profitez d'une journée magique en profitant de ces attractions:</h2>
-                    <Slider {...sliderSettings}>
-                        {filteredRideData.map((ride, index) => (
-                            <div key={index} className="card">
-                                <img src={attractionImages[ride.name]} alt={ride.name} className="imgAttraction" />
-                                <div className="cardText">
-                                    {ride.queue && ride.queue.STANDBY ? (
-                                        <p className="textOpenAttraction">{`${ride.name}: ${ride.queue.STANDBY.waitTime} minutes d'attente (Ouvert)`}</p>
-                                    ) : null}
-                                    <button className="buttonCard">Je m'y rend</button>
-                                </div>
-                            </div>
-                        ))}
-                    </Slider>
+            <div className="container">
+                <input
+                    type="text"
+                    placeholder="Rechercher une attraction"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
+                <p className="lastUpdate">
+                    {lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}
+                </p>
+                <div className="sliderContainer">
+                    {filteredRideData.length === 0 && parkHours ? (
+                        <div className="parkClosed">
+                            {(() => {
+                                const todaySchedule = parkHours.schedule.find(schedule => schedule.date === now.toISOString().split('T')[0]);
+                                const tomorrow = new Date(now);
+                                tomorrow.setDate(tomorrow.getDate() + 1);
+                                const tomorrowSchedule = parkHours.schedule.find(schedule => schedule.date === tomorrow.toISOString().split('T')[0]);
+
+                                if (now.getHours() < 12 && todaySchedule) {
+                                    return (
+                                        <>
+                                            <p>Le parc n'est pas encore ouvert. Voici les horaires d'aujourd'hui :</p>
+                                            <p>Heures d'ouverture: {todaySchedule.openingTime}</p>
+                                            <p>Heures de fermeture: {todaySchedule.closingTime}</p>
+                                        </>
+                                    );
+                                } else if (tomorrowSchedule) {
+                                    return (
+                                        <>
+                                            <p>Le {formatDate(tomorrowSchedule.date).split(' ')[0]} votre parc sera ouvert entre {formatDate(tomorrowSchedule.openingTime)} et {formatDate(tomorrowSchedule.closingTime)}.</p>
+                                            {tomorrowSchedule.type === "EXTRA_HOURS" && (
+                                                <p>avec des Extra Magic Hours entre {formatDate(tomorrowSchedule.openingTime)} et {formatDate(tomorrowSchedule.closingTime)}.</p>
+                                            )}
+                                        </>
+                                    );
+                                }
+                            })()}
+                        </div>
+                    ) : (
+                        <>
+                            <h2>Attractions Ouvertes:</h2>
+                            <Slider {...sliderSettings}>
+                                {filteredRideData.map((ride, index) => (
+                                    <div key={index} className="card">
+                                        <img className="imgAttraction" src={attractionImages[ride.name]} alt={ride.name} />
+                                        <div className="cardText">
+                                            <p>{ride.name}</p>
+                                            {ride.queue && ride.queue.STANDBY && ride.queue.STANDBY.waitTime !== null ? (
+                                                <p className="textOpenAttraction">
+                                                    {`${ride.name}: ${ride.queue.STANDBY.waitTime} minutes d'attente (Ouvert)`}
+                                                </p>
+                                            ) : (
+                                                <p className="textOpenAttraction">Pas de temps d'attente disponible</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </Slider>
+                        </>
+                    )}
                 </div>
-                <div className="OpenAttractionSlider">
-                    <h2>Ces attractions sont fermées:</h2>
+                <div className="sliderContainer">
+                    <h2>Attractions Fermées:</h2>
                     <Slider {...sliderSettings}>
                         {closedRideData.map((ride, index) => (
                             <div key={index} className="card">
-                                <img src={attractionImages[ride.name]} alt={ride.name} className="imgAttraction" />
+                                <img className="imgAttraction" src={attractionImages[ride.name]} alt={ride.name} />
                                 <div className="cardText">
-                                    <p className="textOpenAttraction">{`L'attraction ${ride.name} est actuellement fermé`}</p>
+                                    <p>{ride.name} (Fermé)</p>
+                                    {/* Autres détails de l'attraction */}
                                 </div>
                             </div>
                         ))}
@@ -199,13 +268,7 @@ function Homepage() {
                 </div>
             </div>
         </div>
-        </div>
     );
-}
-
-const formatDate = (date) => {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
-    return new Date(date).toLocaleDateString(undefined, options);
 };
 
 export default Homepage;
