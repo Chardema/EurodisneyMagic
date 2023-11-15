@@ -72,3 +72,9 @@ h1 {
 .textOpenAttraction{
     font-size: 15px;
 }
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+    }
+}

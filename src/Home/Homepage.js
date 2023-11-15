@@ -34,6 +34,7 @@ import MHTC from './../img/TeaCup.jpg'
 import RRSG from './../img/ShootinGallery.jpg'
 import TD from './../img/Tanière dragon.jpg'
 import MickeyPhil from './../img/orchestrephilarmagique.jpg'
+import PaysConte from '../img/PaysConte.jpg'
 import ThunderMesa from './../img/ThunderMesa.jpg'
 import Pinocchio from './../img/Pinocchio.jpg'
 import Casey from './../img/CaseyJr.jpg'
@@ -43,7 +44,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import ThemeParkInfo from './../ThemeParkInfo';
 import './Homepage.css';
 import Navbar from './../Navbar/Navbar';
-import useInterval from './../useInterval'; // Assurez-vous d'importer useInterval depuis le fichier correspondant
+import useInterval from './../useInterval';// Assurez-vous d'importer useInterval depuis le fichier correspondant
 
 const attractionImages = {
     'Disneyland Railroad Discoveryland Station': DRSDiscoveryland,
@@ -82,7 +83,8 @@ const attractionImages = {
     "Blanche-Neige et les Sept Nains®": BlancheNeige,
     "Mickey’s PhilharMagic": MickeyPhil,
     'Pirates of the Caribbean': Pirates,
-    '"it\'s a small world"': ISW
+    '"it\'s a small world"': ISW,
+    "Le Pays des Contes de Fées": PaysConte
 };
 
 function Homepage() {
