@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import logosansbg from './../img/logosansbg.png'
 import './Navbar.css';
 
 const Navbar = () => {
@@ -7,7 +8,7 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            <h1>EuroDisneyMagic</h1>
+            <img  className="logo" src={logosansbg} alt="logo"/>
             <ul>
                 <li><Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link></li>
                 <li><Link to="/attractions" className={location.pathname === '/attractions' ? 'active' : ''}>Attractions</Link></li>
