@@ -116,7 +116,12 @@ h1 {
 }
 
 /* ... Autres styles ... */
-
+.searchAttraction {
+    padding: 10px;
+    font-size: 16px;
+    margin: 0px 20px;
+    width: 100%;
+}
 
 @media (max-width: 768px) {
     .container {

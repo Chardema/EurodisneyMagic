@@ -191,15 +191,16 @@ const Homepage = () => {
         <div className="Home">
             <Navbar />
             <div className="container">
-                <input
-                    type="text"
-                    placeholder="Rechercher une attraction"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
                 <p className="lastUpdate">
                     {lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}
                 </p>
+                <input
+                    type="text"
+                    placeholder="Rechercher une attraction"
+                    className="searchAttraction"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
                 <div className="sliderContainer">
                     {filteredRideData.length === 0 && parkHours ? (
                         <div className="parkClosed">
