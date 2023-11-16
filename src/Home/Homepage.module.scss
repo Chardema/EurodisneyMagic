@@ -1,0 +1,41 @@
+// Dans votre fichier Homepage.module.scss
+.Welcome {
+    margin-bottom: 10px;
+}
+.list li {
+    color: white;
+    text-decoration: none;
+    list-style-type: none;
+}
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 10px;
+    text-align: center; // Centre le texte et le bouton
+}
+
+// Style pour le bouton central
+.centerButton {
+    display: flex;
+    justify-content: center; // Centre le bouton horizontalement
+    margin-top: 20px; // Ajoute un espace au-dessus du bouton
+}
+
+// Style pour le bouton des attractions
+.attractionsButton {
+    padding: 10px 20px;
+    background-color: #0072ce; // Couleur bleue thématique Disney
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); // Ombre légère pour le bouton
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: darken(#0072ce, 10%); // Assombrir le bouton lors du survol
+        cursor: pointer;
+    }
+}

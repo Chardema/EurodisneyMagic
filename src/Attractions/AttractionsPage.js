@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
+import styles from './attractions.module.scss'
 import Slider from 'react-slick';
 import {
     setRawRideData,
@@ -11,7 +12,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar'; // Assurez-vous que le chemin est correct
 import useInterval from './../useInterval'; // Assurez-vous que le chemin est correct
-import './attractions.css'; // Assurez-vous que le chemin est correct
+import './attractions.module.scss'; // Assurez-vous que le chemin est correct
 
 // Fonction pour importer les images dynamiquement
 const importImage = (imageName) => {
@@ -204,49 +205,41 @@ const Attractions = () => {
     };
 
     return (
-        <div className="Home">
+        <div>
             <Navbar />
-            <div className="container">
-                <p className="lastUpdate">
-                    {lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}
-                </p>
-                <input
-                    type="text"
-                    placeholder="Rechercher une attraction"
-                    className="searchAttraction"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-                <div className="sliderContainer">
-                    {filteredRideData.length > 0 ? (
-                        <>
-                            <h2>Liste des attractions:</h2>
-                            <Slider {...sliderSettings}>
-                                {filteredRideData.map((ride) => (
-                                    <div key={ride.id} className="card">
-                                        <img className="imgAttraction" src={attractionImages[ride.name]} alt={ride.name} />
-                                        <div className="cardText">
-                                            <p className="textOpenAttraction">{ride.name} {ride.status === 'CLOSED' ? '(Fermé)' : ''}</p>
-                                            {ride.queue && ride.queue.STANDBY && ride.queue.STANDBY.waitTime !== null && ride.status !== 'CLOSED' ? (
-                                                <p className="textOpenAttraction">
-                                                    {`${ride.queue.STANDBY.waitTime} minutes d'attente (Ouvert)`}
-                                                </p>
-                                            ) : ride.status !== 'CLOSED' ? (
-                                                <p className="textOpenAttraction">Momentanément Indisponible</p>
-                                            ) : null}
-                                        </div>
+                <div className={styles.container}>
+                    <p className={styles.lastUpdate}>
+                        {lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}
+                    </p>
+                    <input
+                        type="text"
+                        placeholder="Rechercher une attraction"
+                        className={styles.searchAttraction}
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    <div className={styles.attractionsList}>
+                        {filteredRideData.length > 0 ? (
+                            filteredRideData.map((ride) => (
+                                <div key={ride.id} className={styles.card}>
+                                    <img className={styles.imgAttraction} src={attractionImages[ride.name]} alt={ride.name} />
+                                    <div className={styles.cardText}>
+                                        <p className={styles.textOpenAttraction}>{ride.name} {ride.status === 'CLOSED' ? '(Fermé)' : ''}</p>
+                                        {ride.queue && ride.queue.STANDBY && ride.queue.STANDBY.waitTime !== null && ride.status !== 'CLOSED' ? (
+                                            <p className={styles.textOpenAttraction}>
+                                                {`${ride.queue.STANDBY.waitTime} minutes d'attente (Ouvert)`}
+                                            </p>
+                                        ) : ride.status !== 'CLOSED' ? (
+                                            <p className={styles.textOpenAttraction}>Momentanément Indisponible</p>
+                                        ) : null}
                                     </div>
-                                ))}
-                            </Slider>
-                        </>
-                    ) : searchTerm ? (
-                        <p>Aucune attraction correspondant à la recherche.</p>
-                    ) : parkHours ? (
-                        renderParkHours()
-                    ) : (
-                        <p>Chargement des horaires du parc...</p>
-                    )}
-                </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p>Aucune attraction correspondant à la recherche.</p>
+                        )}
+                    </div>
+
             </div>
         </div>
     );

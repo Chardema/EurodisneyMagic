@@ -1,0 +1,89 @@
+// Styles globaux
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #2C2C2E;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+p, h1, h2 {
+    color: white;
+    margin: 0; // Supprime les marges par défaut
+}
+
+.lastUpdate {
+    padding: 10px 0;
+}
+// Styles du conteneur principal
+.container {
+    max-width: 80%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+// Styles pour la recherche d'attractions
+.searchAttraction {
+    padding: 15px;
+    font-size: 16px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+// Styles pour la liste des attractions
+.attractionsList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Ajuste automatiquement le nombre de colonnes
+    gap: 20px;
+}
+
+// Styles pour les cartes individuelles d'attractions
+.card {
+    background-color: #FFFFFF;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+// Styles pour les images des attractions
+.imgAttraction {
+    width: 100%;
+    height: auto; // Ajuste la hauteur en fonction de la largeur tout en maintenant les proportions
+    object-fit: cover; // Couvre la zone de l'image sans étirement
+    border-radius: 5px 5px 0 0;
+}
+
+// Styles pour le texte des cartes
+.cardText {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+    text-align: left;
+}
+
+// Styles spécifiques pour le texte des attractions ouvertes
+.textOpenAttraction {
+    font-size: 15px;
+    color: black; // Couleur du texte pour les attractions ouvertes
+}
+
+// Media queries pour les ajustements responsifs
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+    }
+
+    .attractionsList {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); // Plus petites cartes sur les écrans étroits
+    }
+}
