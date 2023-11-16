@@ -141,6 +141,7 @@ const Attractions = () => {
     const handleSearchChange = useCallback((event) => {
         dispatch(setSearchTerm(event.target.value));
     }, [dispatch]);
+    const allRidesClosed = filteredRideData.every(ride => ride.status === 'CLOSED');
 
     const sliderSettings = {
         dots: false,
@@ -174,50 +175,63 @@ const Attractions = () => {
     };
 
     const formatDate = (dateString) => {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        return new Intl.DateTimeFormat('fr-FR', options).format(new Date(dateString));
+        if (!dateString) return 'Date invalide';
+
+        try {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Intl.DateTimeFormat('fr-FR', options).format(new Date(dateString));
+        } catch (error) {
+            console.error("Erreur de formatage de date:", error, "pour la date:", dateString);
+            return 'Date invalide';
+        }
     };
     const renderParkHours = () => {
-        const todaySchedule = parkHours.schedule.find(schedule => schedule.date === now.toISOString().split('T')[0]);
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const tomorrowSchedule = parkHours.schedule.find(schedule => schedule.date === tomorrow.toISOString().split('T')[0]);
+        if (!parkHours || !parkHours.schedule) {
+            return <p>Horaires non disponibles.</p>;
+        }
 
-        if (now.getHours() < 12 && todaySchedule) {
+        const todayStr = now.toISOString().split('T')[0];
+        const todaySchedules = parkHours.schedule.filter(schedule => schedule.date === todayStr);
+
+        const renderScheduleInfo = (schedules) => {
+            const operatingSchedule = schedules.find(s => s.type === "OPERATING");
+            const extraHoursSchedule = schedules.find(s => s.type === "EXTRA_HOURS");
+
             return (
                 <>
-                    <p>Le parc n'est pas encore ouvert. Voici les horaires d'aujourd'hui :</p>
-                    <p>Heures d'ouverture: {todaySchedule.openingTime}</p>
-                    <p>Heures de fermeture: {todaySchedule.closingTime}</p>
-                </>
-            );
-        } else if (tomorrowSchedule) {
-            return (
-                <>
-                    <p>Le {formatDate(tomorrowSchedule.date).split(' ')[0]} votre parc sera ouvert entre {formatDate(tomorrowSchedule.openingTime)} et {formatDate(tomorrowSchedule.closingTime)}.</p>
-                    {tomorrowSchedule.type === "EXTRA_HOURS" && (
-                        <p>avec des Extra Magic Hours entre {formatDate(tomorrowSchedule.openingTime)} et {formatDate(tomorrowSchedule.closingTime)}.</p>
+                    {operatingSchedule && (
+                        <p>Le parc est ouvert le {formatDate(operatingSchedule.date).split(' ')[0]} entre {formatDate(operatingSchedule.openingTime)} et {formatDate(operatingSchedule.closingTime)}.</p>
+                    )}
+                    {extraHoursSchedule && (
+                        <p>Extra Magic Hours: de {formatDate(extraHoursSchedule.openingTime)} à {formatDate(extraHoursSchedule.closingTime)}.</p>
                     )}
                 </>
             );
-        }
-        return <p>Horaires non disponibles.</p>;
+        };
+
+        return (
+            <>
+                {renderScheduleInfo(todaySchedules)}
+            </>
+        );
     };
+
 
     return (
         <div>
             <Navbar />
-                <div className={styles.container}>
-                    <p className={styles.lastUpdate}>
-                        {lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}
-                    </p>
-                    <input
-                        type="text"
-                        placeholder="Rechercher une attraction"
-                        className={styles.searchAttraction}
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                    />
+            <div className={styles.container}>
+                <p className={styles.lastUpdate}>
+                    {lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}
+                </p>
+                <input
+                    type="text"
+                    placeholder="Rechercher une attraction"
+                    className={styles.searchAttraction}
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
+                {!allRidesClosed && (
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
                             filteredRideData.map((ride) => (
@@ -239,7 +253,13 @@ const Attractions = () => {
                             <p>Aucune attraction correspondant à la recherche.</p>
                         )}
                     </div>
-
+                )}
+                {allRidesClosed && (
+                    <div className={styles.parkHours}>
+                        <h2>Horaires du Parc</h2>
+                        {renderParkHours()}
+                    </div>
+                )}
             </div>
         </div>
     );
