@@ -74,7 +74,11 @@ h1 {
 .textOpenAttraction{
     font-size: 15px;
 }
-
+.searchAttraction {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+}
 
 /* ... Autres styles ... */
 
@@ -92,24 +96,30 @@ h1 {
 
 /* En mode liste pour les écrans de taille maximale de 768px (smartphones) */
 @media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+    }
     .card {
         flex-direction: row; /* Disposition en ligne pour les smartphones */
         height: auto; /* Ajuster la hauteur automatiquement */
     }
 
     .imgAttraction {
-        height: auto; /* Ajuster la hauteur automatiquement */
-        width: 50%; /* Prendre la moitié de la largeur */
+        height: 50%;
+        width: 100%; /* Prendre la moitié de la largeur */
         border-radius: 5px 0 0 5px; /* Coins arrondis à gauche */
     }
 
     .cardText {
-        width: 50%; /* Prendre la moitié de la largeur */
+        width: 100%; /* Prendre la moitié de la largeur */
         padding: 10px;
         text-align: center;
         border-radius: 0 5px 5px 0; /* Coins arrondis à droite */
     }
-
+    .searchAttraction {
+        width: 80%;
+        align-self: center;
+    }
     .buttonCard {
         width: 100%; /* Prendre toute la largeur */
         border-radius: 0; /* Pas de coins arrondis pour le bouton en mode liste */
@@ -118,14 +128,3 @@ h1 {
 }
 
 /* ... Autres styles ... */
-.searchAttraction {
-    padding: 10px;
-    font-size: 16px;
-    width: 100%;
-}
-
-@media (max-width: 768px) {
-    .container {
-        max-width: 100%;
-    }
-}
