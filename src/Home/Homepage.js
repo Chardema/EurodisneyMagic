@@ -5,7 +5,6 @@ import Slider from 'react-slick';
 import {
     setRawRideData,
     setFilteredRideData,
-    setClosedRideData,
     setSearchTerm
 } from '../redux/actions'; // Assurez-vous que le chemin est correct
 import 'slick-carousel/slick/slick.css';
@@ -135,16 +134,14 @@ const Homepage = () => {
 
     //Filtre des attractions
     useEffect(() => {
-        const openAttractions = rawRideData
-            .filter(ride => ride.status === 'OPERATING' && ride.entityType !== 'SHOW');
-        const closedAttractions = rawRideData
-            .filter(ride => ride.status === 'CLOSED' && ride.entityType !== 'SHOW');
-        const filteredAttractions = openAttractions
+        const filteredAttractions = rawRideData
+            .filter(ride => ride.entityType !== 'SHOW')
             .filter(ride => ride.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
         dispatch(setFilteredRideData(filteredAttractions));
-        dispatch(setClosedRideData(closedAttractions));
     }, [rawRideData, searchTerm, dispatch]);
+
+
 
 
     const handleSearchChange = useCallback((event) => {
@@ -232,40 +229,26 @@ const Homepage = () => {
                         </div>
                     ) : (
                         <>
-                            <h2>Attractions Ouvertes:</h2>
+                            <h2>Liste des attractions:</h2>
                             <Slider {...sliderSettings}>
-                                {filteredRideData.map((ride, index) => (
-                                    <div key={index} className="card">
+                                {filteredRideData.map((ride) => (
+                                    <div key={ride.id} className="card"> {/* Utilisez un identifiant unique si possible */}
                                         <img className="imgAttraction" src={attractionImages[ride.name]} alt={ride.name} />
                                         <div className="cardText">
-                                            <p>{ride.name}</p>
-                                            {ride.queue && ride.queue.STANDBY && ride.queue.STANDBY.waitTime !== null ? (
+                                            <p>{ride.name} {ride.status === 'CLOSED' ? '(Fermé)' : ''}</p>
+                                            {ride.queue && ride.queue.STANDBY && ride.queue.STANDBY.waitTime !== null && ride.status !== 'CLOSED' ? (
                                                 <p className="textOpenAttraction">
-                                                    {`${ride.name}: ${ride.queue.STANDBY.waitTime} minutes d'attente (Ouvert)`}
+                                                    {`${ride.queue.STANDBY.waitTime} minutes d'attente (Ouvert)`}
                                                 </p>
-                                            ) : (
-                                                <p className="textOpenAttraction">Pas de temps d'attente disponible</p>
-                                            )}
+                                            ) : ride.status !== 'CLOSED' ? (
+                                                <p className="textOpenAttraction">Monentanément Indisponible</p>
+                                            ) : null}
                                         </div>
                                     </div>
                                 ))}
                             </Slider>
                         </>
                     )}
-                </div>
-                <div className="sliderContainer">
-                    <h2>Attractions Fermées:</h2>
-                    <Slider {...sliderSettings}>
-                        {closedRideData.map((ride, index) => (
-                            <div key={index} className="card">
-                                <img className="imgAttraction" src={attractionImages[ride.name]} alt={ride.name} />
-                                <div className="cardText">
-                                    <p>{ride.name} (Fermé)</p>
-                                    {/* Autres détails de l'attraction */}
-                                </div>
-                            </div>
-                        ))}
-                    </Slider>
                 </div>
             </div>
         </div>
