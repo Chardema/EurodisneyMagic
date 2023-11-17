@@ -7,8 +7,16 @@
     text-decoration: none;
     list-style-type: none;
 }
+
+.logo {
+    height: 400px;
+}
+.schedule {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
 .container {
-    min-height: 100vh;
+    min-height: 80vh;
     display: flex;
     align-items: center;
     flex-direction: column;

@@ -2,13 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
 import styles from './attractions.module.scss'
-import Slider from 'react-slick';
+import {formatDate} from "../utils";
 import {
     setRawRideData,
     setFilteredRideData,
     setSearchTerm
 } from '../redux/actions'; // Assurez-vous que le chemin est correct
 import 'slick-carousel/slick/slick.css';
+import {useNavigate} from 'react-router-dom';
 import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar'; // Assurez-vous que le chemin est correct
 import useInterval from './../useInterval'; // Assurez-vous que le chemin est correct
@@ -84,12 +85,13 @@ const attractionImages = attractionNames.reduce((acc, name) => {
     acc[name] = importImage(imageName);
     return acc;
 }, {});
+
 const Attractions = () => {
     const dispatch = useDispatch();
     const { rawRideData, filteredRideData, closedRideData, searchTerm } = useSelector(state => state);
     const [lastUpdate, setLastUpdate] = useState(null);
-    const [parkHours, setParkHours] = useState(null);
-    const now = new Date();
+    const navigate = useNavigate();
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const fetchData = useCallback(async () => {
         try {
@@ -106,6 +108,7 @@ const Attractions = () => {
         } catch (error) {
             console.error(error);
         }
+        setIsDataLoaded(true);
     }, [dispatch]);
 
     useEffect(() => {
@@ -115,19 +118,6 @@ const Attractions = () => {
     useInterval(() => {
         fetchData();
     }, 60000);
-    //Récupérer les horraires du Parc
-    useEffect(() => {
-        const fetchParkHours = async () => {
-            try {
-                const response = await axios.get('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/schedule');
-                setParkHours(response.data);
-            } catch (error) {
-                console.error("Erreur lors de la récupération des horaires du parc :", error);
-            }
-        };
-
-        fetchParkHours();
-    }, []);
 
     //Filtre des attractions
     useEffect(() => {
@@ -143,79 +133,12 @@ const Attractions = () => {
     }, [dispatch]);
     const allRidesClosed = filteredRideData.every(ride => ride.status === 'CLOSED');
 
-    const sliderSettings = {
-        dots: false,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 3,
-        slidesToScroll: 3,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3,
-                },
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2,
-                },
-            },
-            {
-                breakpoint: 480,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                },
-            },
-        ],
-    };
-
-    const formatDate = (dateString) => {
-        if (!dateString) return 'Date invalide';
-
-        try {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            return new Intl.DateTimeFormat('fr-FR', options).format(new Date(dateString));
-        } catch (error) {
-            console.error("Erreur de formatage de date:", error, "pour la date:", dateString);
-            return 'Date invalide';
+    // redirection vers page d'accueil si toutes attractions fermées
+    useEffect(() => {
+        if(allRidesClosed && isDataLoaded) {
+            navigate("/");
         }
-    };
-    const renderParkHours = () => {
-        if (!parkHours || !parkHours.schedule) {
-            return <p>Horaires non disponibles.</p>;
-        }
-
-        const todayStr = now.toISOString().split('T')[0];
-        const todaySchedules = parkHours.schedule.filter(schedule => schedule.date === todayStr);
-
-        const renderScheduleInfo = (schedules) => {
-            const operatingSchedule = schedules.find(s => s.type === "OPERATING");
-            const extraHoursSchedule = schedules.find(s => s.type === "EXTRA_HOURS");
-
-            return (
-                <>
-                    {operatingSchedule && (
-                        <p>Le parc est ouvert le {formatDate(operatingSchedule.date).split(' ')[0]} entre {formatDate(operatingSchedule.openingTime)} et {formatDate(operatingSchedule.closingTime)}.</p>
-                    )}
-                    {extraHoursSchedule && (
-                        <p>Extra Magic Hours: de {formatDate(extraHoursSchedule.openingTime)} à {formatDate(extraHoursSchedule.closingTime)}.</p>
-                    )}
-                </>
-            );
-        };
-
-        return (
-            <>
-                {renderScheduleInfo(todaySchedules)}
-            </>
-        );
-    };
-
+    }, [allRidesClosed, isDataLoaded, navigate])
 
     return (
         <div>
@@ -245,19 +168,17 @@ const Attractions = () => {
                                             </p>
                                         ) : ride.status !== 'CLOSED' ? (
                                             <p className={styles.textOpenAttraction}>Momentanément Indisponible</p>
-                                        ) : null}
+                                        ) : isDataLoaded ? (
+                                            <p>Aucune attraction correspondant à la recherche.</p>
+                                        ) : (
+                                            <p>Chargement des attractions...</p>
+                                        )}
                                     </div>
                                 </div>
                             ))
                         ) : (
                             <p>Aucune attraction correspondant à la recherche.</p>
                         )}
-                    </div>
-                )}
-                {allRidesClosed && (
-                    <div className={styles.parkHours}>
-                        <h2>Horaires du Parc</h2>
-                        {renderParkHours()}
                     </div>
                 )}
             </div>
