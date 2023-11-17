@@ -44,6 +44,7 @@ p, h1, h2 {
 
 // Styles pour les cartes individuelles d'attractions
 .card {
+    position: relative;
     background-color: #FFFFFF;
     border: 1px solid #ddd;
     display: flex;
@@ -54,12 +55,29 @@ p, h1, h2 {
 }
 
 // Styles pour les images des attractions
+.waitTime {
+    position: absolute; // Positionnement absolu pour le placer en haut à droite
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7); // Fond légèrement transparent
+    color: white;
+    border-radius: 50%;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
 .imgAttraction {
     width: 100%;
-    height: auto; // Ajuste la hauteur en fonction de la largeur tout en maintenant les proportions
-    object-fit: cover; // Couvre la zone de l'image sans étirement
-    border-radius: 5px 5px 0 0;
+    height: 200px; // Hauteur fixe pour une meilleure uniformité
+    object-fit: cover; // Assure que l'image couvre toute la zone sans être déformée
 }
+
 
 // Styles pour le texte des cartes
 .cardText {

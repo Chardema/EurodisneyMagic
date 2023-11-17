@@ -160,19 +160,8 @@ const Attractions = () => {
                             filteredRideData.map((ride) => (
                                 <div key={ride.id} className={styles.card}>
                                     <img className={styles.imgAttraction} src={attractionImages[ride.name]} alt={ride.name} />
-                                    <div className={styles.cardText}>
-                                        <p className={styles.textOpenAttraction}>{ride.name} {ride.status === 'CLOSED' ? '(Fermé)' : ''}</p>
-                                        {ride.queue && ride.queue.STANDBY && ride.queue.STANDBY.waitTime !== null && ride.status !== 'CLOSED' ? (
-                                            <p className={styles.textOpenAttraction}>
-                                                {`${ride.queue.STANDBY.waitTime} minutes d'attente (Ouvert)`}
-                                            </p>
-                                        ) : ride.status !== 'CLOSED' ? (
-                                            <p className={styles.textOpenAttraction}>Momentanément Indisponible</p>
-                                        ) : isDataLoaded ? (
-                                            <p>Aucune attraction correspondant à la recherche.</p>
-                                        ) : (
-                                            <p>Chargement des attractions...</p>
-                                        )}
+                                    <div className={styles.waitTime}>
+                                        {`${ride.queue.STANDBY.waitTime}min`}
                                     </div>
                                 </div>
                             ))
