@@ -9,7 +9,6 @@ import {
     setSearchTerm
 } from '../redux/actions'; // Assurez-vous que le chemin est correct
 import 'slick-carousel/slick/slick.css';
-import {useNavigate} from 'react-router-dom';
 import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar'; // Assurez-vous que le chemin est correct
 import useInterval from './../useInterval'; // Assurez-vous que le chemin est correct
@@ -91,7 +90,32 @@ const Attractions = () => {
     const { rawRideData, filteredRideData, searchTerm } = useSelector(state => state);
     const [lastUpdate, setLastUpdate] = useState(null);
     const [previousWaitTimes, setPreviousWaitTimes] = useState({});
-    const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [isDataLoaded, setIsDataLoaded] = useState(false); // Correction ici
+
+    const updatePreviousWaitTimes = useCallback((newData) => {
+        const newPreviousWaitTimes = {};
+        newData.forEach(ride => {
+            const standbyQueue = ride.queue?.STANDBY;
+            const currentWaitTime = standbyQueue ? standbyQueue.waitTime : null;
+            newPreviousWaitTimes[ride.id] = (previousWaitTimes[ride.id] !== undefined) ? previousWaitTimes[ride.id] : currentWaitTime;
+        });
+        setPreviousWaitTimes(newPreviousWaitTimes);
+
+        // Stocker dans le stockage local
+        localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
+    }, [previousWaitTimes, setPreviousWaitTimes]);
+
+// À l'intérieur de votre composant Attractions
+    useEffect(() => {
+        // Charger les données depuis le stockage local
+        const storedPreviousWaitTimes = localStorage.getItem('previousWaitTimes');
+        if (storedPreviousWaitTimes) {
+            setPreviousWaitTimes(JSON.parse(storedPreviousWaitTimes));
+        } else {
+            // Utiliser une valeur par défaut si aucune donnée n'est présente
+            setPreviousWaitTimes({});
+        }
+    }, []);
 
     const fetchData = useCallback(async () => {
         try {
@@ -101,8 +125,10 @@ const Attractions = () => {
             setLastUpdate(new Date()); // Mettre à jour lastUpdate à chaque appel réussi
 
             if (Array.isArray(rideTimes.liveData)) {
+                const newPreviousWaitTimes = { ...previousWaitTimes }; // Copie de previousWaitTimes
                 updatePreviousWaitTimes(rideTimes.liveData);
                 dispatch(setRawRideData(rideTimes.liveData));
+                setPreviousWaitTimes(newPreviousWaitTimes); // Mettre à jour previousWaitTimes après la comparaison
             } else {
                 dispatch(setRawRideData([]));
             }
@@ -111,7 +137,8 @@ const Attractions = () => {
             setLastUpdate(new Date()); // Mettre à jour lastUpdate même en cas d'erreur
         }
         setIsDataLoaded(true);
-    }, [dispatch, previousWaitTimes]);
+    }, [dispatch, setIsDataLoaded, updatePreviousWaitTimes, previousWaitTimes]);
+
 
 
     useEffect(() => {
@@ -136,17 +163,7 @@ const Attractions = () => {
 
     const allRidesClosed = filteredRideData.every(ride => ride.status === 'CLOSED');
 
-    const updatePreviousWaitTimes = (newData) => {
-        const newPreviousWaitTimes = {};
-        newData.forEach(ride => {
-            const standbyQueue = ride.queue?.STANDBY;
-            // Utilisez la valeur de waitTime seulement si standbyQueue est défini
-            const currentWaitTime = standbyQueue ? standbyQueue.waitTime : null;
-            // Stockez le dernier temps d'attente connu, ou null si non disponible
-            newPreviousWaitTimes[ride.id] = (previousWaitTimes[ride.id] !== undefined) ? previousWaitTimes[ride.id] : currentWaitTime;
-        });
-        setPreviousWaitTimes(newPreviousWaitTimes);
-    };
+
 
 
     return (
