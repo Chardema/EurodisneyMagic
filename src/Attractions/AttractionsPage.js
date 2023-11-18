@@ -112,12 +112,12 @@ const Attractions = () => {
     // Fonction pour la récupération des données
     const fetchData = useCallback(async () => {
         try {
-            const response = await axios.get('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/live');
-            const rideTimes = response.data;
+            const response = await axios.get('http://localhost:5000/api/attractions');
+            const rideData = response.data;
 
             setLastUpdate(new Date());
-            updatePreviousWaitTimes(rideTimes.liveData || []);
-            dispatch(setRawRideData(rideTimes.liveData || []));
+            updatePreviousWaitTimes(rideData || []);
+            dispatch(setRawRideData(rideData || []));
         } catch (error) {
             console.error(error);
             setLastUpdate(new Date());
@@ -125,6 +125,7 @@ const Attractions = () => {
             setIsDataLoaded(true);
         }
     }, [dispatch, updatePreviousWaitTimes]);
+
 
     // Exécutez fetchData immédiatement après le premier rendu
     useEffect(() => {
