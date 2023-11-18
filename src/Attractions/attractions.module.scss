@@ -81,6 +81,32 @@ p, h1, h2 {
     color: #9c27b0;
 }
 
+
+.checkboxcustom {
+
+    + label {
+        position: relative;
+        padding-left: 25px;
+        cursor: pointer;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #9C27B0; // Bordure de la case personnalisée
+            border-radius: 3px; // Coins arrondis
+            transition: background-color 0.3s;
+        }
+    }
+
+    &:checked + label::before {
+        background-color: #9C27B0; // Couleur de fond lorsqu'elle est cochée
+    }
+}
+
 // Styles pour les images des attractions
 .waitTime {
     position: absolute; // Positionnement absolu pour le placer en haut à droite
@@ -116,12 +142,39 @@ p, h1, h2 {
 
 .filters {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-bottom: 20px;
     padding: 10px;
     background-color: #f0f0f0;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.checkbox{
+    display: flex;
+    padding: 10px;
+
+}
+.allbutton {
+    display: flex;
+    margin: 10px;
+    .button{
+            background-color: #9C27B0; // Exemple de couleur
+            color: white;
+            border: none;
+            padding: 10px;
+        margin-right: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+
+            &:hover {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            &:active {
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Moins d'ombre lors du clic
+            }
+    }
 }
 
 .filterOption {
@@ -135,13 +188,70 @@ p, h1, h2 {
     margin-right: 5px;
 }
 
+/* Style des cases à cocher */
+/* Style des cases à cocher */
+.checkboxcustom {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+.textCheckbox {
+    padding-left: 10px;
+}
+.checkboxcustom::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #9C27B0; /* Couleur de la bordure */
+    border-radius: 5px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.checkboxcustom:checked::before {
+    background-color: #9C27B0; /* Couleur de fond lorsque coché */
+    border-color: #9C27B0; /* Couleur de la bordure lorsque coché */
+}
+
+.checkboxcustom:hover::before {
+    border-color: #7B1FA2; /* Couleur de la bordure au survol */
+}
+
+
 
 // Media queries pour les ajustements responsifs
 @media (max-width: 768px) {
     .container {
         max-width: 100%;
     }
+    .filters {
+        flex-direction: column;
+        align-items: center;
+    }
 
+    .allbutton {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .allbutton .button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    .filterOption {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
     .attractionsList {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); // Plus petites cartes sur les écrans étroits
     }

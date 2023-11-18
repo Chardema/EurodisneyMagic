@@ -90,15 +90,16 @@ const attractionImages = attractionNames.reduce((acc, name) => {
 
 const Attractions = () => {
     const dispatch = useDispatch();
-    const { rawRideData, filteredRideData, searchTerm } = useSelector((state) => state);
+    const { rawRideData, searchTerm, filteredRideData } = useSelector((state) => state);
     const [lastUpdate, setLastUpdate] = useState(null);
     const [previousWaitTimes, setPreviousWaitTimes] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
-    const [showShortWaitTimesOnly, setShowShortWaitTimesOnly] = useState(false);
-    const [showClosedRides, setShowClosedRides] = useState(false);
+    const [filters, setFilters] = useState({
+        showShortWaitTimesOnly: false,
+        showClosedRides: false,
+        selectedPark: 'all' // 'all', 'disneyland', 'studio'
+    });
 
-
-    // Simplification de la fonction de mise à jour des temps d'attente
     const updatePreviousWaitTimes = useCallback((newData) => {
         const newPreviousWaitTimes = newData.reduce((acc, ride) => {
             const currentWaitTime = ride.queue?.STANDBY?.waitTime;
@@ -112,7 +113,6 @@ const Attractions = () => {
         localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
     }, [previousWaitTimes]);
 
-    // Chargement initial des temps d'attente précédents
     useEffect(() => {
         const storedPreviousWaitTimes = localStorage.getItem('previousWaitTimes');
         if (storedPreviousWaitTimes) {
@@ -120,7 +120,6 @@ const Attractions = () => {
         }
     }, []);
 
-    // Fonction pour la récupération des données
     const fetchData = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:5000/api/attractions');
@@ -137,30 +136,37 @@ const Attractions = () => {
         }
     }, [dispatch, updatePreviousWaitTimes]);
 
-
-    // Exécutez fetchData immédiatement après le premier rendu
     useEffect(() => {
         fetchData();
     }, [fetchData]);
-    // Récupération périodique des données
+
     useInterval(fetchData, 60000);
 
-    // Filtre des attractions
     useEffect(() => {
         const filteredAttractions = rawRideData
-            .filter((ride) => (showClosedRides || ride.status !== 'CLOSED') && ride.entityType !== 'SHOW')
-            .filter((ride) => ride.name.toLowerCase().includes(searchTerm.toLowerCase()))
-            .filter((ride) => !showShortWaitTimesOnly || ride.queue?.STANDBY?.waitTime < 30);
+            .filter((ride) => {
+                return (
+                    (filters.showClosedRides || ride.status !== 'CLOSED') &&
+                    ride.entityType !== 'SHOW' &&
+                    ride.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                    (!filters.showShortWaitTimesOnly || ride.queue?.STANDBY?.waitTime < 30) &&
+                    (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark)
+                );
+            });
 
         dispatch(setFilteredRideData(filteredAttractions));
-    }, [rawRideData, searchTerm, showClosedRides, showShortWaitTimesOnly, dispatch]);
+    }, [rawRideData, searchTerm, filters, dispatch]);
 
-    // Gestion de la recherche
-    const handleSearchChange = useCallback((event) => {
+    const handleFilterChange = (filter, value) => {
+        setFilters({ ...filters, [filter]: value });
+    };
+    const handleSearchChange = (event) => {
         dispatch(setSearchTerm(event.target.value));
-    }, [dispatch]);
+    };
+
 
     const allRidesClosed = rawRideData.every((ride) => ride.status === 'CLOSED');
+
     return (
         <div>
             <Navbar />
@@ -178,22 +184,35 @@ const Attractions = () => {
                     onChange={handleSearchChange}
                 />
                 <div className={styles.filters}>
-                    <label className={styles.filterOption}>
-                        <input
-                            type="checkbox"
-                            checked={showShortWaitTimesOnly}
-                            onChange={(e) => setShowShortWaitTimesOnly(e.target.checked)}
-                        />
-                        Moins de 30 min d'attente
-                    </label>
-                    <label className={styles.filterOption}>
-                        <input
-                            type="checkbox"
-                            checked={showClosedRides}
-                            onChange={(e) => setShowClosedRides(e.target.checked)}
-                        />
-                        Afficher les attractions fermées
-                    </label>
+                    <div className={styles.checkbox}>
+                        <label className={styles.filterOption}>
+                            <input
+                                type="checkbox"
+                                className={styles.checkboxcustom}
+                                checked={filters.showShortWaitTimesOnly}
+                                onChange={(e) => handleFilterChange('showShortWaitTimesOnly', e.target.checked)}
+                            />
+                            <div className={styles.textCheckbox}>
+                                Moins de 30 min d'attente
+                            </div>
+                        </label>
+                        <label className={styles.filterOption}>
+                            <input
+                                type="checkbox"
+                                className={styles.checkboxcustom}
+                                checked={filters.showClosedRides}
+                                onChange={(e) => handleFilterChange('showClosedRides', e.target.checked)}
+                            />
+                            <div className={styles.textCheckbox}>
+                                Afficher les attractions fermées
+                            </div>
+                        </label>
+                    </div>
+                    <div className={styles.allbutton}>
+                        <button className={styles.button} onClick={() => setFilters({...filters, selectedPark: 'all'})}>Tous les Parcs</button>
+                        <button  className={styles.button} onClick={() => setFilters({...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401'})}>Disneyland Park</button>
+                        <button  className={styles.button} onClick={() => setFilters({...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968'})}>Studio Park</button>
+                    </div>
                 </div>
                 {!allRidesClosed && (
                     <div className={styles.attractionsList}>
