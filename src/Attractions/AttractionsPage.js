@@ -88,9 +88,9 @@ const attractionImages = attractionNames.reduce((acc, name) => {
 
 const Attractions = () => {
     const dispatch = useDispatch();
-    const { rawRideData, filteredRideData, closedRideData, searchTerm } = useSelector(state => state);
+    const { rawRideData, filteredRideData, searchTerm } = useSelector(state => state);
     const [lastUpdate, setLastUpdate] = useState(null);
-    const navigate = useNavigate();
+    const [previousWaitTimes, setPreviousWaitTimes] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const fetchData = useCallback(async () => {
@@ -98,18 +98,21 @@ const Attractions = () => {
             const response = await axios.get('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/live');
             const rideTimes = response.data;
 
+            setLastUpdate(new Date()); // Mettre à jour lastUpdate à chaque appel réussi
+
             if (Array.isArray(rideTimes.liveData)) {
+                updatePreviousWaitTimes(rideTimes.liveData);
                 dispatch(setRawRideData(rideTimes.liveData));
-                setLastUpdate(new Date());
             } else {
                 dispatch(setRawRideData([]));
-                setLastUpdate(null);
             }
         } catch (error) {
             console.error(error);
+            setLastUpdate(new Date()); // Mettre à jour lastUpdate même en cas d'erreur
         }
         setIsDataLoaded(true);
-    }, [dispatch]);
+    }, [dispatch, previousWaitTimes]);
+
 
     useEffect(() => {
         fetchData();
@@ -119,7 +122,6 @@ const Attractions = () => {
         fetchData();
     }, 60000);
 
-    //Filtre des attractions
     useEffect(() => {
         const filteredAttractions = rawRideData
             .filter(ride => ride.entityType !== 'SHOW')
@@ -131,14 +133,21 @@ const Attractions = () => {
     const handleSearchChange = useCallback((event) => {
         dispatch(setSearchTerm(event.target.value));
     }, [dispatch]);
+
     const allRidesClosed = filteredRideData.every(ride => ride.status === 'CLOSED');
 
-    // redirection vers page d'accueil si toutes attractions fermées
-    useEffect(() => {
-        if(allRidesClosed && isDataLoaded) {
-            navigate("/");
-        }
-    }, [allRidesClosed, isDataLoaded, navigate])
+    const updatePreviousWaitTimes = (newData) => {
+        const newPreviousWaitTimes = {};
+        newData.forEach(ride => {
+            const standbyQueue = ride.queue?.STANDBY;
+            // Utilisez la valeur de waitTime seulement si standbyQueue est défini
+            const currentWaitTime = standbyQueue ? standbyQueue.waitTime : null;
+            // Stockez le dernier temps d'attente connu, ou null si non disponible
+            newPreviousWaitTimes[ride.id] = (previousWaitTimes[ride.id] !== undefined) ? previousWaitTimes[ride.id] : currentWaitTime;
+        });
+        setPreviousWaitTimes(newPreviousWaitTimes);
+    };
+
 
     return (
         <div>
@@ -157,14 +166,24 @@ const Attractions = () => {
                 {!allRidesClosed && (
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
-                            filteredRideData.map((ride) => (
-                                <div key={ride.id} className={styles.card}>
-                                    <img className={styles.imgAttraction} src={attractionImages[ride.name]} alt={ride.name} />
-                                    <div className={styles.waitTime}>
-                                        {`${ride.queue.STANDBY.waitTime}min`}
+                            filteredRideData.map((ride) => {
+                                const standbyQueue = ride.queue?.STANDBY;
+                                const currentWaitTime = standbyQueue ? standbyQueue.waitTime : null;
+                                const isIncreased = ride.queue.STANDBY.waitTime > (previousWaitTimes[ride.id] ?? ride.queue.STANDBY.waitTime);
+                                const isDecreased = ride.queue.STANDBY.waitTime < (previousWaitTimes[ride.id] ?? ride.queue.STANDBY.waitTime);
+                                const waitTimeColor = ride.queue.STANDBY.waitTime >= 35 ? 'red' : 'green';
+
+                                return (
+                                    <div key={ride.id} className={styles.card}>
+                                        <img className={styles.imgAttraction} src={attractionImages[ride.name]} alt={ride.name} />
+                                        <div className={styles.waitTime} style={{ backgroundColor: waitTimeColor }}>
+                                            {ride.status === 'CLOSED' ? 'Fermée' : `${currentWaitTime ?? '0'}min`}
+                                            {isIncreased && <span>🔺</span>} {/* Remplacer par une icône/image de flèche vers le haut */}
+                                            {isDecreased && <span>🔻</span>} {/* Remplacer par une icône/image de flèche vers le bas */}
+                                        </div>
                                     </div>
-                                </div>
-                            ))
+                                );
+                            })
                         ) : (
                             <p>Aucune attraction correspondant à la recherche.</p>
                         )}

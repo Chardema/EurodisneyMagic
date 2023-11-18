@@ -51,20 +51,19 @@ p, h1, h2 {
     flex-direction: column;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
 }
 
 // Styles pour les images des attractions
 .waitTime {
     position: absolute; // Positionnement absolu pour le placer en haut à droite
-    top: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.7); // Fond légèrement transparent
+    top: -18px;
+    right: -22px;
+    background-color: rgba(38, 194, 129,0.9); // Fond légèrement transparent
     color: white;
     border-radius: 50%;
     padding: 5px;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     font-size: 14px;
     display: flex;
     justify-content: center;
