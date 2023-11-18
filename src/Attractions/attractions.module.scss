@@ -49,13 +49,29 @@ p, h1, h2 {
     display: flex;
     flex-direction: column;
     border-radius: 5px;
+    height: 100%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.cardText {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+    height: 30%;
+    text-align: left;
+}
+
+.imgAttraction {
+    width: 100%;
+    height: 70%;// Hauteur fixe pour une meilleure uniformité
+    object-fit: cover; // Assure que l'image couvre toute la zone sans être déformée
 }
 .attractionName {
     font-weight: bold;
     align-self: center;
     transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
-    margin-bottom: 10px;
+    padding: 5px;
     background: linear-gradient(45deg, #7B1FA2, #BA68C8);
     -webkit-background-clip: text;
     color: transparent;
@@ -86,22 +102,11 @@ p, h1, h2 {
     background-color: rgba(139,0,0,0.9);
 }
 
-.imgAttraction {
-    width: 100%;
-    height: 200px; // Hauteur fixe pour une meilleure uniformité
-    object-fit: cover; // Assure que l'image couvre toute la zone sans être déformée
-}
+
 
 
 // Styles pour le texte des cartes
-.cardText {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 10px;
-    text-align: left;
-}
+
 
 // Styles spécifiques pour le texte des attractions ouvertes
 .textOpenAttraction {

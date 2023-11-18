@@ -202,7 +202,9 @@ const Attractions = () => {
                                             src={attractionImages[ride.name]}
                                             alt={ride.name}
                                         />
+                                        <div className={styles.cardText}>
                                         <h3 className={styles.attractionName}>{ride.name}</h3>
+                                        </div>
                                         <div className={`${styles.waitTime} ${waitTimeClass}`}>
                                             {ride.status === 'CLOSED' ? 'Fermée' : `${currentWaitTime ?? '0'}min`}
                                             {isIncreased && <span> 🔺</span>}
