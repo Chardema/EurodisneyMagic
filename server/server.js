@@ -9,6 +9,7 @@ const config = require('./config');
 // Middleware pour gérer les requêtes JSON
 app.use(express.json());
 
+
 // Connexion à MongoDB Atlas
 mongoose
     .connect(config.mongoURI)
@@ -43,9 +44,9 @@ const removeObsoleteAttractions = async () => {
 };
 removeObsoleteAttractions()
 // Fonction pour récupérer les données depuis l'API externe et les stocker dans MongoDB
-const fetchAndStoreData = async () => {
+const fetchAndStoreParkData = async (parkUrl) => {
     try {
-        const response = await axios.get('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/live');
+        const response = await axios.get(parkUrl);
         const rideTimes = response.data.liveData || [];
 
         // Parcourez les données de l'API et stockez-les dans MongoDB
@@ -79,7 +80,10 @@ const fetchAndStoreData = async () => {
         console.error('Erreur lors de la récupération et du stockage des données : ' + error);
     }
 };
-
+const fetchAndStoreData = async () => {
+    await fetchAndStoreParkData('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/live'); // Premier parc
+    await fetchAndStoreParkData('https://api.themeparks.wiki/v1/entity/ca888437-ebb4-4d50-aed2-d227f7096968/live'); // Deuxième parc
+};
 
 // Exécutez la fonction de récupération et de stockage des données à intervalles réguliers
 setInterval(fetchAndStoreData, 60000);

@@ -69,7 +69,18 @@ const attractionNames = [
     'Pirates of the Caribbean',
     '"it\'s a small world"',
     "Le Pays des Contes de Fées",
-    "Pirates' Beach"
+    "Pirates' Beach",
+    "Avengers Assemble: Flight Force",
+    "Cars ROAD TRIP",
+    "Spider-Man W.E.B. Adventure",
+    "Cars Quatre Roues Rallye",
+    "Toy Soldiers Parachute Drop",
+    "RC Racer",
+    "The Twilight Zone Tower of Terror",
+    "Crush's Coaster",
+    "Ratatouille: The Adventure",
+    "Slinky® Dog Zigzag Spin",
+    "Les Tapis Volants - Flying Carpets Over Agrabah®"
 ];
 const attractionImages = attractionNames.reduce((acc, name) => {
     const imageName = formatImageName(name);
