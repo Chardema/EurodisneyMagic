@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
 import styles from './attractions.module.scss'
-import {formatDate} from "../utils";
+import {formatDate, importImage} from "../utils";
 import {
     setRawRideData,
     setFilteredRideData,
@@ -15,15 +15,7 @@ import useInterval from './../useInterval'; // Assurez-vous que le chemin est co
 import './attractions.module.scss'; // Assurez-vous que le chemin est correct
 
 // Fonction pour importer les images dynamiquement
-const importImage = (imageName) => {
-    try {
-        return require(`./../img/${imageName}`);
-    } catch (err) {
-        console.error(err);
-        // Retourne une image par défaut en cas d'erreur
-        return require(`./../img/default.jpg`);
-    }
-};
+
 const formatImageName = (name) => {
     return name
             .replace(/®/g, '') // Supprime le symbole ®
@@ -87,91 +79,84 @@ const attractionImages = attractionNames.reduce((acc, name) => {
 
 const Attractions = () => {
     const dispatch = useDispatch();
-    const { rawRideData, filteredRideData, searchTerm } = useSelector(state => state);
+    const { rawRideData, filteredRideData, searchTerm } = useSelector((state) => state);
     const [lastUpdate, setLastUpdate] = useState(null);
     const [previousWaitTimes, setPreviousWaitTimes] = useState({});
-    const [isDataLoaded, setIsDataLoaded] = useState(false); // Correction ici
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [showShortWaitTimesOnly, setShowShortWaitTimesOnly] = useState(false);
+    const [showClosedRides, setShowClosedRides] = useState(false);
 
+
+    // Simplification de la fonction de mise à jour des temps d'attente
     const updatePreviousWaitTimes = useCallback((newData) => {
-        const newPreviousWaitTimes = {};
-        newData.forEach(ride => {
-            const standbyQueue = ride.queue?.STANDBY;
-            const currentWaitTime = standbyQueue ? standbyQueue.waitTime : null;
-            newPreviousWaitTimes[ride.id] = (previousWaitTimes[ride.id] !== undefined) ? previousWaitTimes[ride.id] : currentWaitTime;
-        });
+        const newPreviousWaitTimes = newData.reduce((acc, ride) => {
+            const currentWaitTime = ride.queue?.STANDBY?.waitTime;
+            if (acc[ride.id] !== currentWaitTime) {
+                acc[ride.id] = currentWaitTime;
+            }
+            return acc;
+        }, {...previousWaitTimes});
+
         setPreviousWaitTimes(newPreviousWaitTimes);
-
-        // Stocker dans le stockage local
         localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
-    }, [previousWaitTimes, setPreviousWaitTimes]);
+    }, [previousWaitTimes]);
 
-// À l'intérieur de votre composant Attractions
+    // Chargement initial des temps d'attente précédents
     useEffect(() => {
-        // Charger les données depuis le stockage local
         const storedPreviousWaitTimes = localStorage.getItem('previousWaitTimes');
         if (storedPreviousWaitTimes) {
             setPreviousWaitTimes(JSON.parse(storedPreviousWaitTimes));
-        } else {
-            // Utiliser une valeur par défaut si aucune donnée n'est présente
-            setPreviousWaitTimes({});
         }
     }, []);
 
+    // Fonction pour la récupération des données
     const fetchData = useCallback(async () => {
         try {
             const response = await axios.get('https://api.themeparks.wiki/v1/entity/dae968d5-630d-4719-8b06-3d107e944401/live');
             const rideTimes = response.data;
 
-            setLastUpdate(new Date()); // Mettre à jour lastUpdate à chaque appel réussi
-
-            if (Array.isArray(rideTimes.liveData)) {
-                const newPreviousWaitTimes = { ...previousWaitTimes }; // Copie de previousWaitTimes
-                updatePreviousWaitTimes(rideTimes.liveData);
-                dispatch(setRawRideData(rideTimes.liveData));
-                setPreviousWaitTimes(newPreviousWaitTimes); // Mettre à jour previousWaitTimes après la comparaison
-            } else {
-                dispatch(setRawRideData([]));
-            }
+            setLastUpdate(new Date());
+            updatePreviousWaitTimes(rideTimes.liveData || []);
+            dispatch(setRawRideData(rideTimes.liveData || []));
         } catch (error) {
             console.error(error);
-            setLastUpdate(new Date()); // Mettre à jour lastUpdate même en cas d'erreur
+            setLastUpdate(new Date());
+        } finally {
+            setIsDataLoaded(true);
         }
-        setIsDataLoaded(true);
-    }, [dispatch, setIsDataLoaded, updatePreviousWaitTimes, previousWaitTimes]);
+    }, [dispatch, updatePreviousWaitTimes]);
 
-
-
+    // Exécutez fetchData immédiatement après le premier rendu
     useEffect(() => {
         fetchData();
     }, [fetchData]);
+    // Récupération périodique des données
+    useInterval(fetchData, 60000);
 
-    useInterval(() => {
-        fetchData();
-    }, 60000);
-
+    // Filtre des attractions
     useEffect(() => {
         const filteredAttractions = rawRideData
-            .filter(ride => ride.entityType !== 'SHOW')
-            .filter(ride => ride.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            .filter((ride) => (showClosedRides || ride.status !== 'CLOSED') && ride.entityType !== 'SHOW')
+            .filter((ride) => ride.name.toLowerCase().includes(searchTerm.toLowerCase()))
+            .filter((ride) => !showShortWaitTimesOnly || ride.queue?.STANDBY?.waitTime < 30);
 
         dispatch(setFilteredRideData(filteredAttractions));
-    }, [rawRideData, searchTerm, dispatch]);
+    }, [rawRideData, searchTerm, showClosedRides, showShortWaitTimesOnly, dispatch]);
 
+    // Gestion de la recherche
     const handleSearchChange = useCallback((event) => {
         dispatch(setSearchTerm(event.target.value));
     }, [dispatch]);
 
-    const allRidesClosed = filteredRideData.every(ride => ride.status === 'CLOSED');
-
-
-
-
+    const allRidesClosed = rawRideData.every((ride) => ride.status === 'CLOSED');
     return (
         <div>
             <Navbar />
             <div className={styles.container}>
                 <p className={styles.lastUpdate}>
-                    {lastUpdate ? `Dernière mise à jour : ${formatDate(lastUpdate)}` : 'Aucune mise à jour récente'}
+                    {lastUpdate
+                        ? `Dernière mise à jour : ${formatDate(lastUpdate)}`
+                        : 'Aucune mise à jour récente'}
                 </p>
                 <input
                     type="text"
@@ -180,6 +165,24 @@ const Attractions = () => {
                     value={searchTerm}
                     onChange={handleSearchChange}
                 />
+                <div className={styles.filters}>
+                    <label className={styles.filterOption}>
+                        <input
+                            type="checkbox"
+                            checked={showShortWaitTimesOnly}
+                            onChange={(e) => setShowShortWaitTimesOnly(e.target.checked)}
+                        />
+                        Moins de 30 min d'attente
+                    </label>
+                    <label className={styles.filterOption}>
+                        <input
+                            type="checkbox"
+                            checked={showClosedRides}
+                            onChange={(e) => setShowClosedRides(e.target.checked)}
+                        />
+                        Afficher les attractions fermées
+                    </label>
+                </div>
                 {!allRidesClosed && (
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
@@ -188,15 +191,22 @@ const Attractions = () => {
                                 const currentWaitTime = standbyQueue ? standbyQueue.waitTime : null;
                                 const isIncreased = ride.queue.STANDBY.waitTime > (previousWaitTimes[ride.id] ?? ride.queue.STANDBY.waitTime);
                                 const isDecreased = ride.queue.STANDBY.waitTime < (previousWaitTimes[ride.id] ?? ride.queue.STANDBY.waitTime);
-                                const waitTimeColor = ride.queue.STANDBY.waitTime >= 35 ? 'red' : 'green';
+                                let waitTimeClass = currentWaitTime >= 30 ? styles.waitTimeHigh : styles.waitTimeLow;
+                                if (isIncreased) waitTimeClass = styles.waitTimeIncreased;
+                                if (isDecreased) waitTimeClass = styles.waitTimeDecreased;
 
                                 return (
                                     <div key={ride.id} className={styles.card}>
-                                        <img className={styles.imgAttraction} src={attractionImages[ride.name]} alt={ride.name} />
-                                        <div className={styles.waitTime} style={{ backgroundColor: waitTimeColor }}>
+                                        <img
+                                            className={styles.imgAttraction}
+                                            src={attractionImages[ride.name]}
+                                            alt={ride.name}
+                                        />
+                                        <h3 className={styles.attractionName}>{ride.name}</h3>
+                                        <div className={`${styles.waitTime} ${waitTimeClass}`}>
                                             {ride.status === 'CLOSED' ? 'Fermée' : `${currentWaitTime ?? '0'}min`}
-                                            {isIncreased && <span>🔺</span>} {/* Remplacer par une icône/image de flèche vers le haut */}
-                                            {isDecreased && <span>🔻</span>} {/* Remplacer par une icône/image de flèche vers le bas */}
+                                            {isIncreased && <span> 🔺</span>}
+                                            {isDecreased && <span> 🔻</span>}
                                         </div>
                                     </div>
                                 );
@@ -212,3 +222,4 @@ const Attractions = () => {
 };
 
 export default Attractions;
+

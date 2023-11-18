@@ -21,3 +21,13 @@ export const formatTime = (dateString) => {
         return 'Heure invalide';
     }
 };
+
+export const importImage = (imageName) => {
+    try {
+        return require(`.//img/${imageName}`);
+    } catch (err) {
+        console.error(err);
+        // Retourne une image par défaut en cas d'erreur
+        return require(`.//img/default.jpg`);
+    }
+};

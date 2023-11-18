@@ -51,6 +51,19 @@ p, h1, h2 {
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+.attractionName {
+    font-weight: bold;
+    align-self: center;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, #7B1FA2, #BA68C8);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.attractionName:hover {
+    color: #9c27b0;
+}
 
 // Styles pour les images des attractions
 .waitTime {
@@ -68,6 +81,9 @@ p, h1, h2 {
     justify-content: center;
     align-items: center;
     text-align: center;
+}
+.waitTimeHigh{
+    background-color: rgba(139,0,0,0.9);
 }
 
 .imgAttraction {
@@ -92,6 +108,28 @@ p, h1, h2 {
     font-size: 15px;
     color: black; // Couleur du texte pour les attractions ouvertes
 }
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filterOption {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-right: 15px;
+}
+
+.filterOption input[type="checkbox"] {
+    margin-right: 5px;
+}
+
 
 // Media queries pour les ajustements responsifs
 @media (max-width: 768px) {
