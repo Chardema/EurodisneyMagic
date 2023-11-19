@@ -4,7 +4,8 @@ const axios = require('axios');
 const Ride = require('./models/Ride'); // Importez votre modèle de données Ride
 const cors = require('cors');
 const app = express();
-const config = require('./config');
+require('dotenv').config();
+const mongoURL = process.env.MONGO_URL
 
 // Utilisation du port fourni par l'environnement pour Azure, sinon 5000
 const port = process.env.PORT || 5000;
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use(cors()); // Activation de CORS
 
 // Connexion à MongoDB Atlas
-mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoURL)
     .then(() => console.log('Connecté à MongoDB Atlas'))
     .catch(err => console.error('Erreur de connexion à MongoDB Atlas:', err));
 
@@ -90,11 +91,6 @@ app.get('/api/attractions', async (req, res) => {
         console.error('Erreur lors de la récupération des attractions:', error);
         res.status(500).send('Erreur serveur');
     }
-});
-app.use(express.static(path.join(__dirname, 'build')));
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 // Démarrage du serveur
 app.listen(port, () => {
