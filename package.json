@@ -24,8 +24,11 @@
     "stream-http": "^3.2.0",
     "web-vitals": "^3.5.0"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node .\\server\\server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
