@@ -179,7 +179,7 @@ const Attractions = () => {
                 </p>
                 <input
                     type="text"
-                    placeholder="Rechercher une attraction"
+                    placeholder="Rechercher une attractio"
                     className={styles.searchAttraction}
                     value={searchTerm}
                     onChange={handleSearchChange}
