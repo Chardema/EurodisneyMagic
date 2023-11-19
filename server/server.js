@@ -9,13 +9,17 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Configuration de la connexion MySQL
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASS,
-});
+// Connexion à MongoDB Atlas
+mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connecté à MongoDB Atlas'))
+    .catch(err => console.error('Erreur de connexion à MongoDB Atlas:', err));
+
+// Fonction pour supprimer les attractions obsolètes
+const removeObsoleteAttractions = async () => {
+    try {
+        const obsoleteAttractions = await Ride.find({
+            $or: [{ entityType: { $ne: 'ATTRACTION' } }]
+        });
 
 const rideModel = new Ride(pool); // Instanciez la classe Ride avec le pool MySQL
 
@@ -61,11 +65,11 @@ app.get('/api/attractions', async (req, res) => {
         res.status(500).send('Erreur serveur');
     }
 });
+app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/', (req, res) => {
-    res.send('Page d’accueil');
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
-
 // Démarrage du serveur
 app.listen(port, () => {
     console.log(`Serveur Express en cours d'exécution sur le port ${port}`);
