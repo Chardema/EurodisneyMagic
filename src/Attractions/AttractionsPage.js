@@ -122,7 +122,7 @@ const Attractions = () => {
 
     const fetchData = useCallback(async () => {
         try {
-            const response = await axios.get('https://magicai.azurewebsites.net/api/attractions')
+            const response = await axios.get('http://magicai.jfcp3675.odns.fr/api/attractions')
             ;
             const rideData = response.data;
 

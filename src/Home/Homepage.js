@@ -28,7 +28,7 @@ const Homepage = () => {
                         <p className={styles.schedule}>Aujourd'hui, Le Disneyland Park est ouvert entre {formatTime(operatingSchedule.openingTime)} et {formatTime(operatingSchedule.closingTime)}.</p>
                     )}
                     {extraHoursSchedule && (
-                        <p className={styles.schedule}>Avec des EMT {formatTime(extraHoursSchedule.openingTime)} et {formatTime(extraHoursSchedule.closingTime)}.</p>
+                        <p className={styles.schedule}>Avec des EMT entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(extraHoursSchedule.closingTime)}.</p>
                     )}
                 </>
             );
