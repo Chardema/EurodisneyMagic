@@ -175,7 +175,7 @@ const Attractions = () => {
                 </p>
                 <input
                     type="text"
-                    placeholder="Rechercher une attractio"
+                    placeholder="Rechercher une attraction"
                     className={styles.searchAttraction}
                     value={searchTerm}
                     onChange={handleSearchChange}
@@ -226,7 +226,11 @@ const Attractions = () => {
                                 </button>
                     </div>
                 </div>
-                {!allRidesClosed && (
+                {allRidesClosed ? (
+                    <div className={styles.noRidesMessage}>
+                        <p>Toutes les attractions sont actuellement fermées, à demain !</p>
+                    </div>
+                ) : (
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
                             filteredRideData.map((ride) => {
@@ -237,24 +241,23 @@ const Attractions = () => {
                                 let waitTimeClass = currentWaitTime >= 30 ? styles.waitTimeHigh : styles.waitTimeLow;
                                 if (isIncreased) waitTimeClass = styles.waitTimeIncreased;
                                 if (isDecreased) waitTimeClass = styles.waitTimeDecreased;
-                                const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale} ` : styles.imgAttraction;
-                                const noRides = ride.status === 'DOWN' ? `${styles.waitTime} ${waitTimeClass} ${styles.nowaittime} ` : `${styles.waitTime} ${waitTimeClass}`;
+                                const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
+                                const noRides = ride.status === 'DOWN' ? `${styles.waitTime} ${waitTimeClass} ${styles.nowaittime}` : `${styles.waitTime} ${waitTimeClass}`;
 
                                 return (
                                     <div key={ride.id} className={styles.card}>
-
                                         <img
                                             className={imageClass}
                                             src={attractionImages[ride.name]}
                                             alt={ride.name}
                                         />
                                         <div className={styles.cardText}>
-                                        <h3 className={styles.attractionName}>{ride.name}</h3>
+                                            <h3 className={styles.attractionName}>{ride.name}</h3>
                                         </div>
                                         <div className={noRides}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
-                                            ride.status === 'CLOSED' ? 'Fermée' :
-                                            `${currentWaitTime !== null ? currentWaitTime : 0}min`}
+                                                ride.status === 'CLOSED' ? 'Fermée' :
+                                                    `${currentWaitTime !== null ? currentWaitTime : 0}min`}
                                             {isIncreased && <span> 🔺</span>}
                                             {isDecreased && <span> 🔻</span>}
                                         </div>
