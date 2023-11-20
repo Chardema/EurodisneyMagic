@@ -40,6 +40,9 @@ p, h1, h2 {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Ajuste automatiquement le nombre de colonnes
     gap: 20px;
 }
+.imgGrayscale {
+    filter: grayscale(100%);
+}
 
 // Styles pour les cartes individuelles d'attractions
 .card {

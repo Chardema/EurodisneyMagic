@@ -226,11 +226,13 @@ const Attractions = () => {
                                 let waitTimeClass = currentWaitTime >= 30 ? styles.waitTimeHigh : styles.waitTimeLow;
                                 if (isIncreased) waitTimeClass = styles.waitTimeIncreased;
                                 if (isDecreased) waitTimeClass = styles.waitTimeDecreased;
+                                const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
 
                                 return (
                                     <div key={ride.id} className={styles.card}>
+
                                         <img
-                                            className={styles.imgAttraction}
+                                            className={imageClass}
                                             src={attractionImages[ride.name]}
                                             alt={ride.name}
                                         />
@@ -238,7 +240,9 @@ const Attractions = () => {
                                         <h3 className={styles.attractionName}>{ride.name}</h3>
                                         </div>
                                         <div className={`${styles.waitTime} ${waitTimeClass}`}>
-                                            {ride.status === 'CLOSED' ? 'Fermée' : `${currentWaitTime ?? '0'}min`}
+                                            {ride.status === 'DOWN' ? 'Indispo' :
+                                            ride.status === 'CLOSED' ? 'Fermée' :
+                                            `${currentWaitTime !== null ? currentWaitTime : 0}min`}
                                             {isIncreased && <span> 🔺</span>}
                                             {isDecreased && <span> 🔻</span>}
                                         </div>
