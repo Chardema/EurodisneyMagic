@@ -6,7 +6,6 @@ import Spectacle from './SpectaclePage/SpectaclePage';
 import MagicAITrip from './MagicTripAI/MagicAITripPage';
 import {Provider} from "react-redux";
 import store from "./redux/store";
-require('dotenv').config();
 
 
 const App = () => {
