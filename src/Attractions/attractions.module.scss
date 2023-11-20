@@ -127,6 +127,10 @@ p, h1, h2 {
     align-items: center;
     text-align: center;
 }
+
+.nowaittime {
+    background-color: grey !important;
+}
 .waitTimeHigh{
     background-color: rgba(139,0,0,0.9);
 }
@@ -160,12 +164,15 @@ p, h1, h2 {
 .allbutton {
     display: flex;
     margin: 10px;
+    .buttonSelected {
+        background-color: #9C27B0; // Couleur de fond pour le bouton sélectionné
+        color: white !important; // Couleur du texte pour le bouton sélectionné
+    }
     .button{
-            background-color: #9C27B0; // Exemple de couleur
-            color: white;
-            border: none;
+            border: 1px solid #9C27B0;
+            color: black;
             padding: 10px;
-        margin-right: 5px;
+            margin-right: 5px;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s, box-shadow 0.3s;
@@ -176,6 +183,7 @@ p, h1, h2 {
 
             &:active {
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Moins d'ombre lors du clic
+                background-color: #9C27B0; // Exemple de couleur
             }
     }
 }

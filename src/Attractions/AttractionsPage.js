@@ -90,7 +90,10 @@ const attractionImages = attractionNames.reduce((acc, name) => {
 
 const Attractions = () => {
     const dispatch = useDispatch();
-    const { rawRideData, searchTerm, filteredRideData } = useSelector((state) => state);
+    const rawRideData = useSelector((state) => state.rawRideData);
+    const searchTerm = useSelector((state) => state.searchTerm);
+    const filteredRideData = useSelector((state) => state.filteredRideData);
+
     const [lastUpdate, setLastUpdate] = useState(null);
     const [previousWaitTimes, setPreviousWaitTimes] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -100,19 +103,6 @@ const Attractions = () => {
         selectedPark: 'all' // 'all', 'disneyland', 'studio'
     });
 
-    const updatePreviousWaitTimes = useCallback((newData) => {
-        const newPreviousWaitTimes = newData.reduce((acc, ride) => {
-            const currentWaitTime = ride.standbyWaitTime;
-            if (acc[ride.id] !== currentWaitTime) {
-                acc[ride.id] = currentWaitTime;
-            }
-            return acc;
-        }, {...previousWaitTimes});
-
-        setPreviousWaitTimes(newPreviousWaitTimes);
-        localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
-    }, [previousWaitTimes]);
-
     useEffect(() => {
         const storedPreviousWaitTimes = localStorage.getItem('previousWaitTimes');
         if (storedPreviousWaitTimes) {
@@ -120,54 +110,60 @@ const Attractions = () => {
         }
     }, []);
 
-    const fetchData = useCallback(async () => {
+    const fetchData = async () => {
         try {
-            const response = await axios.get('http://magicai.jfcp3675.odns.fr/api/attractions')
-            ;
+            const response = await axios.get('http://magicai.jfcp3675.odns.fr/api/attractions');
             const rideData = response.data;
-
             setLastUpdate(new Date());
-            updatePreviousWaitTimes(rideData || []);
+
+            // Mettre à jour les temps d'attente précédents
+            const newPreviousWaitTimes = rideData.reduce((acc, ride) => {
+                const currentWaitTime = ride.standbyWaitTime;
+                if (acc[ride.id] !== currentWaitTime) {
+                    acc[ride.id] = currentWaitTime;
+                }
+                return acc;
+            }, previousWaitTimes);
+            setPreviousWaitTimes(newPreviousWaitTimes);
+            localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
+
             dispatch(setRawRideData(rideData || []));
         } catch (error) {
-            console.error(error); 
+            console.error(error);
             setLastUpdate(new Date());
         } finally {
             setIsDataLoaded(true);
         }
-    }, [dispatch, updatePreviousWaitTimes]);
+    };
 
     useEffect(() => {
         fetchData();
-    }, [fetchData]);
-
-    useInterval(fetchData, 60000);
+        const intervalId = setInterval(fetchData, 60000);
+        return () => clearInterval(intervalId);
+    }, []); // Aucune dépendance ici pour éviter des appels multiples
 
     useEffect(() => {
-        const filteredAttractions = rawRideData
-            .filter((ride) => {
-                return (
-                    (filters.showClosedRides || ride.status !== 'CLOSED') &&
-                    ride.entityType !== 'SHOW' &&
-                    ride.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                    (!filters.showShortWaitTimesOnly || ride.standbyWaitTime< 30) &&
-                    (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark)
-                );
-            });
-
+        const filteredAttractions = rawRideData.filter((ride) => {
+            return (
+                (filters.showClosedRides || ride.status !== 'CLOSED') &&
+                ride.entityType !== 'SHOW' &&
+                ride.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                (!filters.showShortWaitTimesOnly || ride.standbyWaitTime < 30) &&
+                (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark)
+            );
+        });
         dispatch(setFilteredRideData(filteredAttractions));
     }, [rawRideData, searchTerm, filters, dispatch]);
 
     const handleFilterChange = (filter, value) => {
         setFilters({ ...filters, [filter]: value });
     };
+
     const handleSearchChange = (event) => {
         dispatch(setSearchTerm(event.target.value));
     };
 
-
     const allRidesClosed = rawRideData.every((ride) => ride.status === 'CLOSED');
-
     return (
         <div>
             <Navbar />
@@ -210,9 +206,24 @@ const Attractions = () => {
                         </label>
                     </div>
                     <div className={styles.allbutton}>
-                        <button className={styles.button} onClick={() => setFilters({...filters, selectedPark: 'all'})}>Tous les Parcs</button>
-                        <button  className={styles.button} onClick={() => setFilters({...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401'})}>Disneyland Park</button>
-                        <button  className={styles.button} onClick={() => setFilters({...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968'})}>Studio Park</button>
+                                <button 
+                                    className={`${styles.button} ${filters.selectedPark === 'all' ? styles.buttonSelected : ''}`}
+                                    onClick={() => setFilters({...filters, selectedPark: 'all'})}
+                                >
+                                    Tous les Parcs
+                                </button>
+                                <button 
+                                    className={`${styles.button} ${filters.selectedPark === 'dae968d5-630d-4719-8b06-3d107e944401' ? styles.buttonSelected : ''}`}
+                                    onClick={() => setFilters({...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401'})}
+                                >
+                                    Disneyland Park
+                                </button>
+                                <button 
+                                    className={`${styles.button} ${filters.selectedPark === 'ca888437-ebb4-4d50-aed2-d227f7096968' ? styles.buttonSelected : ''}`}
+                                    onClick={() => setFilters({...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968'})}
+                                >
+                                    Studio Park
+                                </button>
                     </div>
                 </div>
                 {!allRidesClosed && (
@@ -226,7 +237,8 @@ const Attractions = () => {
                                 let waitTimeClass = currentWaitTime >= 30 ? styles.waitTimeHigh : styles.waitTimeLow;
                                 if (isIncreased) waitTimeClass = styles.waitTimeIncreased;
                                 if (isDecreased) waitTimeClass = styles.waitTimeDecreased;
-                                const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
+                                const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale} ` : styles.imgAttraction;
+                                const noRides = ride.status === 'DOWN' ? `${styles.waitTime} ${waitTimeClass} ${styles.nowaittime} ` : `${styles.waitTime} ${waitTimeClass}`;
 
                                 return (
                                     <div key={ride.id} className={styles.card}>
@@ -239,7 +251,7 @@ const Attractions = () => {
                                         <div className={styles.cardText}>
                                         <h3 className={styles.attractionName}>{ride.name}</h3>
                                         </div>
-                                        <div className={`${styles.waitTime} ${waitTimeClass}`}>
+                                        <div className={noRides}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
                                             ride.status === 'CLOSED' ? 'Fermée' :
                                             `${currentWaitTime !== null ? currentWaitTime : 0}min`}
