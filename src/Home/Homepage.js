@@ -1,14 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Importez Link depuis react-router-dom
+import { Link } from 'react-router-dom';
 import Navbar from "../Navbar/Navbar";
 import styles from './Homepage.module.scss';
 import useParkHours from "../FetchParkHours";
-import Castle from './../img/DisneylandCastle.png'
-import {formatTime} from '../utils'
+import Castle from './../img/DisneylandCastle.png';
+import { formatTime } from '../utils';
 
 const Homepage = () => {
     const parkHours = useParkHours();
-    const now = new Date()
+    const now = new Date();
 
     const renderParkHours = () => {
         if (!parkHours || !parkHours.schedule) {
@@ -18,17 +18,30 @@ const Homepage = () => {
         const todayStr = now.toISOString().split('T')[0];
         const todaySchedules = parkHours.schedule.filter(schedule => schedule.date === todayStr);
 
+        const isParkOpen = (schedules) => {
+            const operatingSchedule = schedules.find(s => s.type === "OPERATING");
+            if (!operatingSchedule) return false;
+
+            const openingTime = new Date(todayStr + 'T' + operatingSchedule.openingTime);
+            const closingTime = new Date(todayStr + 'T' + operatingSchedule.closingTime);
+            return now >= openingTime && now <= closingTime;
+        };
+
         const renderScheduleInfo = (schedules) => {
+            if (!isParkOpen(schedules)) {
+                return <p className={styles.closedMessage}>Le Parc Disneyland est actuellement fermé.</p>;
+            }
+
             const operatingSchedule = schedules.find(s => s.type === "OPERATING");
             const extraHoursSchedule = schedules.find(s => s.type === "EXTRA_HOURS");
 
             return (
                 <>
                     {operatingSchedule && (
-                        <p className={styles.schedule}>Aujourd'hui, Le Disneyland Park est ouvert entre {formatTime(operatingSchedule.openingTime)} et {formatTime(operatingSchedule.closingTime)}.</p>
+                        <p className={styles.schedule}>Aujourd'hui, Le Parc Disneyland est ouvert entre {formatTime(operatingSchedule.openingTime)} et {formatTime(operatingSchedule.closingTime)}.</p>
                     )}
                     {extraHoursSchedule && (
-                        <p className={styles.schedule}>Avec des EMT entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(extraHoursSchedule.closingTime)}.</p>
+                        <p className={styles.schedule}>Avec des Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(extraHoursSchedule.closingTime)}.</p>
                     )}
                 </>
             );
@@ -59,5 +72,3 @@ const Homepage = () => {
 };
 
 export default Homepage;
-
-
