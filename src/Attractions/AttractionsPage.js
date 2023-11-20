@@ -112,7 +112,7 @@ const Attractions = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://magicai.jfcp3675.odns.fr/api/attractions');
+            const response = await axios.get('https://magicjourney.fr/api/attractions');
             const rideData = response.data;
             setLastUpdate(new Date());
 
