@@ -102,7 +102,7 @@ const Attractions = () => {
 
     const updatePreviousWaitTimes = useCallback((newData) => {
         const newPreviousWaitTimes = newData.reduce((acc, ride) => {
-            const currentWaitTime = ride.queue?.STANDBY?.waitTime;
+            const currentWaitTime = ride.standbyWaitTime;
             if (acc[ride.id] !== currentWaitTime) {
                 acc[ride.id] = currentWaitTime;
             }
@@ -130,7 +130,7 @@ const Attractions = () => {
             updatePreviousWaitTimes(rideData || []);
             dispatch(setRawRideData(rideData || []));
         } catch (error) {
-            console.error(error);
+            console.error(error); 
             setLastUpdate(new Date());
         } finally {
             setIsDataLoaded(true);
@@ -150,7 +150,7 @@ const Attractions = () => {
                     (filters.showClosedRides || ride.status !== 'CLOSED') &&
                     ride.entityType !== 'SHOW' &&
                     ride.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                    (!filters.showShortWaitTimesOnly || ride.queue?.STANDBY?.waitTime < 30) &&
+                    (!filters.showShortWaitTimesOnly || ride.standbyWaitTime< 30) &&
                     (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark)
                 );
             });
@@ -219,10 +219,10 @@ const Attractions = () => {
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
                             filteredRideData.map((ride) => {
-                                const standbyQueue = ride.queue?.STANDBY;
-                                const currentWaitTime = standbyQueue ? standbyQueue.waitTime : null;
-                                const isIncreased = ride.queue.STANDBY.waitTime > (previousWaitTimes[ride.id] ?? ride.queue.STANDBY.waitTime);
-                                const isDecreased = ride.queue.STANDBY.waitTime < (previousWaitTimes[ride.id] ?? ride.queue.STANDBY.waitTime);
+                                const standbyQueue = ride.standbyWaitTime;
+                                const currentWaitTime = standbyQueue ? standbyQueue : null;
+                                const isIncreased = ride.standbyWaitTime > (previousWaitTimes[ride.id] ?? ride.standbyWaitTime);
+                                const isDecreased = ride.standbyWaitTime < (previousWaitTimes[ride.id] ?? ride.standbyWaitTime);
                                 let waitTimeClass = currentWaitTime >= 30 ? styles.waitTimeHigh : styles.waitTimeLow;
                                 if (isIncreased) waitTimeClass = styles.waitTimeIncreased;
                                 if (isDecreased) waitTimeClass = styles.waitTimeDecreased;
