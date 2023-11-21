@@ -15,33 +15,44 @@ const Homepage = () => {
         if (!schedules) {
             return <p>Horaires de {parkName} non disponibles.</p>;
         }
-
+    
         const todayStr = now.toISOString().split('T')[0];
         const todaySchedules = schedules.filter(schedule => schedule.date === todayStr);
         const operatingSchedule = todaySchedules.find(s => s.type === "OPERATING");
         const extraHoursSchedule = todaySchedules.find(s => s.type === "EXTRA_HOURS");
-
+    
         if (!operatingSchedule) {
             return <p className={styles.closedMessage}>{parkName} est actuellement fermé.</p>;
         }
-
-        const openingTime = new Date(todayStr + 'T' + operatingSchedule.openingTime);
-        const closingTime = new Date(todayStr + 'T' + operatingSchedule.closingTime);
+    
+        // Utiliser les Extra Magic Hours pour l'heure d'ouverture, si disponibles
+        const openingTime = extraHoursSchedule ? new Date(extraHoursSchedule.openingTime) : new Date(operatingSchedule.openingTime);
+    
+        // Utiliser l'horaire d'opération normal pour l'heure de fermeture
+        const closingTime = new Date(operatingSchedule.closingTime);
+    
         const isParkOpen = now >= openingTime && now <= closingTime;
-
+    
         if (!isParkOpen) {
             return <p className={styles.closedMessage}>{parkName} est actuellement fermé.</p>;
         }
+        console.log("Opening Time:", openingTime);
+        console.log("Closing Time:", closingTime);
+        console.log("Current Time:", now);
+        console.log("Is Park Open:", isParkOpen);
 
+    
         return (
             <>
-                <p className={styles.schedule}>Aujourd'hui, {parkName} est ouvert entre {formatTime(operatingSchedule.openingTime)} et {formatTime(operatingSchedule.closingTime)}.</p>
+                <p className={styles.schedule}>Aujourd'hui, {parkName} est ouvert entre {formatTime(openingTime)} et {formatTime(closingTime)}.</p>
                 {extraHoursSchedule && (
-                    <p className={styles.schedule}>Avec des Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(extraHoursSchedule.closingTime)}.</p>
+                    <p className={styles.schedule}>Avec des Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingSchedule.openingTime)}.</p>
                 )}
             </>
         );
     };
+
+
 
     return (
         <div className={styles.body}>
