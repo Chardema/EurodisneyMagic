@@ -44,7 +44,7 @@ const Homepage = () => {
     
         return (
             <>
-                <p className={styles.schedule}>Aujourd'hui, {parkName} est ouvert entre {formatTime(openingTime)} et {formatTime(closingTime)}.</p>
+                <p className={styles.schedule}>{parkName} est ouvert entre {formatTime(openingTime)} et {formatTime(closingTime)}.</p>
                 {extraHoursSchedule && (
                     <p className={styles.schedule}>Avec des Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingSchedule.openingTime)}.</p>
                 )}
