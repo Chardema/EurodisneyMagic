@@ -9,7 +9,9 @@ const Navbar = () => {
 
     return (
         <nav className={styles.navbar}>
-            <img  className={styles.logo} src={logosansbg} alt="logo"/>
+            <Link to="/">
+                <img className={styles.logo} src={logosansbg} alt="logo" />
+            </Link>
             <ul>
                 <li><Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link></li>
                 <li><Link to="/attractions" className={location.pathname === '/attractions' ? 'active' : ''}>Attractions</Link></li>
