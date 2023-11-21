@@ -19,8 +19,9 @@
     margin-bottom: 10px;
 }
 .logo {
-    width: 200px;
-    height: auto;
+    width: 250px;
+    height: 250px;
+    padding-bottom: 10px;
 }
 .container {
     min-height: 80vh;
@@ -36,13 +37,18 @@
 .centerButton {
     display: flex;
     justify-content: center; // Centre le bouton horizontalement
-    margin-top: 20px; // Ajoute un espace au-dessus du bouton
+    margin-top: 60px; // Ajoute un espace au-dessus du bouton
 }
 
+.hours{
+    height: 300px;
+    padding-bottom: 10px;
+}
 // Style pour le bouton des attractions
 .attractionsButton {
     padding: 10px 20px;
     border: 1px solid #9C27B0; // Couleur bleue thématique Disney
+    font-size: 20px;
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -52,5 +58,19 @@
     &:hover {
         background-color: darken(#9C27B0, 10%); // Assombrir le bouton lors du survol
         cursor: pointer;
+    }
+}
+
+@media (max-width: 768px) {
+    .allparks{
+        flex-direction: column;
+    }
+    .logo {
+        width: 100px;
+        height: auto;
+    }
+    .hours{
+        height: auto;
+        padding-top: 10px;
     }
 }

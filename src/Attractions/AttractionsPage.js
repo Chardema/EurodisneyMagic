@@ -99,7 +99,6 @@ const Attractions = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [filters, setFilters] = useState({
         showShortWaitTimesOnly: false,
-        showClosedRides: false,
         selectedPark: 'all' // 'all', 'disneyland', 'studio'
     });
 
@@ -145,7 +144,6 @@ const Attractions = () => {
     useEffect(() => {
         const filteredAttractions = rawRideData.filter((ride) => {
             return (
-                (filters.showClosedRides || ride.status !== 'CLOSED') &&
                 ride.entityType !== 'SHOW' &&
                 ride.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
                 (!filters.showShortWaitTimesOnly || ride.standbyWaitTime < 30) &&
@@ -191,17 +189,6 @@ const Attractions = () => {
                             />
                             <div className={styles.textCheckbox}>
                                 Moins de 30 min d'attente
-                            </div>
-                        </label>
-                        <label className={styles.filterOption}>
-                            <input
-                                type="checkbox"
-                                className={styles.checkboxcustom}
-                                checked={filters.showClosedRides}
-                                onChange={(e) => handleFilterChange('showClosedRides', e.target.checked)}
-                            />
-                            <div className={styles.textCheckbox}>
-                                Afficher les attractions fermées
                             </div>
                         </label>
                     </div>
