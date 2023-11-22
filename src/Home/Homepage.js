@@ -11,48 +11,57 @@ const Homepage = () => {
     const parkHours = useParkHours();
     const now = new Date();
 
+    const getSchedulesForDate = (schedules, date) => {
+        const dateStr = date.toISOString().split('T')[0];
+        return schedules.filter(schedule => schedule.date === dateStr);
+    };
+
     const renderScheduleInfo = (schedules, parkName) => {
         if (!schedules) {
             return <p>Horaires de {parkName} non disponibles.</p>;
         }
-    
-        const todayStr = now.toISOString().split('T')[0];
-        const todaySchedules = schedules.filter(schedule => schedule.date === todayStr);
-        const operatingSchedule = todaySchedules.find(s => s.type === "OPERATING");
-        const extraHoursSchedule = todaySchedules.find(s => s.type === "EXTRA_HOURS");
-    
-        if (!operatingSchedule) {
-            return <p className={styles.closedMessage}>{parkName} est actuellement fermé.</p>;
+
+        const todaySchedules = getSchedulesForDate(schedules, now);
+        const operatingScheduleToday = todaySchedules.find(s => s.type === "OPERATING");
+
+        if (!operatingScheduleToday) {
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowSchedules = getSchedulesForDate(schedules, tomorrow);
+            const operatingScheduleTomorrow = tomorrowSchedules.find(s => s.type === "OPERATING");
+
+            if (!operatingScheduleTomorrow) {
+                return <p className={styles.closedMessage}>{parkName} est actuellement fermé. Pas d'horaires disponibles pour demain.</p>;
+            }
+
+            const openingTimeTomorrow = new Date(operatingScheduleTomorrow.openingTime);
+            const closingTimeTomorrow = new Date(operatingScheduleTomorrow.closingTime);
+
+            return (
+                <p className={styles.closedMessage}>
+                    {parkName} est actuellement fermé. <br/> Demain, il sera ouvert de {formatTime(openingTimeTomorrow)} à {formatTime(closingTimeTomorrow)}.
+                </p>
+            );
         }
-    
-        // Utiliser les Extra Magic Hours pour l'heure d'ouverture, si disponibles
-        const openingTime = extraHoursSchedule ? new Date(extraHoursSchedule.openingTime) : new Date(operatingSchedule.openingTime);
-    
-        // Utiliser l'horaire d'opération normal pour l'heure de fermeture
-        const closingTime = new Date(operatingSchedule.closingTime);
-    
+
+        const extraHoursSchedule = todaySchedules.find(s => s.type === "EXTRA_HOURS");
+        const openingTime = extraHoursSchedule ? new Date(extraHoursSchedule.openingTime) : new Date(operatingScheduleToday.openingTime);
+        const closingTime = new Date(operatingScheduleToday.closingTime);
         const isParkOpen = now >= openingTime && now <= closingTime;
-    
+
         if (!isParkOpen) {
             return <p className={styles.closedMessage}>{parkName} est actuellement fermé.</p>;
         }
-        console.log("Opening Time:", openingTime);
-        console.log("Closing Time:", closingTime);
-        console.log("Current Time:", now);
-        console.log("Is Park Open:", isParkOpen);
 
-    
         return (
             <>
                 <p className={styles.schedule}>{parkName} est ouvert entre {formatTime(openingTime)} et {formatTime(closingTime)}.</p>
                 {extraHoursSchedule && (
-                    <p className={styles.schedule}>Avec des Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingSchedule.openingTime)}.</p>
+                    <p className={styles.schedule}>Avec des Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingScheduleToday.openingTime)}.</p>
                 )}
             </>
         );
     };
-
-
 
     return (
         <div className={styles.body}>
