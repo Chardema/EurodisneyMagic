@@ -203,13 +203,13 @@ const Attractions = () => {
                                     className={`${styles.button} ${filters.selectedPark === 'dae968d5-630d-4719-8b06-3d107e944401' ? styles.buttonSelected : ''}`}
                                     onClick={() => setFilters({...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401'})}
                                 >
-                                    Disneyland Park
+                                    Parc Disneyland
                                 </button>
                                 <button 
                                     className={`${styles.button} ${filters.selectedPark === 'ca888437-ebb4-4d50-aed2-d227f7096968' ? styles.buttonSelected : ''}`}
                                     onClick={() => setFilters({...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968'})}
                                 >
-                                    Studio Park
+                                    Walt Disney Studios
                                 </button>
                     </div>
                 </div>
