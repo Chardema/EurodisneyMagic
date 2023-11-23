@@ -97,7 +97,7 @@ const Attractions = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/attractions');
+            const response = await axios.get('https://eurojourney.azurewebsites.net/api/attractions');
             const rideData = response.data;
             setLastUpdate(new Date());
 
