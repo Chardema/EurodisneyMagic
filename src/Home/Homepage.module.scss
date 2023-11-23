@@ -34,10 +34,10 @@
 }
 
 // Style pour le bouton central
-.centerButton {
+.Buttoncontainer {
     display: flex;
-    justify-content: center; // Centre le bouton horizontalement
-    margin-top: 60px; // Ajoute un espace au-dessus du bouton
+    justify-content: center;
+    margin-top: 60px;
 }
 
 .hours{
@@ -50,6 +50,7 @@
     border: 1px solid #9C27B0; // Couleur bleue thématique Disney
     font-size: 20px;
     color: white;
+    margin: 5px;
     text-decoration: none;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); // Ombre légère pour le bouton

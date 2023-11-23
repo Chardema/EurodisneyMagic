@@ -10,6 +10,18 @@ export const formatDate = (dateString) => {
     }
 };
 
+export const formatImageName = (name) => {
+    return name
+            .replace(/®/g, '') // Supprime le symbole ®
+            .replace(/™/g, '') // Supprime le symbole ™
+            .replace(/:/g, '') // Supprime les deux-points
+            .replace(/é/g, 'e') // Remplace é par e
+            .replace(/è/g, 'e') // Remplace è par e
+            .replace(/'/g, '') // Remplace è par e
+            // Ajoutez ici d'autres remplacements si nécessaire
+            .replace(/[^a-zA-Z0-9]/g, '') // Supprime les autres caractères non alphanumériques
+        + '.jpg';
+};
 export const formatTime = (dateString) => {
     if (!dateString) return 'Heure invalide';
 

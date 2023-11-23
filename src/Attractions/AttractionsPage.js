@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
 import styles from './attractions.module.scss'
-import {formatDate, importImage} from "../utils";
+import {formatDate, formatImageName, importImage} from "../utils";
 import {
     setRawRideData,
     setFilteredRideData,
@@ -13,21 +13,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar'; // Assurez-vous que le chemin est correct
 import useInterval from './../useInterval'; // Assurez-vous que le chemin est correct
 import './attractions.module.scss'; // Assurez-vous que le chemin est correct
-
-// Fonction pour importer les images dynamiquement
-
-const formatImageName = (name) => {
-    return name
-            .replace(/®/g, '') // Supprime le symbole ®
-            .replace(/™/g, '') // Supprime le symbole ™
-            .replace(/:/g, '') // Supprime les deux-points
-            .replace(/é/g, 'e') // Remplace é par e
-            .replace(/è/g, 'e') // Remplace è par e
-            .replace(/'/g, '') // Remplace è par e
-            // Ajoutez ici d'autres remplacements si nécessaire
-            .replace(/[^a-zA-Z0-9]/g, '') // Supprime les autres caractères non alphanumériques
-        + '.jpg';
-};
 
 // Liste des noms d'attractions
 const attractionNames = [

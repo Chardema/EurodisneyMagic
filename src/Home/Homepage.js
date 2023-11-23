@@ -81,8 +81,13 @@ const Homepage = () => {
                         </div>
                     </div>
                 </div>
-                <div className={styles.centerButton}>
-                    <Link to="/attractions" className={styles.attractionsButton}>Temps d'attente en direct</Link>
+                <div className={styles.Buttoncontainer}>
+                    <div className={styles.centerButton}>
+                        <Link to="/attractions" className={styles.attractionsButton}>Temps d'attente en direct</Link>
+                    </div>
+                    <div className={styles.centerButton}>
+                        <Link to="/spectacle" className={styles.attractionsButton}>Prochaine représentation spectacle</Link>
+                    </div>
                 </div>
             </div>
         </div>
