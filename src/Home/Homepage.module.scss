@@ -65,6 +65,15 @@
 @media (max-width: 768px) {
     .allparks{
         flex-direction: column;
+        height: auto;
+    }
+    .Buttoncontainer {
+        flex-direction: row;
+        width: 100%;
+        .attractionsButton {
+            font-size: 9px;
+            width: 30%;
+        }
     }
     .logo {
         width: 100px;
