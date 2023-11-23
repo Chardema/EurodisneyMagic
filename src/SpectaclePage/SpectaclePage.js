@@ -1,8 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import styles from './spectacle.module.scss';
-import Navbar from "../Navbar/Navbar"; // Adaptez le chemin et le style en conséquence
+import Navbar from "../Navbar/Navbar";
+import {formatImageName, importImage} from "../utils"; // Adaptez le chemin et le style en conséquence
 
+
+const showsNames = [
+    "Mickey's Dazzling Christmas Parade!",
+    'Let’s Sing Christmas!',
+    'Disney Dreams Nighttime Extravaganza',
+    'The Lion King: Rhythms of the Pride Lands',
+    'The Disney Junior Dream Factory',
+    'Frozen: A Musical Invitation',
+    'Stitch Live!',
+    'Mickey and the Magician ',
+    'TOGETHER: a Pixar Musical Adventure',
+    'Avengers: Power the Night',
+    'Disney Stars on Parade ',
+    'Magic Over Disney: a nighttime show to the rhythm of Disney and Pixar Music',
+    'Guardians of the Galaxy: Dance Challenge! '
+];
+const attractionShows = showsNames.reduce((acc, name) => {
+    const imageName = formatImageName(name);
+    acc[name] = importImage(imageName);
+    return acc;
+}, {});
 const Shows = () => {
     const [showsData, setShowsData] = useState([]);
     const [lastUpdate, setLastUpdate] = useState(null);
@@ -12,25 +34,27 @@ const Shows = () => {
             const response = await axios.get('http://localhost:5000/api/shows');
             const currentDateTime = new Date();
 
-            const filteredShowsData = response.data.filter(show => {
-                // Vérifier si au moins un horaire de spectacle est encore à venir
-                return show.showtimes.some(time => new Date(time.endTime) > currentDateTime);
-            });
+            const showsDataWithNextShowtime = response.data
+                .map(show => {
+                    // Trouver le prochain horaire de spectacle
+                    const nextShowtime = show.showtimes
+                        .filter(time => new Date(time.startTime) > currentDateTime)
+                        .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
 
-            // Limiter à 3 représentations pour chaque spectacle
-            const showsDataWithLimitedShowtimes = filteredShowsData.map(show => {
-                return {
-                    ...show,
-                    showtimes: show.showtimes.slice(0, 3)
-                };
-            });
+                    return {
+                        ...show,
+                        showtimes: nextShowtime ? [nextShowtime] : []
+                    };
+                })
+                .filter(show => show.showtimes.length > 0); // Exclure les spectacles sans horaires futurs
 
-            setShowsData(showsDataWithLimitedShowtimes);
+            setShowsData(showsDataWithNextShowtime);
             setLastUpdate(currentDateTime);
         } catch (error) {
             console.error('Erreur lors de la récupération des données:', error);
         }
     };
+
 
     useEffect(() => {
         fetchData();
@@ -43,20 +67,19 @@ const Shows = () => {
             <Navbar />
             <div className={styles.container}>
                 <h1>Spectacles prévu aujourd'hui</h1>
+                <p>Pour plus de précision, n'hésitez pas à consultez l'application Disneyland Paris officielle</p>
                 {lastUpdate && <p className={styles.lastUpdate}>Dernière mise à jour : {lastUpdate.toLocaleTimeString()}</p>}
                 <div className={styles.showsList}>
                     {showsData.length > 0 ? (
                         showsData.map((show) => (
                             <div key={show.id} className={styles.card}>
+                                <img className={styles.showImage} src={attractionShows[show.name]} alt={show.name} />
                                 <h3 className={styles.showName}>{show.name}</h3>
-                                <p className={styles.showStatus}>{show.status}</p>
-                                <ul className={styles.showtimes}>
-                                    {show.showtimes.map((time, index) => (
-                                        <li key={index}>
-                                            {new Date(time.startTime).toLocaleTimeString()}
-                                        </li>
-                                    ))}
-                                </ul>
+                                {show.showtimes.length > 0 ? (
+                                    <h2 className={styles.showStatus}>Prochaine représentation : {new Date(show.showtimes[0].startTime).toLocaleTimeString()}</h2>
+                                ) : (
+                                    <p className={styles.noShowtimes}>Aucune représentation prévue.</p>
+                                )}
                             </div>
                         ))
                     ) : (
