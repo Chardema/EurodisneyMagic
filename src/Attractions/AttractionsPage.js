@@ -99,6 +99,7 @@ const Attractions = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [filters, setFilters] = useState({
         showShortWaitTimesOnly: false,
+        hideClosedRides: false,
         selectedPark: 'all' // 'all', 'disneyland', 'studio'
     });
 
@@ -111,22 +112,20 @@ const Attractions = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('https://magicjourney.fr/api/attractions');
+            const response = await axios.get('http://localhost:5000/api/attractions');
             const rideData = response.data;
             setLastUpdate(new Date());
 
-            // Mettre à jour les temps d'attente précédents
             const newPreviousWaitTimes = rideData.reduce((acc, ride) => {
-                const currentWaitTime = ride.standbyWaitTime;
-                if (acc[ride.id] !== currentWaitTime) {
-                    acc[ride.id] = currentWaitTime;
-                }
+                acc[ride.id] = ride.waitTime;
                 return acc;
             }, previousWaitTimes);
+
             setPreviousWaitTimes(newPreviousWaitTimes);
             localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
+            const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
 
-            dispatch(setRawRideData(rideData || []));
+            dispatch(setRawRideData(sortedRideData || []));
         } catch (error) {
             console.error(error);
             setLastUpdate(new Date());
@@ -135,6 +134,7 @@ const Attractions = () => {
         }
     };
 
+
     useEffect(() => {
         fetchData();
         const intervalId = setInterval(fetchData, 60000);
@@ -142,14 +142,16 @@ const Attractions = () => {
     }, []); // Aucune dépendance ici pour éviter des appels multiples
 
     useEffect(() => {
-        const filteredAttractions = rawRideData.filter((ride) => {
-            return (
-                ride.entityType !== 'SHOW' &&
-                ride.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                (!filters.showShortWaitTimesOnly || ride.standbyWaitTime < 30) &&
-                (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark)
-            );
-        });
+        const filteredAttractions = rawRideData
+            .filter((ride) => {
+                return (
+                    (filters.hideClosedRides ? ride.status !== 'CLOSED' : true) &&
+                    (filters.showShortWaitTimesOnly ? ride.waitTime < 30 : true) &&
+                    (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark) &&
+                    ride.name.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            })
+            .sort((a, b) => a.waitTime - b.waitTime); // Tri par temps d'attente
         dispatch(setFilteredRideData(filteredAttractions));
     }, [rawRideData, searchTerm, filters, dispatch]);
 
@@ -192,6 +194,19 @@ const Attractions = () => {
                             </div>
                         </label>
                     </div>
+                    <div className={styles.checkbox}>
+                        <label className={styles.filterOption}>
+                            <input
+                                type="checkbox"
+                                className={styles.checkboxcustom}
+                                checked={filters.hideClosedRides}
+                                onChange={(e) => handleFilterChange('hideClosedRides', e.target.checked)}
+                            />
+                            <div className={styles.textCheckbox}>
+                                Masquer les attractions fermées
+                            </div>
+                        </label>
+                    </div>
                     <div className={styles.allbutton}>
                                 <button 
                                     className={`${styles.button} ${filters.selectedPark === 'all' ? styles.buttonSelected : ''}`}
@@ -221,10 +236,10 @@ const Attractions = () => {
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
                             filteredRideData.map((ride) => {
-                                const standbyQueue = ride.standbyWaitTime;
+                                const standbyQueue = ride.waitTime;
                                 const currentWaitTime = standbyQueue ? standbyQueue : null;
-                                const isIncreased = ride.standbyWaitTime > (previousWaitTimes[ride.id] ?? ride.standbyWaitTime);
-                                const isDecreased = ride.standbyWaitTime < (previousWaitTimes[ride.id] ?? ride.standbyWaitTime);
+                                const isIncreased = ride.waitTime > (previousWaitTimes[ride.id] ?? ride.waitTime);
+                                const isDecreased = ride.waitTime < (previousWaitTimes[ride.id] ?? ride.waitTime);
                                 let waitTimeClass = currentWaitTime >= 30 ? styles.waitTimeHigh : styles.waitTimeLow;
                                 if (isIncreased) waitTimeClass = styles.waitTimeIncreased;
                                 if (isDecreased) waitTimeClass = styles.waitTimeDecreased;
