@@ -31,7 +31,7 @@ const Shows = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/shows');
+            const response = await axios.get('https://eurojourney.azurewebsites.net/api/shows');
             const currentDateTime = new Date();
 
             const showsDataWithNextShowtime = response.data
