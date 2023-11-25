@@ -6,11 +6,13 @@ import Spectacle from './SpectaclePage/SpectaclePage';
 import MagicAITrip from './MagicTripAI/MagicAITripPage';
 import {Provider} from "react-redux";
 import store from "./redux/store";
+import { Analytics } from '@vercel/analytics/react';
 
 
 const App = () => {
     return (
         <Provider store={store}>
+            <Analytics />
         <Router>
             <div>
                 <Routes>
