@@ -1,0 +1,47 @@
+// MagicAITrip.module.scss
+.magicAiTripContainer {
+  text-align: center;
+  padding: 0;
+  padding: 20px;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.content {
+  margin-top: 30px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+}
+
+.castleImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Ombre légère pour une touche de profondeur
+}
+.content {
+  margin-top: 30px;
+}
+h2, p, .comingSoon {
+  margin: 0 auto; // Centrer le contenu
+  max-width: 800px; // Largeur maximale pour une meilleure lisibilité sur les grands écrans
+}
+h2 {
+  color: #4a90e2;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+p {
+  color: #333;
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.comingSoon {
+  margin-top: 40px;
+  font-size: 22px;
+  color: #d35400;
+  font-weight: bold;
+}
