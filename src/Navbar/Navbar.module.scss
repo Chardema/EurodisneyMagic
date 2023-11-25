@@ -1,51 +1,69 @@
 /* Navbar.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 .navbar {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    text-align: center;
     padding: 20px;
-    background-color: #1C1C1E; /* Dark background color similar to the logo background */
+    background-color: #F0F0F0;
 }
 
-.navbar h1 {
-    margin-bottom: 15px; /* Adds spacing below the title */
-    color: #FFFFFF; /* White color for the title to stand out on the dark background */
+.navbartitle {
+    flex-grow: 1;
+    text-align: center;
+}
+.navLinks {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 1s, opacity 1s ease;
 }
 
+.showMenu {
+    opacity: 1;
+    max-height: 500px;
+}
+
+.menuIcon {
+    cursor: pointer;
+    font-size: 24px;
+    transition: tranform 1s ease;
+}
+
+.menuIcon.open {
+    transform: rotate(90deg);
+}
 .navbar ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    text-align: center;
 }
 
-.logo {
-    height: 100px;
-}
 .navbar li {
-    display: inline-block;
-    margin-right: 15px;
+    margin-top: 10px;
 }
 
 .navbar a {
     text-decoration: none;
-    color: #FFFFFF; /* White text for better readability on the dark background */
+    color: black;
     font-weight: bold;
     font-size: 18px;
-}
-
-.navbar a:hover {
-    color: #9C27B0; /* Gold color to match the accent color in the logo */
-}
-.navbar a.active {
-    color: #9C27B0; /* Gold color for the active class to align with the logo's color scheme */
+    font-family: Nunito, sans-serif;
 }
 
 
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
+    }
+    .menuIcon {
+        order: 1; /* Place l'icône du menu à droite */
+        font-size: 30px; /* Taille plus grande pour les appareils mobiles */
+    }
+    .navLinks {
+        order: 2; /* Place les liens sous le titre */
     }
 }

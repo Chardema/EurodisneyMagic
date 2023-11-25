@@ -5,7 +5,9 @@ import styles from './Homepage.module.scss';
 import useParkHours from "../FetchParkHours";
 import Castle from './../img/Disneylandlogo.png';
 import Studios from './../img/Studioslogo.png';
+import MobileNavbar from "../mobileNavbar/mobileNavbar";
 import { formatTime } from '../utils';
+import BottomNav from "../mobileNavbar/mobileNavbar";
 
 const Homepage = () => {
     const parkHours = useParkHours();
@@ -55,9 +57,9 @@ const Homepage = () => {
 
         return (
             <>
-                <p className={styles.schedule}>{parkName} est ouvert entre {formatTime(openingTime)} et {formatTime(closingTime)}.</p>
+                <p className={styles.schedule}>{parkName} : {formatTime(openingTime)} jusqu'à {formatTime(closingTime)}.</p>
                 {extraHoursSchedule && (
-                    <p className={styles.schedule}>Avec des Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingScheduleToday.openingTime)}.</p>
+                    <p className={styles.schedule}>Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingScheduleToday.openingTime)}.</p>
                 )}
             </>
         );
@@ -77,7 +79,7 @@ const Homepage = () => {
                     <div className={styles.studios}>
                         <div className={styles.hours}>
                             <img className={styles.logo} src={Studios} alt="Studio Park Hours" />
-                            {renderScheduleInfo(parkHours?.studio?.schedule, "Le Parc Walt Disney Studios")}
+                            {renderScheduleInfo(parkHours?.studio?.schedule, "Les Walt Disney Studios")}
                         </div>
                     </div>
                 </div>
@@ -90,6 +92,7 @@ const Homepage = () => {
                     </div>
                 </div>
             </div>
+            <BottomNav />
         </div>
     );
 };

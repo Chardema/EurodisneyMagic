@@ -1,0 +1,35 @@
+// Dans BottomNav.module.scss
+.bottomNav {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60px; // Hauteur accrue
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    align-items: center; // Centrer verticalement le contenu
+  }
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  text-decoration: none;
+  color: #333;
+  font-size: 12px; // Taille de police réduite pour l'espace
+  &:hover {
+    color: darken(#333, 10%);
+  }
+}
+
+.icon {
+  font-size: 20px; // Taille des icônes
+  margin-bottom: 5px; // Espace entre l'icône et le texte
+}

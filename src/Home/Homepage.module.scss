@@ -1,4 +1,6 @@
 // Dans votre fichier Homepage.module.scss
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 .Welcome {
     margin-bottom: 10px;
 }
@@ -14,9 +16,15 @@
     justify-content: space-around;
     gap: 20px;
 }
-.schedule {
+.schedule, .closedMessage {
     font-size: 20px;
     margin-bottom: 10px;
+    font-family: Roboto, sans-serif;
+    color: #333333;
+}
+.mobileNavbar {
+    display: none; // Par défaut, masquez la barre de navigation mobile
+
 }
 .logo {
     width: 250px;
@@ -49,7 +57,7 @@
     padding: 10px 20px;
     border: 1px solid #9C27B0; // Couleur bleue thématique Disney
     font-size: 20px;
-    color: white;
+    color: #333333;
     margin: 5px;
     text-decoration: none;
     border-radius: 5px;
@@ -67,13 +75,18 @@
         flex-direction: column;
         height: auto;
     }
+
     .Buttoncontainer {
-        flex-direction: row;
+        flex-direction: column;
         width: 100%;
+        height: auto;
         .attractionsButton {
             font-size: 9px;
             width: 30%;
         }
+    }
+    .schedule, .closedMessage {
+        font-size: 15px;
     }
     .logo {
         width: 100px;
@@ -82,5 +95,11 @@
     .hours{
         height: auto;
         padding-top: 10px;
+    }
+    .mobileNavbar {
+        display: none; // Affiche la barre de navigation mobile
+    }
+    .Buttoncontainer{
+        display: none;
     }
 }
