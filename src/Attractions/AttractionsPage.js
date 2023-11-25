@@ -103,27 +103,27 @@ const Attractions = () => {
             const rideData = response.data;
             setLastUpdate(new Date());
 
-            // Préparation pour la mise à jour des temps d'attente précédents
             const newPreviousWaitTimes = { ...previousWaitTimes };
 
             rideData.forEach(ride => {
                 if (newPreviousWaitTimes[ride.id]) {
+                    // Ajout d'une condition pour s'assurer qu'il y avait un temps d'attente précédent
+                    const hadPreviousWaitTime = newPreviousWaitTimes[ride.id].currentWaitTime !== null;
+
                     newPreviousWaitTimes[ride.id] = {
-                        ...newPreviousWaitTimes[ride.id],
-                        previousWaitTime: newPreviousWaitTimes[ride.id].currentWaitTime,
-                        currentWaitTime: ride.waitTime
+                        previousWaitTime: hadPreviousWaitTime ? newPreviousWaitTimes[ride.id].currentWaitTime : null,
+                        currentWaitTime: ride.waitTime,
+                        hadPreviousWaitTime
                     };
                 } else {
-                    newPreviousWaitTimes[ride.id] = { currentWaitTime: ride.waitTime, previousWaitTime: null };
+                    newPreviousWaitTimes[ride.id] = { currentWaitTime: ride.waitTime, previousWaitTime: null, hadPreviousWaitTime: false };
                 }
             });
 
             setPreviousWaitTimes(newPreviousWaitTimes);
             localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
 
-            // Trier les attractions en fonction du temps d'attente
             const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
-
             dispatch(setRawRideData(sortedRideData || []));
         } catch (error) {
             console.error(error);
@@ -132,6 +132,7 @@ const Attractions = () => {
             setIsDataLoaded(true);
         }
     };
+
 
 
     useEffect(() => {
@@ -236,8 +237,8 @@ const Attractions = () => {
                         {filteredRideData.length > 0 ? (
                             filteredRideData.map((ride) => {
                                 const waitTimeInfo = previousWaitTimes[ride.id];
-                                const isIncreased = waitTimeInfo && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
-                                const isDecreased = waitTimeInfo && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
+                                const isIncreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
+                                const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
                                 const isWaitTimeHigh = ride.waitTime >= 40;
                                 const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
 
