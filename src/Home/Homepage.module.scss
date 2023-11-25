@@ -55,7 +55,7 @@
 // Style pour le bouton des attractions
 .attractionsButton {
     padding: 10px 20px;
-    border: 1px solid #9C27B0; // Couleur bleue thématique Disney
+    border: 1px solid #007BFF; // Couleur bleue thématique Disney
     font-size: 20px;
     color: #333333;
     margin: 5px;
@@ -65,8 +65,9 @@
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: darken(#9C27B0, 10%); // Assombrir le bouton lors du survol
+        background-color:#007BFF ; // Assombrir le bouton lors du survol
         cursor: pointer;
+        color: white;
     }
 }
 
