@@ -103,26 +103,6 @@ const Attractions = () => {
             const rideData = response.data;
             setLastUpdate(new Date());
 
-            const newPreviousWaitTimes = { ...previousWaitTimes };
-
-            rideData.forEach(ride => {
-                if (newPreviousWaitTimes[ride.id]) {
-                    // Ajout d'une condition pour s'assurer qu'il y avait un temps d'attente précédent
-                    const hadPreviousWaitTime = newPreviousWaitTimes[ride.id].currentWaitTime !== null;
-
-                    newPreviousWaitTimes[ride.id] = {
-                        previousWaitTime: hadPreviousWaitTime ? newPreviousWaitTimes[ride.id].currentWaitTime : null,
-                        currentWaitTime: ride.waitTime,
-                        hadPreviousWaitTime
-                    };
-                } else {
-                    newPreviousWaitTimes[ride.id] = { currentWaitTime: ride.waitTime, previousWaitTime: null, hadPreviousWaitTime: false };
-                }
-            });
-
-            setPreviousWaitTimes(newPreviousWaitTimes);
-            localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
-
             const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
             dispatch(setRawRideData(sortedRideData || []));
         } catch (error) {
@@ -236,9 +216,8 @@ const Attractions = () => {
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
                             filteredRideData.map((ride) => {
-                                const waitTimeInfo = previousWaitTimes[ride.id];
-                                const isIncreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
-                                const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
+                                const isIncreased = ride.previousWaitTime !== null && ride.waitTime > ride.previousWaitTime;
+                                const isDecreased = ride.previousWaitTime !== null && ride.waitTime < ride.previousWaitTime;
                                 const isWaitTimeHigh = ride.waitTime >= 40;
                                 const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
 
