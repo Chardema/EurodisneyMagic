@@ -1,13 +1,14 @@
 // Styles globaux
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: #F0F0F0;
     color: #333;
     margin: 0;
     padding: 0;
 }
 
-p, h1, h2 {
+p,h2 {
     color: #333333;
     margin: 0; // Supprime les marges par défaut
 }
@@ -86,40 +87,18 @@ h1 {
     align-self: center;
     transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
     padding: 5px;
-    background: linear-gradient(45deg, #7B1FA2, #BA68C8);
+    background: linear-gradient(45deg, #007BFF, #5AB3FF);
     -webkit-background-clip: text;
     color: transparent;
+    font-family: 'Roboto', sans-serif;
 }
 
 .attractionName:hover {
-    color: #9c27b0;
+    color: #5AB3FF;
 }
 
 
-.checkboxcustom {
 
-    + label {
-        position: relative;
-        padding-left: 25px;
-        cursor: pointer;
-
-        &::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #9C27B0; // Bordure de la case personnalisée
-            border-radius: 3px; // Coins arrondis
-            transition: background-color 0.3s;
-        }
-    }
-
-    &:checked + label::before {
-        background-color: #9C27B0; // Couleur de fond lorsqu'elle est cochée
-    }
-}
 
 // Styles pour les images des attractions
 .waitTime {
@@ -170,11 +149,11 @@ h1 {
     display: flex;
     margin: 10px;
     .buttonSelected {
-        background-color: #9C27B0; // Couleur de fond pour le bouton sélectionné
+        background-color: #007BFF; // Couleur de fond pour le bouton sélectionné
         color: white !important; // Couleur du texte pour le bouton sélectionné
     }
     .button{
-            border: 1px solid #9C27B0;
+            border: 1px solid #007BFF;
             color: black;
             padding: 10px;
             margin-right: 5px;
@@ -188,7 +167,7 @@ h1 {
 
             &:active {
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Moins d'ombre lors du clic
-                background-color: #9C27B0; // Exemple de couleur
+                background-color: #007BFF; // Exemple de couleur
             }
     }
 }
@@ -227,18 +206,18 @@ h1 {
     left: 0;
     width: 20px;
     height: 20px;
-    border: 2px solid #9C27B0; /* Couleur de la bordure */
+    border: 2px solid #007BFF; /* Couleur de la bordure */
     border-radius: 5px;
     transition: background-color 0.3s, border-color 0.3s;
 }
 
 .checkboxcustom:checked::before {
-    background-color: #9C27B0; /* Couleur de fond lorsque coché */
-    border-color: #9C27B0; /* Couleur de la bordure lorsque coché */
+    background-color: #007BFF; /* Couleur de fond lorsque coché */
+    border-color: #007BFF; /* Couleur de la bordure lorsque coché */
 }
 
 .checkboxcustom:hover::before {
-    border-color: #7B1FA2; /* Couleur de la bordure au survol */
+    border-color: #007BFF; /* Couleur de la bordure au survol */
 }
 
 
