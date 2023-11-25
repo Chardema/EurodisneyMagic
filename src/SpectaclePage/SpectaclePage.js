@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import styles from './spectacle.module.scss';
 import Navbar from "../Navbar/Navbar";
-import {formatImageName, importImage} from "../utils";
+import {formatImageName, importImage, useWindowWidth} from "../utils";
 import BottomNav from "../mobileNavbar/mobileNavbar"; // Adaptez le chemin et le style en conséquence
 
 
@@ -29,6 +29,7 @@ const attractionShows = showsNames.reduce((acc, name) => {
 const Shows = () => {
     const [showsData, setShowsData] = useState([]);
     const [lastUpdate, setLastUpdate] = useState(null);
+    const width = useWindowWidth()
 
     const fetchData = async () => {
         try {
@@ -65,7 +66,7 @@ const Shows = () => {
 
     return (
         <div>
-            <Navbar />
+            {width > 768 && <Navbar />}
             <div className={styles.container}>
                 <h1>Spectacles prévu aujourd'hui</h1>
                 <p className={styles.info}>Pour plus de précision, n'hésitez pas à consultez l'application Disneyland Paris officielle </p>

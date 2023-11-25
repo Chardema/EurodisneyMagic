@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
 import styles from './attractions.module.scss'
-import {formatDate, formatImageName, importImage} from "../utils";
+import {formatDate, formatImageName, importImage, useWindowWidth} from "../utils";
 import {
     setRawRideData,
     setFilteredRideData,
@@ -158,17 +158,14 @@ const Attractions = () => {
     const handleSearchChange = (event) => {
         dispatch(setSearchTerm(event.target.value));
     };
+    const width = useWindowWidth();
 
     const allRidesClosed = rawRideData.every((ride) => ride.status === 'CLOSED');
     return (
         <div>
-            <Navbar />
+            {width > 768 && <Navbar />}
+
             <div className={styles.container}>
-                <p className={styles.lastUpdate}>
-                    {lastUpdate
-                        ? `Dernière mise à jour : ${formatDate(lastUpdate)}`
-                        : 'Aucune mise à jour récente'}
-                </p>
                 <input
                     type="text"
                     placeholder="Rechercher une attraction"
@@ -176,6 +173,12 @@ const Attractions = () => {
                     value={searchTerm}
                     onChange={handleSearchChange}
                 />
+                <p className={styles.lastUpdate}>
+                    {lastUpdate
+                        ? `Dernière mise à jour : ${formatDate(lastUpdate)}`
+                        : 'Aucune mise à jour récente'}
+                </p>
+
                 <div className={styles.filters}>
                     <div className={styles.checkbox}>
                         <label className={styles.filterOption}>

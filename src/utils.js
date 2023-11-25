@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 export const formatDate = (dateString) => {
     if (!dateString) return 'Date invalide';
 
@@ -10,6 +11,20 @@ export const formatDate = (dateString) => {
     }
 };
 
+
+export const useWindowWidth = () => {
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWidth(window.innerWidth);
+
+        window.addEventListener('resize', handleResize);
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    return width;
+};
 export const formatImageName = (name) => {
     return name
             .replace(/®/g, '') // Supprime le symbole ®
