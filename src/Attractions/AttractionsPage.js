@@ -103,6 +103,17 @@ const Attractions = () => {
             const rideData = response.data;
             setLastUpdate(new Date());
 
+            const newPreviousWaitTimes = rideData.reduce((acc, ride) => {
+                acc[ride.id] = {
+                    currentWaitTime: ride.waitTime,
+                    previousWaitTime: ride.previousWaitTime,
+                    hadPreviousWaitTime: ride.previousWaitTime != null
+                };
+                return acc;
+            }, {});
+
+            setPreviousWaitTimes(newPreviousWaitTimes);
+
             const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
             dispatch(setRawRideData(sortedRideData || []));
         } catch (error) {
@@ -112,6 +123,7 @@ const Attractions = () => {
             setIsDataLoaded(true);
         }
     };
+
 
     const getWaitTimeStyle = (waitTime) => {
         if (waitTime < 20) return styles.waitTimeShort;
