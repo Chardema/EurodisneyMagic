@@ -103,13 +103,25 @@ const Attractions = () => {
             const rideData = response.data;
             setLastUpdate(new Date());
 
-            const newPreviousWaitTimes = rideData.reduce((acc, ride) => {
-                acc[ride.id] = ride.waitTime;
-                return acc;
-            }, previousWaitTimes);
+            // Préparation pour la mise à jour des temps d'attente précédents
+            const newPreviousWaitTimes = { ...previousWaitTimes };
+
+            rideData.forEach(ride => {
+                if (newPreviousWaitTimes[ride.id]) {
+                    newPreviousWaitTimes[ride.id] = {
+                        ...newPreviousWaitTimes[ride.id],
+                        previousWaitTime: newPreviousWaitTimes[ride.id].currentWaitTime,
+                        currentWaitTime: ride.waitTime
+                    };
+                } else {
+                    newPreviousWaitTimes[ride.id] = { currentWaitTime: ride.waitTime, previousWaitTime: null };
+                }
+            });
 
             setPreviousWaitTimes(newPreviousWaitTimes);
             localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
+
+            // Trier les attractions en fonction du temps d'attente
             const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
 
             dispatch(setRawRideData(sortedRideData || []));
@@ -133,7 +145,7 @@ const Attractions = () => {
             .filter((ride) => {
                 return (
                     (filters.hideClosedRides ? ride.status !== 'CLOSED' : true) &&
-                    (filters.showShortWaitTimesOnly ? ride.waitTime < 30 : true) &&
+                    (filters.showShortWaitTimesOnly ? ride.waitTime < 40 : true) &&
                     (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark) &&
                     ride.name.toLowerCase().includes(searchTerm.toLowerCase())
                 );
@@ -177,7 +189,7 @@ const Attractions = () => {
                                 onChange={(e) => handleFilterChange('showShortWaitTimesOnly', e.target.checked)}
                             />
                             <div className={styles.textCheckbox}>
-                                Moins de 30 min d'attente
+                                Moins de 40 min d'attente
                             </div>
                         </label>
                     </div>
@@ -223,15 +235,11 @@ const Attractions = () => {
                     <div className={styles.attractionsList}>
                         {filteredRideData.length > 0 ? (
                             filteredRideData.map((ride) => {
-                                const standbyQueue = ride.waitTime;
-                                const currentWaitTime = standbyQueue ? standbyQueue : null;
-                                const isIncreased = ride.waitTime > (previousWaitTimes[ride.id] ?? ride.waitTime);
-                                const isDecreased = ride.waitTime < (previousWaitTimes[ride.id] ?? ride.waitTime);
-                                let waitTimeClass = currentWaitTime >= 30 ? styles.waitTimeHigh : styles.waitTimeLow;
-                                if (isIncreased) waitTimeClass = styles.waitTimeIncreased;
-                                if (isDecreased) waitTimeClass = styles.waitTimeDecreased;
+                                const waitTimeInfo = previousWaitTimes[ride.id];
+                                const isIncreased = waitTimeInfo && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
+                                const isDecreased = waitTimeInfo && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
+                                const isWaitTimeHigh = ride.waitTime >= 40;
                                 const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
-                                const noRides = ride.status === 'DOWN' ? `${styles.waitTime} ${waitTimeClass} ${styles.nowaittime}` : `${styles.waitTime} ${waitTimeClass}`;
 
                                 return (
                                     <div key={ride.id} className={styles.card}>
@@ -243,12 +251,12 @@ const Attractions = () => {
                                         <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
                                         </div>
-                                        <div className={noRides}>
+                                        <div className={`${styles.waitTime} ${isIncreased || isDecreased ? styles.pulseAnimation : ''} ${isWaitTimeHigh ? styles.waitTimeHigh : ''}`}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
                                                 ride.status === 'CLOSED' ? 'Fermée' :
-                                                    `${currentWaitTime !== null ? currentWaitTime : 0}min`}
-                                            {isIncreased && <span> 🔺</span>}
-                                            {isDecreased && <span> 🔻</span>}
+                                                    `${ride.waitTime !== null ? ride.waitTime : 0} min`}
+                                            {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
+                                            {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
                                     </div>
                                 );
