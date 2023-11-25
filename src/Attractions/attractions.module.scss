@@ -23,7 +23,6 @@ h1 {
 }
 // Styles du conteneur principal
 .container {
-    max-width: 80%;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -98,23 +97,63 @@ h1 {
 
 
 
+.waitTimeShort {
+    background-color: #4CAF50; /* Vert pour temps d'attente courts */
+}
 
+.waitTimeMedium {
+    background-color: #FFC107; /* Jaune pour temps d'attente moyens */
+}
+
+.waitTimeLong {
+    background-color: #F44336; /* Rouge pour temps d'attente longs */
+}
+
+.arrowUp {
+    color: #4CAF50; /* Vert pour l'augmentation du temps d'attente */
+    font-size: 1.5em;
+}
+
+.arrowDown {
+    color: #F44336; /* Rouge pour la diminution du temps d'attente */
+    font-size: 1.5em;
+}
+.waitTimeHigh {
+    background-color: #ff6347; /* Rouge tomate pour une visibilité élevée */
+    color: white; /* Texte blanc pour un meilleur contraste */
+}
+
+/* Animation pulse */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.pulseAnimation {
+    animation: pulse 1s infinite;
+}
+
+/* Styles pour les images des attractions */
+.imgGrayscale {
+    filter: grayscale(100%);
+}
 // Styles pour les images des attractions
 .waitTime {
-    position: absolute; // Positionnement absolu pour le placer en haut à droite
-    top: -18px;
-    right: -22px;
-    background-color: rgba(38, 194, 129,0.9); // Fond légèrement transparent
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
-    border-radius: 50%;
-    padding: 5px;
-    width: 50px;
-    height: 50px;
+    border-radius: 15px;
+    padding: 5px 10px;
     font-size: 14px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    text-align: center;
+    justify-content: center;
 }
 
 .arrowUp {

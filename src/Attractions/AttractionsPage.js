@@ -113,7 +113,11 @@ const Attractions = () => {
         }
     };
 
-
+    const getWaitTimeStyle = (waitTime) => {
+        if (waitTime < 20) return styles.waitTimeShort;
+        if (waitTime < 40) return styles.waitTimeMedium;
+        return styles.waitTimeLong;
+    };
 
     useEffect(() => {
         fetchData();
@@ -214,34 +218,31 @@ const Attractions = () => {
                     </div>
                 ) : (
                     <div className={styles.attractionsList}>
-                        {filteredRideData.length > 0 ? (
-                            filteredRideData.map((ride) => {
-                                const isIncreased = ride.previousWaitTime !== null && ride.waitTime > ride.previousWaitTime;
-                                const isDecreased = ride.previousWaitTime !== null && ride.waitTime < ride.previousWaitTime;
-                                const isWaitTimeHigh = ride.waitTime >= 40;
-                                const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
+                        {filteredRideData.length > 0 ? filteredRideData.map((ride) => {
+                            const waitTimeInfo = previousWaitTimes[ride.id];
+                            const isIncreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
+                            const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
+                            const isWaitTimeHigh = ride.waitTime >= 40;
+                            const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
+                            const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : ''; // Classe supplémentaire pour les temps d'attente élevés
 
-                                return (
-                                    <div key={ride.id} className={styles.card}>
-                                        <img
-                                            className={imageClass}
-                                            src={attractionImages[ride.name]}
-                                            alt={ride.name}
-                                        />
-                                        <div className={styles.cardText}>
-                                            <h3 className={styles.attractionName}>{ride.name}</h3>
-                                        </div>
-                                        <div className={`${styles.waitTime} ${isIncreased || isDecreased ? styles.pulseAnimation : ''} ${isWaitTimeHigh ? styles.waitTimeHigh : ''}`}>
-                                            {ride.status === 'DOWN' ? 'Indispo' :
-                                                ride.status === 'CLOSED' ? 'Fermée' :
-                                                    `${ride.waitTime !== null ? ride.waitTime : 0} min`}
-                                            {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
-                                            {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
-                                        </div>
+                            return (
+                                <div key={ride.id} className={styles.card}>
+                                    <img className={imageClass} src={attractionImages[ride.name]} alt={ride.name} />
+                                    <div className={styles.cardText}>
+                                        <h3 className={styles.attractionName}>{ride.name}</h3>
+                                        {/* Ajoutez ici des informations supplémentaires sur l'attraction si disponibles */}
                                     </div>
-                                );
-                            })
-                        ) : (
+                                    <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
+                                        {ride.status === 'DOWN' ? 'Indispo' :
+                                            ride.status === 'CLOSED' ? 'Fermée' :
+                                                `${ride.waitTime !== null ? ride.waitTime : 0} min`}
+                                        {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
+                                        {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
+                                    </div>
+                                </div>
+                            );
+                        }) : (
                             <p>Aucune attraction correspondant à la recherche.</p>
                         )}
                     </div>
