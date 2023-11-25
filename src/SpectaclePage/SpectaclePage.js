@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import styles from './spectacle.module.scss';
 import Navbar from "../Navbar/Navbar";
-import {formatImageName, importImage} from "../utils"; // Adaptez le chemin et le style en conséquence
+import {formatImageName, importImage} from "../utils";
+import BottomNav from "../mobileNavbar/mobileNavbar"; // Adaptez le chemin et le style en conséquence
 
 
 const showsNames = [
@@ -67,7 +68,7 @@ const Shows = () => {
             <Navbar />
             <div className={styles.container}>
                 <h1>Spectacles prévu aujourd'hui</h1>
-                <p>Pour plus de précision, n'hésitez pas à consultez l'application Disneyland Paris officielle</p>
+                <p className={styles.info}>Pour plus de précision, n'hésitez pas à consultez l'application Disneyland Paris officielle </p>
                 {lastUpdate && <p className={styles.lastUpdate}>Dernière mise à jour : {lastUpdate.toLocaleTimeString()}</p>}
                 <div className={styles.showsList}>
                     {showsData.length > 0 ? (
@@ -87,6 +88,7 @@ const Shows = () => {
                     )}
                 </div>
             </div>
+            <BottomNav />
         </div>
     )
 };

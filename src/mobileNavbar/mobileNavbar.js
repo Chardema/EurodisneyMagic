@@ -16,7 +16,7 @@ const BottomNav = () => {
                 <FaTheaterMasks className={styles.icon} />
                 Spectacle
             </Link>
-            <Link to="/magic-ai" className={styles.navItem}>
+            <Link to="/magicAITrip" className={styles.navItem}>
                 <FaMagic className={styles.icon} />
                 Magic AI
             </Link>
