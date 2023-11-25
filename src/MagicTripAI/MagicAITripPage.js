@@ -3,12 +3,14 @@ import Navbar from "../Navbar/Navbar";
 import styles from './MagicAITrip.module.scss';
 import BottomNav from "../mobileNavbar/mobileNavbar"; // Assurez-vous d'avoir ce fichier CSS
 import castleImage from './../img/disneycastle.jpg';
+import { useWindowWidth } from '../utils';
 
 const MagicAITrip = () => {
+    const width = useWindowWidth()
     return (
         <div>
         <div className={styles.magicAiTripContainer}>
-            <Navbar />
+            {width > 768 && <Navbar />}
             <img src={castleImage} alt="Disney Castle" className={styles.castleImage} />
             <div className={styles.content}>
 

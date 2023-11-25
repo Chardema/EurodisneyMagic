@@ -6,12 +6,13 @@ import useParkHours from "../FetchParkHours";
 import Castle from './../img/Disneylandlogo.png';
 import Studios from './../img/Studioslogo.png';
 import MobileNavbar from "../mobileNavbar/mobileNavbar";
-import { formatTime } from '../utils';
+import {formatTime, useWindowWidth} from '../utils';
 import BottomNav from "../mobileNavbar/mobileNavbar";
 
 const Homepage = () => {
     const parkHours = useParkHours();
     const now = new Date();
+    const width = useWindowWidth()
 
     const getSchedulesForDate = (schedules, date) => {
         const dateStr = date.toISOString().split('T')[0];
@@ -67,8 +68,10 @@ const Homepage = () => {
 
     return (
         <div className={styles.body}>
-            <Navbar />
+            {width > 768 && <Navbar />}
             <div className={styles.container}>
+                <h1 className={styles.title}>Bienvenue sur le site Magic Journey</h1>
+                <p> Aujourd'hui : </p>
                 <div className={styles.allparks}>
                     <div className={styles.disneyland}>
                         <div className={styles.hours}>
