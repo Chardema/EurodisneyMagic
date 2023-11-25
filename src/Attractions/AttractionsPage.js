@@ -12,7 +12,9 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar'; // Assurez-vous que le chemin est correct
 import useInterval from './../useInterval'; // Assurez-vous que le chemin est correct
-import './attractions.module.scss'; // Assurez-vous que le chemin est correct
+import './attractions.module.scss';
+import MobileNavbar from "../mobileNavbar/mobileNavbar";
+import BottomNav from "../mobileNavbar/mobileNavbar"; // Assurez-vous que le chemin est correct
 
 // Liste des noms d'attractions
 const attractionNames = [
@@ -257,6 +259,7 @@ const Attractions = () => {
                     </div>
                 )}
             </div>
+            <BottomNav />
         </div>
     );
 };
