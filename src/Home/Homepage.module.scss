@@ -73,6 +73,7 @@
 
 @media (max-width: 768px) {
     .allparks{
+        margin-top: 20px;
         flex-direction: column;
         height: auto;
     }
@@ -90,8 +91,8 @@
         font-size: 15px;
     }
     .logo {
-        width: 100px;
-        height: auto;
+        width: 200px;
+        height: 200px;
     }
     .hours{
         height: auto;
