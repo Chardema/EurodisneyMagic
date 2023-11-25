@@ -118,6 +118,33 @@ h1 {
     text-align: center;
 }
 
+.arrowUp {
+    color: red;
+    font-size: 1.5em; // Taille plus grande pour plus de visibilité
+}
+
+.arrowDown {
+    color: green;
+    font-size: 1.5em;
+}
+.waitTimeHigh {
+    color: red; // Couleur pour les temps d'attente élevés
+}
+
+
+// Animation pulse
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.pulseAnimation {
+    animation: pulse 1s infinite;
+}
 .nowaittime {
     background-color: grey !important;
 }
