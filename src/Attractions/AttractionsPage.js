@@ -87,7 +87,8 @@ const Attractions = () => {
     const [filters, setFilters] = useState({
         showShortWaitTimesOnly: false,
         hideClosedRides: false,
-        selectedPark: 'all' // 'all', 'disneyland', 'studio'
+        selectedPark: 'all', // 'all', 'disneyland', 'studio'
+        selectedType: 'all' // 'all', 'sans file d'attente', 'famille', 'sensation'
     });
 
     useEffect(() => {
@@ -144,6 +145,7 @@ const Attractions = () => {
                     (filters.hideClosedRides ? ride.status !== 'CLOSED' : true) &&
                     (filters.showShortWaitTimesOnly ? ride.waitTime < 40 : true) &&
                     (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark) &&
+                    (filters.selectedType === 'all' || ride.type === filters.selectedType) &&
                     ride.name.toLowerCase().includes(searchTerm.toLowerCase())
                 );
             })
@@ -180,6 +182,20 @@ const Attractions = () => {
                 </p>
 
                 <div className={styles.filters}>
+                    <div className={styles.filterOption}>
+                        <label>Type d'attraction:</label>
+                        <select
+                            value={filters.selectedType}
+                            onChange={(e) => handleFilterChange('selectedType', e.target.value)}
+                        >
+                            <option value="all">Tous les types</option>
+                            <option value="Famille">Famille</option>
+                            <option value="Sensation">Sensation</option>
+                            <option value="Sans file d’attente">Sans file d’attente</option>
+                            <option value="Rencontre avec les personnages">Rencontre avec les personnages</option>
+                            {/* Ajoutez d'autres options de type ici si nécessaire */}
+                        </select>
+                    </div>
                     <div className={styles.checkbox}>
                         <label className={styles.filterOption}>
                             <input
