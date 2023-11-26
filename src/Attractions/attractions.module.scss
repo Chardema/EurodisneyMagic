@@ -197,6 +197,39 @@ h1 {
     font-size: 15px;
     color: black; // Couleur du texte pour les attractions ouvertes
 }
+/* Styles pour l'option de filtre */
+.filterOption {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Espace entre les options de filtre */
+    font-size: 16px; /* Taille de police pour l'étiquette */
+    color: #333; /* Couleur de texte foncée pour un bon contraste */
+}
+
+.filterOption label {
+    margin-right: 10px; /* Espace entre l'étiquette et le menu déroulant */
+}
+
+/* Styles pour le menu déroulant */
+.filterOption select {
+    padding: 8px 12px; /* Padding pour rendre le menu déroulant plus accessible */
+    border: 1px solid #ccc; /* Bordure discrète */
+    border-radius: 5px; /* Coins arrondis */
+    background-color: white; /* Couleur de fond */
+    font-size: 14px; /* Taille de police du texte à l'intérieur */
+    color: #333; /* Couleur de texte */
+    cursor: pointer; /* Change le curseur pour indiquer qu'il s'agit d'un élément interactif */
+    outline: none; /* Supprime l'outline par défaut sur le focus pour un style personnalisé */
+}
+
+.filterOption select:hover,
+.filterOption select:focus {
+    border-color: #007BFF; /* Change la couleur de la bordure au survol ou au focus */
+}
+
+.filterOption select option {
+    padding: 8px; /* Padding pour les options pour améliorer la lisibilité */
+}
 
 .filters {
     display: flex;
