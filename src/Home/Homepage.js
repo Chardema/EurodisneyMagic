@@ -58,9 +58,9 @@ const Homepage = () => {
 
         return (
             <>
-                <p className={styles.schedule}>{parkName} : {formatTime(openingTime)} jusqu'à {formatTime(closingTime)}.</p>
+                <p className={styles.schedule}>{parkName} est ouvert entre {formatTime(openingTime)} et jusqu'à {formatTime(closingTime)}.</p>
                 {extraHoursSchedule && (
-                    <p className={styles.schedule}>Magic Hours entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingScheduleToday.openingTime)}.</p>
+                    <p className={styles.schedule}>les Magic Hours sont entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingScheduleToday.openingTime)}.</p>
                 )}
             </>
         );
@@ -70,8 +70,7 @@ const Homepage = () => {
         <div className={styles.body}>
             {width > 768 && <Navbar />}
             <div className={styles.container}>
-                <h1 className={styles.title}>Bienvenue sur le site Magic Journey</h1>
-                <p> Aujourd'hui : </p>
+                <h1 className={styles.title}>Bienvenue,</h1>
                 <div className={styles.allparks}>
                     <div className={styles.disneyland}>
                         <div className={styles.hours}>
