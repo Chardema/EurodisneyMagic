@@ -11,7 +11,6 @@ body {
     height: 100%;
 }
 
-
 .mobileNavbar {
     position: fixed;
     bottom: 0;
@@ -78,31 +77,13 @@ h1 {
     }
 }
 .cardText {
-    h3 {
-        font-size: 1.4em;
-        margin: 0;
-    }
-    .attractionLand {
-        font-size: 1.2em;
-        margin-bottom: 10px;
-    }
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 10px;
     height: 30%;
     text-align: left;
-}
-.favoriteButton {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: none;
-    border: none;
-    color: #ff0000;
-    font-size: 24px;
-    cursor: pointer;
 }
 
 .imgAttraction {
@@ -126,6 +107,8 @@ h1 {
 .attractionName:hover {
     color: #5AB3FF;
 }
+
+
 
 .waitTimeShort {
     background-color: #4CAF50; /* Vert pour temps d'attente courts */
@@ -185,29 +168,20 @@ h1 {
     align-items: center;
     justify-content: center;
 }
-.modalButton {
-    background-color: white;
-    color: #007BFF;
-    border: 1px solid #007BFF;
-    border-radius: 5px;
-    padding: 10px 15px;
-    margin: 5px 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-
+.custom-marker {
+    background-color: #FFF;
+    border-radius: 10px !important;
+    padding: 5px !important;
+    text-align: center !important;
+    font-weight: bold !important;
+    color: white !important;
+    font-size: 14px;
 }
 
-.modalButton:hover
-{
-        background-color: #007BFF;
-        color: white;
-}
 .header {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
-    width: 100%;
 
     button {
         background-color: white;
@@ -260,7 +234,7 @@ h1 {
 .filterOption {
     display: flex;
     align-items: center;
-    margin: 10px 0;
+    margin-bottom: 15px; /* Espace entre les options de filtre */
     font-size: 16px; /* Taille de police pour l'étiquette */
     color: #333; /* Couleur de texte foncée pour un bon contraste */
 }
@@ -358,10 +332,7 @@ h1 {
 .textCheckbox {
     padding-left: 10px;
 }
-.selectOption1{
-    width: 100%;
-    margin-right: 5px;
-}
+
 .checkboxcustom::before {
     content: "";
     position: absolute;
@@ -383,27 +354,9 @@ h1 {
     border-color: #007BFF; /* Couleur de la bordure au survol */
 }
 
-.popupContent {
-    text-align: center;
-    .popupImage {
-        height: auto;
-        width: 100%;
-        border-radius: 5px;
-    }
-}
-
 
 // Media queries pour les ajustements responsifs
 @media (max-width: 768px) {
-
-    .selectOption1{
-        margin-right: 0;
-    }
-
-    .textCheckbox {
-        padding-left: 10px;
-        padding-top: 10px;
-    }
     .container {
         max-width: 100%;
     }
@@ -428,8 +381,6 @@ h1 {
     }
 
     .filterOption {
-        display: flex;
-        flex-direction: column;
         margin-right: 0;
         margin-bottom: 5px;
     }
@@ -437,22 +388,11 @@ h1 {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); // Plus petites cartes sur les écrans étroits
     }
 
-    .modeSwitch {
-        display: flex;
-        button {
-            width: 50%;
-            margin: 5px 0;
-        }
-    }
-
     .header {
-        flex-direction: column;
-        width: 100%;
-        align-items: center;
-        margin: 0;
+        flex-direction: row;
         button {
             width: 100%;
-            margin: 20px 0 10px 10px;
+            margin: 5px 0;
         }
     }
 }
