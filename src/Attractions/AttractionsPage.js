@@ -7,14 +7,12 @@ import {
     setRawRideData,
     setFilteredRideData,
     setSearchTerm
-} from '../redux/actions'; // Assurez-vous que le chemin est correct
+} from '../redux/actions';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Navbar from './../Navbar/Navbar'; // Assurez-vous que le chemin est correct
-import useInterval from './../useInterval'; // Assurez-vous que le chemin est correct
+import Navbar from './../Navbar/Navbar';
 import './attractions.module.scss';
-import MobileNavbar from "../mobileNavbar/mobileNavbar";
-import BottomNav from "../mobileNavbar/mobileNavbar"; // Assurez-vous que le chemin est correct
+import BottomNav from "../mobileNavbar/mobileNavbar";
 
 // Liste des noms d'attractions
 const attractionNames = [
@@ -170,25 +168,19 @@ const Attractions = () => {
             <div className={styles.container}>
                 <input
                     type="text"
-                    placeholder="Rechercher une attraction"
+                    placeholder="Quelle attraction aujourd'hui ?"
                     className={styles.searchAttraction}
                     value={searchTerm}
                     onChange={handleSearchChange}
                 />
-                <p className={styles.lastUpdate}>
-                    {lastUpdate
-                        ? `Dernière mise à jour : ${formatDate(lastUpdate)}`
-                        : 'Aucune mise à jour récente'}
-                </p>
-
                 <div className={styles.filters}>
                     <div className={styles.filterOption}>
-                        <label>Type d'attraction:</label>
                         <select
                             value={filters.selectedType}
                             onChange={(e) => handleFilterChange('selectedType', e.target.value)}
                         >
-                            <option value="all">Tous les types</option>
+                            <option value="all">Types d'attractions</option>
+                            <option value="all">Toutes</option>
                             <option value="Famille">Famille</option>
                             <option value="Sensation">Sensation</option>
                             <option value="Sans file d’attente">Sans file d’attente</option>
@@ -254,19 +246,18 @@ const Attractions = () => {
                             const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
                             const isWaitTimeHigh = ride.waitTime >= 40;
                             const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
-                            const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : ''; // Classe supplémentaire pour les temps d'attente élevés
+                            const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : '';
 
                             return (
                                 <div key={ride.id} className={styles.card}>
                                     <img className={imageClass} src={attractionImages[ride.name]} alt={ride.name} />
                                     <div className={styles.cardText}>
                                         <h3 className={styles.attractionName}>{ride.name}</h3>
-                                        {/* Ajoutez ici des informations supplémentaires sur l'attraction si disponibles */}
                                     </div>
                                     <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
                                         {ride.status === 'DOWN' ? 'Indispo' :
                                             ride.status === 'CLOSED' ? 'Fermée' :
-                                                `${ride.waitTime !== null ? ride.waitTime : 0} min`}
+                                                ride.waitTime === null ? 'Instantanée' : `${ride.waitTime} min`}
                                         {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
                                         {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                     </div>
