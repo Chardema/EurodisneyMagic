@@ -13,6 +13,10 @@ import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar';
 import './attractions.module.scss';
 import BottomNav from "../mobileNavbar/mobileNavbar";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
 
 // Liste des noms d'attractions
 const attractionNames = [
@@ -78,7 +82,7 @@ const Attractions = () => {
     const rawRideData = useSelector((state) => state.rawRideData);
     const searchTerm = useSelector((state) => state.searchTerm);
     const filteredRideData = useSelector((state) => state.filteredRideData);
-
+    const [viewMode, setViewMode] = useState('list'); // 'list', 'map'
     const [lastUpdate, setLastUpdate] = useState(null);
     const [previousWaitTimes, setPreviousWaitTimes] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -161,116 +165,192 @@ const Attractions = () => {
     const width = useWindowWidth();
 
     const allRidesClosed = rawRideData.every((ride) => ride.status === 'CLOSED');
+
+    const getWaitTimeColor = (ride) => {
+        let content;
+        let backgroundColor = '#F44336'; // Couleur par défaut pour 'indisponible' ou 'fermée'
+
+        if (ride.status === 'DOWN' || ride.status === 'CLOSED') {
+            content = 'Fermée';
+        } else if (ride.waitTime === null) {
+            content = 'Instantanée';
+            backgroundColor = '#4CAF50'; // Vert
+        } else if (ride.waitTime < 20) {
+            content = `${ride.waitTime} min`;
+            backgroundColor = '#4CAF50'; // Vert
+        } else if (ride.waitTime < 40) {
+            content = `${ride.waitTime} min`;
+            backgroundColor = '#FFC107'; // Jaune
+        } else {
+            content = `${ride.waitTime} min`;
+        }
+
+        return `<div style="
+        background-color: ${backgroundColor}; 
+        color: white; 
+        width: 40px; 
+        height: 40px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        border-radius: 50%; 
+        font-weight: bold; 
+        font-size: 10px;
+    ">${content}</div>`;
+    };
+
     return (
         <div className={styles.bodyAttraction}>
             {width > 768 && <Navbar />}
-
-            <div className={styles.container}>
-                <input
-                    type="text"
-                    placeholder="Quelle attraction aujourd'hui ?"
-                    className={styles.searchAttraction}
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-                <div className={styles.filters}>
-                    <div className={styles.filterOption}>
-                        <select
-                            value={filters.selectedType}
-                            onChange={(e) => handleFilterChange('selectedType', e.target.value)}
-                        >
-                            <option value="all">Types d'attractions</option>
-                            <option value="all">Toutes</option>
-                            <option value="Famille">Famille</option>
-                            <option value="Sensation">Sensation</option>
-                            <option value="Sans file d’attente">Sans file d’attente</option>
-                            <option value="Rencontre avec les personnages">Rencontre avec les personnages</option>
-                        </select>
-                    </div>
-                    <div className={styles.checkbox}>
-                        <label className={styles.filterOption}>
-                            <input
-                                type="checkbox"
-                                className={styles.checkboxcustom}
-                                checked={filters.showShortWaitTimesOnly}
-                                onChange={(e) => handleFilterChange('showShortWaitTimesOnly', e.target.checked)}
-                            />
-                            <div className={styles.textCheckbox}>
-                                Moins de 40 min d'attente
-                            </div>
-                        </label>
-                    </div>
-                    <div className={styles.checkbox}>
-                        <label className={styles.filterOption}>
-                            <input
-                                type="checkbox"
-                                className={styles.checkboxcustom}
-                                checked={filters.hideClosedRides}
-                                onChange={(e) => handleFilterChange('hideClosedRides', e.target.checked)}
-                            />
-                            <div className={styles.textCheckbox}>
-                                Masquer les attractions fermées
-                            </div>
-                        </label>
-                    </div>
-                    <div className={styles.allbutton}>
-                                <button 
-                                    className={`${styles.button} ${filters.selectedPark === 'all' ? styles.buttonSelected : ''}`}
-                                    onClick={() => setFilters({...filters, selectedPark: 'all'})}
-                                >
-                                    Tous les Parcs
-                                </button>
-                                <button 
-                                    className={`${styles.button} ${filters.selectedPark === 'dae968d5-630d-4719-8b06-3d107e944401' ? styles.buttonSelected : ''}`}
-                                    onClick={() => setFilters({...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401'})}
-                                >
-                                    Parc Disneyland
-                                </button>
-                                <button 
-                                    className={`${styles.button} ${filters.selectedPark === 'ca888437-ebb4-4d50-aed2-d227f7096968' ? styles.buttonSelected : ''}`}
-                                    onClick={() => setFilters({...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968'})}
-                                >
-                                    Walt Disney Studios
-                                </button>
-                    </div>
+            <div className = {styles.header}>
+                <div className="modeSwitch">
+                    <button className={viewMode === 'list' ? 'active' : ''} onClick={() => setViewMode('list')}>Liste</button>
+                    <button className={viewMode === 'map' ? 'active' : ''} onClick={() => setViewMode('map')}>Carte</button>
                 </div>
-                {allRidesClosed ? (
-                    <div className={styles.noRidesMessage}>
-                        <p>Toutes les attractions sont actuellement fermées, à demain !</p>
-                    </div>
-                ) : (
-                    <div className={styles.attractionsList}>
-                        {filteredRideData.length > 0 ? filteredRideData.map((ride) => {
-                            const waitTimeInfo = previousWaitTimes[ride.id];
-                            const isIncreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
-                            const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
-                            const isWaitTimeHigh = ride.waitTime >= 40;
-                            const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
-                            const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : '';
-
-                            return (
-                                <div key={ride.id} className={styles.card}>
-                                    <img className={imageClass} src={attractionImages[ride.name]} alt={ride.name} />
-                                    <div className={styles.cardText}>
-                                        <h3 className={styles.attractionName}>{ride.name}</h3>
-                                    </div>
-                                    <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
-                                        {ride.status === 'DOWN' ? 'Indispo' :
-                                            ride.status === 'CLOSED' ? 'Fermée' :
-                                                ride.waitTime === null ? 'Instantanée' : `${ride.waitTime} min`}
-                                        {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
-                                        {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
-                                    </div>
-                                </div>
-                            );
-                        }) : (
-                            <p>Aucune attraction correspondant à la recherche.</p>
-                        )}
-                    </div>
-                )}
             </div>
+            {viewMode === 'list' ? (
+                <div className={styles.container}>
+                    <input
+                        type="text"
+                        placeholder="Quelle attraction aujourd'hui ?"
+                        className={styles.searchAttraction}
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    <div className={styles.filters}>
+                        <div className={styles.filterOption}>
+                            <select
+                                value={filters.selectedType}
+                                onChange={(e) => handleFilterChange('selectedType', e.target.value)}
+                            >
+                                <option value="all">Types d'attractions</option>
+                                <option value="all">Toutes</option>
+                                <option value="Famille">Famille</option>
+                                <option value="Sensation">Sensation</option>
+                                <option value="Sans file d’attente">Sans file d’attente</option>
+                                <option value="Rencontre avec les personnages">Rencontre avec les personnages</option>
+                            </select>
+                        </div>
+                        <div className={styles.checkbox}>
+                            <label className={styles.filterOption}>
+                                <input
+                                    type="checkbox"
+                                    className={styles.checkboxcustom}
+                                    checked={filters.showShortWaitTimesOnly}
+                                    onChange={(e) => handleFilterChange('showShortWaitTimesOnly', e.target.checked)}
+                                />
+                                <div className={styles.textCheckbox}>
+                                    Moins de 40 min d'attente
+                                </div>
+                            </label>
+                        </div>
+                        <div className={styles.checkbox}>
+                            <label className={styles.filterOption}>
+                                <input
+                                    type="checkbox"
+                                    className={styles.checkboxcustom}
+                                    checked={filters.hideClosedRides}
+                                    onChange={(e) => handleFilterChange('hideClosedRides', e.target.checked)}
+                                />
+                                <div className={styles.textCheckbox}>
+                                    Masquer les attractions fermées
+                                </div>
+                            </label>
+                        </div>
+                        <div className={styles.allbutton}>
+                                    <button
+                                        className={`${styles.button} ${filters.selectedPark === 'all' ? styles.buttonSelected : ''}`}
+                                        onClick={() => setFilters({...filters, selectedPark: 'all'})}
+                                    >
+                                        Tous les Parcs
+                                    </button>
+                                    <button
+                                        className={`${styles.button} ${filters.selectedPark === 'dae968d5-630d-4719-8b06-3d107e944401' ? styles.buttonSelected : ''}`}
+                                        onClick={() => setFilters({...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401'})}
+                                    >
+                                        Parc Disneyland
+                                    </button>
+                                    <button
+                                        className={`${styles.button} ${filters.selectedPark === 'ca888437-ebb4-4d50-aed2-d227f7096968' ? styles.buttonSelected : ''}`}
+                                        onClick={() => setFilters({...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968'})}
+                                    >
+                                        Walt Disney Studios
+                                    </button>
+                        </div>
+                    </div>
+
+                    {allRidesClosed ? (
+                        <div className={styles.noRidesMessage}>
+                            <p>Toutes les attractions sont actuellement fermées, à demain !</p>
+                        </div>
+                    ) : (
+                        <div className={styles.attractionsList}>
+                            {filteredRideData.length > 0 ? filteredRideData.map((ride) => {
+                                const waitTimeInfo = previousWaitTimes[ride.id];
+                                const isIncreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
+                                const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
+                                const isWaitTimeHigh = ride.waitTime >= 40;
+                                const imageClass = ride.status === 'DOWN' ? `${styles.imgAttraction} ${styles.imgGrayscale}` : styles.imgAttraction;
+                                const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : '';
+
+                                return (
+                                    <div key={ride.id} className={styles.card}>
+                                        <img className={imageClass} src={attractionImages[ride.name]} alt={ride.name} />
+                                        <div className={styles.cardText}>
+                                            <h3 className={styles.attractionName}>{ride.name}</h3>
+                                        </div>
+                                        <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
+                                            {ride.status === 'DOWN' ? 'Indispo' :
+                                                ride.status === 'CLOSED' ? 'Fermée' :
+                                                    ride.waitTime === null ? 'Instantanée' : `${ride.waitTime} min`}
+                                            {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
+                                            {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
+                                        </div>
+                                    </div>
+                                );
+                            }) : (
+                                <p>Aucune attraction correspondant à la recherche.</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+                    ) : (
+                <MapContainer
+                    center={[48.872, 2.775]} // Coordonnées centrales du parc
+                    zoom={15}
+                    scrollWheelZoom={true}
+                    style={{ height: '100vh', width: '100vw' } }
+                    maxBounds={[[48.850, 2.770], [48.877, 2.780]]} // Limite de déplacement
+                    minZoom={15} // Limite de zoom minimum
+                >
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            />
+                            {filteredRideData.map((ride) => {
+                                // Assurez-vous que les coordonnées existent et qu'elles sont dans un format correct
+                                if (ride.coordinates && ride.coordinates.length === 2) {
+                                    return (
+                                        <Marker
+                                            key={ride.id}
+                                            position={ride.coordinates}
+                                            icon={L.divIcon({
+                                                className: '', // Supprimez la classe si vous utilisez des styles en ligne
+                                                html: getWaitTimeColor(ride),
+                                            })}
+                                        >
+                                            <Popup>
+                                                {ride.name}
+                                            </Popup>
+                                        </Marker>
+                                    );
+                                }
+                                return null; // Si les coordonnées ne sont pas disponibles, ne pas rendre le Marker
+                            })}
+                        </MapContainer>
+                        )}
             <div className={styles.mobilecontainer}>
-            <BottomNav />
+                    <BottomNav />
             </div>
         </div>
     );
