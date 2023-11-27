@@ -108,8 +108,6 @@ h1 {
     color: #5AB3FF;
 }
 
-
-
 .waitTimeShort {
     background-color: #4CAF50; /* Vert pour temps d'attente courts */
 }
@@ -168,20 +166,12 @@ h1 {
     align-items: center;
     justify-content: center;
 }
-.custom-marker {
-    background-color: #FFF;
-    border-radius: 10px !important;
-    padding: 5px !important;
-    text-align: center !important;
-    font-weight: bold !important;
-    color: white !important;
-    font-size: 14px;
-}
 
 .header {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    width: 100%;
 
     button {
         background-color: white;
@@ -354,6 +344,15 @@ h1 {
     border-color: #007BFF; /* Couleur de la bordure au survol */
 }
 
+.popupContent {
+    text-align: center;
+    .popupImage {
+        max-width: 100%; // Assurez-vous que l'image ne dépasse pas le popup
+        height: auto;
+        border-radius: 5px;
+    }
+}
+
 
 // Media queries pour les ajustements responsifs
 @media (max-width: 768px) {
@@ -388,11 +387,22 @@ h1 {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); // Plus petites cartes sur les écrans étroits
     }
 
+    .modeSwitch {
+        display: flex;
+        button {
+            width: 50%;
+            margin: 5px 0;
+        }
+    }
+
     .header {
-        flex-direction: row;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        margin: 0;
         button {
             width: 100%;
-            margin: 5px 0;
+            margin: 20px 0 10px 10px;
         }
     }
 }

@@ -140,6 +140,12 @@ const Attractions = () => {
         return () => clearInterval(intervalId);
     }, []); // Aucune dépendance ici pour éviter des appels multiples
 
+
+    useEffect(() => {
+        // Log pour vérifier les données de l'attraction "Spider-Man"
+        const spiderManAttraction = rawRideData.find(ride => ride.name === "Spider-Man W.E.B. Adventure");
+        console.log('Spider-Man attraction data:', spiderManAttraction);
+    }, [rawRideData]);
     useEffect(() => {
         const filteredAttractions = rawRideData
             .filter((ride) => {
@@ -203,9 +209,9 @@ const Attractions = () => {
         <div className={styles.bodyAttraction}>
             {width > 768 && <Navbar />}
             <div className = {styles.header}>
-                <div className="modeSwitch">
+                <div className={styles.modeSwitch}>
                     <button className={viewMode === 'list' ? 'active' : ''} onClick={() => setViewMode('list')}>Liste</button>
-                    <button className={viewMode === 'map' ? 'active' : ''} onClick={() => setViewMode('map')}>Carte</button>
+                    <button className={viewMode === 'map' ? 'active' : ''} onClick={() => setViewMode('map')}>Plan</button>
                 </div>
             </div>
             {viewMode === 'list' ? (
@@ -320,7 +326,7 @@ const Attractions = () => {
                     zoom={15}
                     scrollWheelZoom={true}
                     style={{ height: '100vh', width: '100vw' } }
-                    maxBounds={[[48.850, 2.770], [48.877, 2.780]]} // Limite de déplacement
+                    maxBounds={[[48.850, 2.770], [48.877, 2.785]]} // Limite de déplacement
                     minZoom={15} // Limite de zoom minimum
                 >
                             <TileLayer
@@ -340,7 +346,14 @@ const Attractions = () => {
                                             })}
                                         >
                                             <Popup>
-                                                {ride.name}
+                                                <div className={styles.popupContent}>
+                                                    <img
+                                                        src={attractionImages[ride.name]}
+                                                        alt={ride.name}
+                                                        className={styles.popupImage}
+                                                    />
+                                                    <div>{ride.name}</div>
+                                                </div>
                                             </Popup>
                                         </Marker>
                                     );
