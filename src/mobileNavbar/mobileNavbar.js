@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaMagic, FaTheaterMasks } from 'react-icons/fa';
-import { LuRollerCoaster } from "react-icons/lu";
-import { MdSchedule } from "react-icons/md";
+import { FaMagic } from 'react-icons/fa';
+import { MdSchedule, MdAttractions } from "react-icons/md";
+import { RiSparkling2Fill } from "react-icons/ri";
 import styles from './mobileNavbar.module.scss';
 
 const BottomNav = () => {
@@ -19,14 +19,14 @@ const BottomNav = () => {
                 to="/attractions"
                 className={({ isActive }) => isActive ? `${styles.navItem} ${styles.activeNavItem}` : styles.navItem}
             >
-                <LuRollerCoaster className={styles.icon} />
+                <MdAttractions className={styles.icon} />
                 Attractions
             </NavLink>
             <NavLink
                 to="/spectacle"
                 className={({ isActive }) => isActive ? `${styles.navItem} ${styles.activeNavItem}` : styles.navItem}
             >
-                <FaTheaterMasks className={styles.icon} />
+                <RiSparkling2Fill className={styles.icon} />
                 Spectacle
             </NavLink>
             <NavLink

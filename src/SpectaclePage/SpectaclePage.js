@@ -70,7 +70,6 @@ const Shows = () => {
             <div className={styles.container}>
                 <h1>Spectacles prévu aujourd'hui</h1>
                 <p className={styles.info}>Pour plus de précision, n'hésitez pas à consultez l'application Disneyland Paris officielle </p>
-                {lastUpdate && <p className={styles.lastUpdate}>Dernière mise à jour : {lastUpdate.toLocaleTimeString()}</p>}
                 <div className={styles.showsList}>
                     {showsData.length > 0 ? (
                         showsData.map((show) => (
