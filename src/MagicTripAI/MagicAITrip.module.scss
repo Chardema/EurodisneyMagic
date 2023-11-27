@@ -5,7 +5,6 @@
   padding: 20px;
   margin: 0;
   font-family: Arial, sans-serif;
-  margin-bottom: 80px;
 }
 
 .content {
@@ -45,4 +44,13 @@ p {
   font-size: 22px;
   color: #d35400;
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .comingSoon {
+    font-size: 14px;
+  }
+  .magicAiTripContainer {
+    margin-bottom: 80px;
+  }
 }
