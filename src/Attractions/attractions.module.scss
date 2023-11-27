@@ -7,7 +7,16 @@ body {
     margin: 0;
     padding: 0;
 }
+.bodyAttraction{
+    height: 100%;
+}
 
+.mobileNavbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
 p,h2 {
     color: #333333;
     margin: 0; // Supprime les marges par défaut
@@ -28,6 +37,7 @@ h1 {
     display: flex;
     flex-direction: column;
     padding: 20px;
+    height: 90%;
 }
 
 // Styles pour la recherche d'attractions
@@ -45,6 +55,7 @@ h1 {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Ajuste automatiquement le nombre de colonnes
     gap: 20px;
+    margin-bottom: 80px;
 }
 .imgGrayscale {
     filter: grayscale(100%);
