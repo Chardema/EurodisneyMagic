@@ -5,14 +5,16 @@ import styles from './Homepage.module.scss';
 import useParkHours from "../FetchParkHours";
 import Castle from './../img/Disneylandlogo.png';
 import Studios from './../img/Studioslogo.png';
-import MobileNavbar from "../mobileNavbar/mobileNavbar";
+import { TiWeatherCloudy } from "react-icons/ti";
 import {formatTime, useWindowWidth} from '../utils';
 import BottomNav from "../mobileNavbar/mobileNavbar";
+import useWeather from "../weather";
 
 const Homepage = () => {
     const parkHours = useParkHours();
     const now = new Date();
     const width = useWindowWidth()
+    const weather = useWeather();
 
     const getSchedulesForDate = (schedules, date) => {
         const dateStr = date.toISOString().split('T')[0];
@@ -58,7 +60,7 @@ const Homepage = () => {
 
         return (
             <>
-                <p className={styles.schedule}>{parkName} est ouvert entre {formatTime(openingTime)} et jusqu'à {formatTime(closingTime)}.</p>
+                <p className={styles.schedule}> {formatTime(openingTime)} - {formatTime(closingTime)}.</p>
                 {extraHoursSchedule && (
                     <p className={styles.schedule}>les Magic Hours sont entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingScheduleToday.openingTime)}.</p>
                 )}
@@ -71,6 +73,13 @@ const Homepage = () => {
             {width > 768 && <Navbar />}
             <div className={styles.container}>
                 <h1 className={styles.title}>Bienvenue,</h1>
+                <div className={styles.weatherInfo}>
+                    {weather && (
+                        <div>
+                            <p> <TiWeatherCloudy size={40} />  {Math.round(weather.main.temp)}°C </p>
+                        </div>
+                    )}
+                </div>
                 <div className={styles.allparks}>
                     <div className={styles.disneyland}>
                         <div className={styles.hours}>
