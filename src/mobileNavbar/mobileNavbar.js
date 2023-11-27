@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { FaMagic } from 'react-icons/fa';
 import { MdSchedule, MdAttractions } from "react-icons/md";
 import { RiSparkling2Fill } from "react-icons/ri";
-import { FaHome } from "react-icons/fa";
 import styles from './mobileNavbar.module.scss';
 
 const BottomNav = () => {
@@ -11,13 +10,6 @@ const BottomNav = () => {
         <div className={styles.bottomNav}>
             <NavLink
                 to="/"
-                className={({ isActive }) => isActive ? `${styles.navItem} ${styles.activeNavItem}` : styles.navItem}
-            >
-                <FaHome className={styles.icon} />
-                Accueil
-            </NavLink>
-            <NavLink
-                to="/hours"
                 className={({ isActive }) => isActive ? `${styles.navItem} ${styles.activeNavItem}` : styles.navItem}
             >
                 <MdSchedule className={styles.icon} />
