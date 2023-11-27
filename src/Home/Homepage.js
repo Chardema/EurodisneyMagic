@@ -72,7 +72,6 @@ const Homepage = () => {
         <div className={styles.body}>
             {width > 768 && <Navbar />}
             <div className={styles.container}>
-                <h1 className={styles.title}>Bienvenue,</h1>
                 <div className={styles.weatherInfo}>
                     {weather && (
                         <div>
