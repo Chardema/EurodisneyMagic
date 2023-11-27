@@ -176,7 +176,9 @@ const Attractions = () => {
         let content;
         let backgroundColor = '#F44336'; // Couleur par défaut pour 'indisponible' ou 'fermée'
 
-        if (ride.status === 'DOWN' || ride.status === 'CLOSED') {
+        if (ride.status === 'DOWN') {
+            content = 'Indispo';
+        } else if (ride.status === 'CLOSED') {
             content = 'Fermée';
         } else if (ride.waitTime === null) {
             content = 'Instantanée';
@@ -190,6 +192,7 @@ const Attractions = () => {
         } else {
             content = `${ride.waitTime} min`;
         }
+
 
         return `<div style="
         background-color: ${backgroundColor}; 
@@ -353,6 +356,7 @@ const Attractions = () => {
                                                         className={styles.popupImage}
                                                     />
                                                     <div>{ride.name}</div>
+                                                    <div>{ride.type}</div>
                                                 </div>
                                             </Popup>
                                         </Marker>

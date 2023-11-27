@@ -347,8 +347,8 @@ h1 {
 .popupContent {
     text-align: center;
     .popupImage {
-        max-width: 100%; // Assurez-vous que l'image ne dépasse pas le popup
-        height: auto;
+        height: 150px;
+        width: auto;
         border-radius: 5px;
     }
 }
