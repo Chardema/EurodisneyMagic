@@ -164,7 +164,7 @@ const Attractions = () => {
 
     const allRidesClosed = rawRideData.every((ride) => ride.status === 'CLOSED');
     return (
-        <div>
+        <div className={styles.bodyAttraction}>
             {width > 768 && <Navbar />}
 
             <div className={styles.container}>
@@ -193,7 +193,6 @@ const Attractions = () => {
                             <option value="Sensation">Sensation</option>
                             <option value="Sans file d’attente">Sans file d’attente</option>
                             <option value="Rencontre avec les personnages">Rencontre avec les personnages</option>
-                            {/* Ajoutez d'autres options de type ici si nécessaire */}
                         </select>
                     </div>
                     <div className={styles.checkbox}>
@@ -279,7 +278,9 @@ const Attractions = () => {
                     </div>
                 )}
             </div>
+            <div className={styles.mobilecontainer}>
             <BottomNav />
+            </div>
         </div>
     );
 };
