@@ -45,3 +45,12 @@ p {
   color: #d35400;
   font-weight: bold;
 }
+
+@media (max-width: 768px) {
+  .comingSoon {
+    font-size: 14px;
+  }
+  .magicAiTripContainer {
+    margin-bottom: 80px;
+  }
+}
