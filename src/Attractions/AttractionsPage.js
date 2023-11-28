@@ -328,7 +328,7 @@ const Attractions = () => {
                     center={[48.872, 2.775]} // Coordonnées centrales du parc
                     zoom={15}
                     scrollWheelZoom={true}
-                    style={{ height: '100vh', width: '100vw' } }
+                    style={{ height: '80vh', width: '100vw' } }
                     maxBounds={[[48.850, 2.770], [48.877, 2.785]]} // Limite de déplacement
                     minZoom={15} // Limite de zoom minimum
                 >
