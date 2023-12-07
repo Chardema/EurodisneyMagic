@@ -77,10 +77,18 @@ h1 {
     }
 }
 .cardText {
+    h3 {
+        font-size: 1.4em;
+        margin: 0;
+    }
+    .attractionLand {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     padding: 10px;
     height: 30%;
     text-align: left;
@@ -224,7 +232,7 @@ h1 {
 .filterOption {
     display: flex;
     align-items: center;
-    margin-bottom: 15px; /* Espace entre les options de filtre */
+    margin: 10px 0;
     font-size: 16px; /* Taille de police pour l'étiquette */
     color: #333; /* Couleur de texte foncée pour un bon contraste */
 }
@@ -380,6 +388,7 @@ h1 {
     }
 
     .filterOption {
+        display: block;
         margin-right: 0;
         margin-bottom: 5px;
     }
