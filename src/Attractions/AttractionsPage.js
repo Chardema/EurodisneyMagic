@@ -90,7 +90,8 @@ const Attractions = () => {
         showShortWaitTimesOnly: false,
         hideClosedRides: false,
         selectedPark: 'all', // 'all', 'disneyland', 'studio'
-        selectedType: 'all' // 'all', 'sans file d'attente', 'famille', 'sensation'
+        selectedType: 'all', // 'all', 'sans file d'attente', 'famille', 'sensation'
+        selectedLand: 'all' // 'all', 'fantasyland', 'frontierland', 'adventureland', 'discoveryland'
     });
 
     useEffect(() => {
@@ -140,12 +141,6 @@ const Attractions = () => {
         return () => clearInterval(intervalId);
     }, []); // Aucune dépendance ici pour éviter des appels multiples
 
-
-    useEffect(() => {
-        // Log pour vérifier les données de l'attraction "Spider-Man"
-        const spiderManAttraction = rawRideData.find(ride => ride.name === "Spider-Man W.E.B. Adventure");
-        console.log('Spider-Man attraction data:', spiderManAttraction);
-    }, [rawRideData]);
     useEffect(() => {
         const filteredAttractions = rawRideData
             .filter((ride) => {
@@ -154,6 +149,7 @@ const Attractions = () => {
                     (filters.showShortWaitTimesOnly ? ride.waitTime < 40 : true) &&
                     (filters.selectedPark === 'all' || ride.parkId === filters.selectedPark) &&
                     (filters.selectedType === 'all' || ride.type === filters.selectedType) &&
+                    (filters.selectedLand === 'all' || ride.land === filters.selectedLand) &&
                     ride.name.toLowerCase().includes(searchTerm.toLowerCase())
                 );
             })
@@ -228,6 +224,20 @@ const Attractions = () => {
                     />
                     <div className={styles.filters}>
                         <div className={styles.filterOption}>
+                            <select
+                                value={filters.selectedLand}
+                                onChange={(e) => handleFilterChange('selectedLand', e.target.value)}
+                            >
+                                <option value="all">Tous les lands</option>
+                                <option value="Adventureland">Adventureland</option>
+                                <option value="Fantasyland">Fantasyland</option>
+                                <option value="Frontierland">Frontierland</option>
+                                <option value="Discoveryland">Discoveryland</option>
+                                <option value="Main Street, U.S.A">Main Street U.S.A.</option>
+                                <option value="Production Courtyard">Production Courtyard</option>
+                                <option value="Toon Studio">Toon Studio</option>
+                                <option value="Avengers Campus">Avengers Campus</option>
+                            </select>
                             <select
                                 value={filters.selectedType}
                                 onChange={(e) => handleFilterChange('selectedType', e.target.value)}
@@ -307,6 +317,7 @@ const Attractions = () => {
                                         <img className={imageClass} src={attractionImages[ride.name]} alt={ride.name} />
                                         <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
+                                            <p className={styles.attractionLand}>{ride.land}</p>
                                         </div>
                                         <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
@@ -344,7 +355,7 @@ const Attractions = () => {
                                             key={ride.id}
                                             position={ride.coordinates}
                                             icon={L.divIcon({
-                                                className: '', // Supprimez la classe si vous utilisez des styles en ligne
+                                                className: '',
                                                 html: getWaitTimeColor(ride),
                                             })}
                                         >
