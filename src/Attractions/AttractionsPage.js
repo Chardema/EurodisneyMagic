@@ -240,6 +240,7 @@ const Attractions = () => {
                             <select
                                 value={filters.selectedLand}
                                 onChange={(e) => handleFilterChange('selectedLand', e.target.value)}
+                                className={styles.selectOption1}
                             >
                                 <option value="all">Tous les lands</option>
                                 <option value="Adventureland">Adventureland</option>
@@ -254,6 +255,7 @@ const Attractions = () => {
                             <select
                                 value={filters.selectedType}
                                 onChange={(e) => handleFilterChange('selectedType', e.target.value)}
+                                className={styles.selectOption2}
                             >
                                 <option value="all">Types d'attractions</option>
                                 <option value="all">Toutes</option>
