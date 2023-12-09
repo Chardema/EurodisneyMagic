@@ -104,18 +104,20 @@ const Hours = () => {
                 </button>
                 {showWeatherInfo && (
                     <>
-                    <p className={styles.title}>Sélectionnez le jour que vous souhaitez : </p>
-                    <div className={styles.dateChange}>
+                        <div className={`${styles.dateChangePanel} ${showWeatherInfo ? styles.dateChangePanelOpen : ''}`}>
                         {selectedDay !== todayString && (
                             <div className={styles.todayButtonContainer}>
-                                <button onClick={goToToday} className={styles.todayButton}>Aujourd'hui</button>
+                                <button onClick={function(event){ goToToday(); setShowWeatherInfo(false)}} className={styles.todayButton}>Aujourd'hui</button>
                             </div>
                         )}
                         <div className={styles.datePickerContainer}>
                             <input
                                 type="date"
                                 value={selectedDay}
-                                onChange={e => setSelectedDay(e.target.value)}
+                                onChange={e => {
+                                    setSelectedDay(e.target.value);
+                                    setShowWeatherInfo(false); // Ajoutez ceci pour fermer le panneau
+                                }}
                                 min={todayString}
                                 max={maxDateStringFormatted}
                                 className={styles.datePicker}

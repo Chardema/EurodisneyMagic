@@ -30,7 +30,23 @@
         background-color: #0056b3;
     }
 }
+.dateChangePanel {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
 
+.dateChangePanelOpen {
+    opacity: 1;
+    max-height: 500px; /* Ajustez en fonction du contenu */
+}
+
+
+.weatherInfoOpen {
+    opacity: 1;
+    max-height: 500px; /* Réglez ceci selon la hauteur maximale nécessaire */
+}
 .dateChange {
     flex-direction: column;
     display: flex;
