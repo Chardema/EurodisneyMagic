@@ -16,6 +16,9 @@ import BottomNav from "../mobileNavbar/mobileNavbar";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 
 
 // Liste des noms d'attractions
@@ -77,7 +80,7 @@ const attractionImages = attractionNames.reduce((acc, name) => {
     return acc;
 }, {});
 
-const Attractions = () => {
+const Attractions = ({ favorites, toggleFavorite }) => {
     const dispatch = useDispatch();
     const rawRideData = useSelector((state) => state.rawRideData);
     const searchTerm = useSelector((state) => state.searchTerm);
@@ -326,6 +329,9 @@ const Attractions = () => {
                                             {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
                                             {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
+                                        <button className={styles.favoriteButton} onClick={() => toggleFavorite(ride)}>
+                                            <FontAwesomeIcon icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart} />
+                                        </button>
                                     </div>
                                 );
                             }) : (
