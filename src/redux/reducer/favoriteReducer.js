@@ -24,9 +24,9 @@ const favoritesReducer = (state = initialState, action) => {
         case SET_FAVORITES:
             return {
                 ...state,
-                favorites: action.payload,
+                favorites: action.payload, // Mettez à jour la liste des favoris avec la nouvelle liste
             };
-
+        // Autres cas...
         default:
             return state;
     }
