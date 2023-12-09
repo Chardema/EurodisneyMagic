@@ -255,7 +255,7 @@ const Attractions = () => {
                             <select
                                 value={filters.selectedType}
                                 onChange={(e) => handleFilterChange('selectedType', e.target.value)}
-                                className={styles.selectOption2}
+                                className={styles.selectOption}
                             >
                                 <option value="all">Types d'attractions</option>
                                 <option value="all">Toutes</option>
