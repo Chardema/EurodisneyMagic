@@ -8,6 +8,7 @@ import backgroundImage from './../img/MickeysDazzlingChristmasParade.jpg';
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {setFavorites} from "../redux/actions";
+import { RiDeleteBin7Fill } from "react-icons/ri";
 
 
 
@@ -31,7 +32,6 @@ const HomePage = () => {
                 : favorite;
         });
     };
-    // Chargement initial des favoris depuis localStorage
     // Mise à jour des favoris Redux lorsque les attractions changent
     useEffect(() => {
         const updatedFavorites = updateFavorites(reduxFavorites, attractions);
@@ -41,6 +41,10 @@ const HomePage = () => {
         }
     }, [attractions, dispatch]);
 
+    const removeFavorite = (favorite) => {
+        const updatedFavorites = reduxFavorites.filter(fav => fav.id !== favorite.id);
+        dispatch(setFavorites(updatedFavorites)); // Mettre à jour les favoris sans déclencher à nouveau le composant
+    };
 
 
     const getWaitTimeColor = (attraction) => {
@@ -74,11 +78,18 @@ const HomePage = () => {
                                 <div key={favorite.id} className={styles.attractionscard}>
                                     <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
                                     <h3>{favorite.name}</h3>
-                                    <div className={`${styles.waitTimeCircle} ${getWaitTimeColor(favorite)}`}>
-                                        {favorite.status === 'CLOSED' ? 'Fermée' :
-                                            favorite.status === 'DOWN' ? 'Indispo' :
-                                                favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
+                                    <div className={styles.infoanddelete}>
+                                        <div className={`${styles.waitTimeCircle} ${getWaitTimeColor(favorite)}`}>
+                                            {favorite.status === 'CLOSED' ? 'Fermée' :
+                                                favorite.status === 'DOWN' ? 'Indispo' :
+                                                    favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
+                                        </div>
+                                        <RiDeleteBin7Fill
+                                            className={`${styles.removeIcon} ${styles.favoriteIcon}`}
+                                            onClick={() => removeFavorite(favorite)}
+                                        />
                                     </div>
+
                                 </div>
                             ))}
 
