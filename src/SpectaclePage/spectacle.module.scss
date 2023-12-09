@@ -6,6 +6,34 @@
   text-align: center;
 }
 
+.modeSwitch {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  button {
+    background-color: white;
+    color: #007BFF;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 0 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+
+    &:hover {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    &.active {
+      background-color: #007BFF;
+      color: white;
+    }
+  }
+}
+
 .lastUpdate {
   margin-bottom: 20px;
   color: #666;
