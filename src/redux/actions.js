@@ -31,7 +31,7 @@ export const setAttractions = (attractions) => {
 export const setFavorites = (favorites) => {
     return {
         type: SET_FAVORITES,
-        payload: favorites, // Utilisez la nouvelle liste de favoris
+        payload: favorites,
     };
 };
 
@@ -41,14 +41,4 @@ export const toggleFavorite = (attraction) => {
         payload: attraction,
     };
 };
-
-export const TOGGLE_FAVORITE_SHOW = 'TOGGLE_FAVORITE_SHOW';
-
-// Exemple de fonction pour ajouter un spectacle aux favoris
-
-export const toggleFavoriteShow = show => ({
-    type: TOGGLE_FAVORITE_SHOW,
-    payload: show,
-});
-
 
