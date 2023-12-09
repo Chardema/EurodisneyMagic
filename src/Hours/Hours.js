@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from "../Navbar/Navbar";
 import styles from './Hours.module.scss';
@@ -6,14 +6,17 @@ import useParkHours from "../FetchParkHours";
 import Castle from './../img/Disneylandlogo.png';
 import Studios from './../img/Studioslogo.png';
 import { TiWeatherCloudy } from "react-icons/ti";
-import { formatTime, useWindowWidth } from '../utils';
+import {formatTime, useWindowWidth} from '../utils';
 import BottomNav from "../mobileNavbar/mobileNavbar";
-import { useWeather, useWeatherForecast } from "../weather";
+import useWeather from "../weather";
 
 const Hours = () => {
     const parkHours = useParkHours();
-    const width = useWindowWidth();
+    const now = new Date();
+    const width = useWindowWidth()
     const weather = useWeather();
+<<<<<<<< HEAD:src/Home/Homepage.js
+========
     const [selectedDay, setSelectedDay] = useState(new Date().toISOString().split('T')[0]);
     const [showWeatherInfo, setShowWeatherInfo] = useState(false);
     const weatherForecast = useWeatherForecast(selectedDay);
@@ -37,9 +40,16 @@ const Hours = () => {
         "moderate rain": "Pluie modérée",
         "Rain": "Pluie",
         "Clouds": "Nuageux",
+>>>>>>>> 6cad6c9 (Modif esthétique):src/Hours/Hours.js
 
+    const getSchedulesForDate = (schedules, date) => {
+        const dateStr = date.toISOString().split('T')[0];
+        return schedules.filter(schedule => schedule.date === dateStr);
     };
 
+<<<<<<<< HEAD:src/Home/Homepage.js
+    const renderScheduleInfo = (schedules, parkName) => {
+========
     const toggleWeatherInfo = () => {
         setShowWeatherInfo(!showWeatherInfo);
     };
@@ -65,59 +75,83 @@ const Hours = () => {
     };
 
     const renderScheduleInfo = (schedules, parkName, date) => {
+>>>>>>>> 6cad6c9 (Modif esthétique):src/Hours/Hours.js
         if (!schedules) {
             return <p>Horaires de {parkName} non disponibles.</p>;
         }
 
-        const selectedDaySchedules = getSchedulesForDate(schedules, date);
-        const operatingSchedule = selectedDaySchedules.find(s => s.type === "OPERATING");
-        const extraHoursSchedule = selectedDaySchedules.find(s => s.type === "EXTRA_HOURS");
+        const todaySchedules = getSchedulesForDate(schedules, now);
+        const operatingScheduleToday = todaySchedules.find(s => s.type === "OPERATING");
 
-        if (!operatingSchedule && !extraHoursSchedule) {
-            return <p className={styles.closedMessage}>{parkName} est actuellement fermé. Pas d'horaires disponibles pour le jour sélectionné.</p>;
+        if (!operatingScheduleToday) {
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowSchedules = getSchedulesForDate(schedules, tomorrow);
+            const operatingScheduleTomorrow = tomorrowSchedules.find(s => s.type === "OPERATING");
+
+            if (!operatingScheduleTomorrow) {
+                return <p className={styles.closedMessage}>{parkName} est actuellement fermé. Pas d'horaires disponibles pour demain.</p>;
+            }
+
+            const openingTimeTomorrow = new Date(operatingScheduleTomorrow.openingTime);
+            const closingTimeTomorrow = new Date(operatingScheduleTomorrow.closingTime);
+
+            return (
+                <p className={styles.closedMessage}>
+                    {parkName} est actuellement fermé. <br/> Demain, il sera ouvert de {formatTime(openingTimeTomorrow)} à {formatTime(closingTimeTomorrow)}.
+                </p>
+            );
+        }
+
+        const extraHoursSchedule = todaySchedules.find(s => s.type === "EXTRA_HOURS");
+        const openingTime = extraHoursSchedule ? new Date(extraHoursSchedule.openingTime) : new Date(operatingScheduleToday.openingTime);
+        const closingTime = new Date(operatingScheduleToday.closingTime);
+        const isParkOpen = now >= openingTime && now <= closingTime;
+
+        if (!isParkOpen) {
+            return <p className={styles.closedMessage}>{parkName} est actuellement fermé.</p>;
         }
 
         return (
             <>
-                {operatingSchedule && (
-                    <p className={styles.schedule}>
-                        {formatTime(new Date(operatingSchedule.openingTime))} - {formatTime(new Date(operatingSchedule.closingTime))}
-                    </p>
-                )}
+                <p className={styles.schedule}> {formatTime(openingTime)} - {formatTime(closingTime)}.</p>
                 {extraHoursSchedule && (
-                    <p className={styles.schedule}>
-                        Extra Magic Hours: {formatTime(new Date(extraHoursSchedule.openingTime))} - {formatTime(new Date(extraHoursSchedule.closingTime))}
-                    </p>
+                    <p className={styles.schedule}>les Magic Hours sont entre {formatTime(extraHoursSchedule.openingTime)} et {formatTime(operatingScheduleToday.openingTime)}.</p>
                 )}
-
             </>
         );
     };
-
 
     return (
         <div className={styles.body}>
             {width > 768 && <Navbar />}
             <div className={styles.container}>
+<<<<<<<< HEAD:src/Home/Homepage.js
+                <div className={styles.weatherInfo}>
+                    {weather && (
+                        <div>
+                            <p> <TiWeatherCloudy size={40} />  {Math.round(weather.main.temp)}°C </p>
+                        </div>
+                    )}
+                </div>
+========
                 <button onClick={toggleWeatherInfo} className={styles.showWeatherButton}>
                     {showWeatherInfo ? 'Masquer' : 'Changer de date'}
                 </button>
                 {showWeatherInfo && (
                     <>
-                        <div className={`${styles.dateChangePanel} ${showWeatherInfo ? styles.dateChangePanelOpen : ''}`}>
+                    <p className={styles.title}>Sélectionnez le jour que vous souhaitez : </p>
+                    <div className={styles.dateChange}>
                         {selectedDay !== todayString && (
                             <div className={styles.todayButtonContainer}>
-                                <button onClick={function(event){ goToToday(); setShowWeatherInfo(false)}} className={styles.todayButton}>Aujourd'hui</button>
+                                <button onClick={goToToday} className={styles.todayButton}>Aujourd'hui</button>
                             </div>
                         )}
                         <div className={styles.datePickerContainer}>
                             <input
                                 type="date"
                                 value={selectedDay}
-                                onChange={e => {
-                                    setSelectedDay(e.target.value);
-                                    setShowWeatherInfo(false); // Ajoutez ceci pour fermer le panneau
-                                }}
+                                onChange={e => setSelectedDay(e.target.value)}
                                 min={todayString}
                                 max={maxDateStringFormatted}
                                 className={styles.datePicker}
@@ -153,18 +187,27 @@ const Hours = () => {
                             !isToday(selectedDay) && !isForecastAvailable && <p>Les prévisions météorologiques ne sont pas encore disponibles pour cette date.</p>
                         )}
                     </div>
+>>>>>>>> 6cad6c9 (Modif esthétique):src/Hours/Hours.js
                 <div className={styles.allparks}>
                     <div className={styles.disneyland}>
                         <div className={styles.hours}>
                             <img className={styles.logo} src={Castle} alt="Disneyland Park Hours" />
-                            {renderScheduleInfo(parkHours?.disneyland?.schedule, "Le Parc Disneyland", selectedDay)}
+                            {renderScheduleInfo(parkHours?.disneyland?.schedule, "Le Parc Disneyland")}
                         </div>
                     </div>
                     <div className={styles.studios}>
                         <div className={styles.hours}>
                             <img className={styles.logo} src={Studios} alt="Studio Park Hours" />
-                            {renderScheduleInfo(parkHours?.studio?.schedule, "Les Walt Disney Studios", selectedDay)}
+                            {renderScheduleInfo(parkHours?.studio?.schedule, "Les Walt Disney Studios")}
                         </div>
+                    </div>
+                </div>
+                <div className={styles.Buttoncontainer}>
+                    <div className={styles.centerButton}>
+                        <Link to="/attractions" className={styles.attractionsButton}>Temps d'attente en direct</Link>
+                    </div>
+                    <div className={styles.centerButton}>
+                        <Link to="/spectacle" className={styles.attractionsButton}>Prochaine représentation spectacle</Link>
                     </div>
                 </div>
             </div>
