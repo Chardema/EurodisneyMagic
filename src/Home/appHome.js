@@ -73,7 +73,6 @@ const HomePage = () => {
                 <div className={styles.content}>
                     {reduxFavorites.length > 0 ? (
                         <div className={styles.attractionsSection}>
-                            <h3>Vos Favoris</h3>
                             {reduxFavorites.map(favorite => (
                                 <div key={favorite.id} className={styles.attractionscard}>
                                     <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
