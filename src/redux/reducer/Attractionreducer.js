@@ -1,9 +1,10 @@
-// Votre reducer (à titre d'exemple, ajustez-le selon votre implémentation actuelle)
+import { SET_ATTRACTIONS } from '../actions';
 const initialState = {
     rawRideData: [],
     filteredRideData: [],
     closedRideData: [],
     searchTerm: '',
+    attractions: [],
 };
 
 const yourReducer = (state = initialState, action) => {
@@ -27,6 +28,11 @@ const yourReducer = (state = initialState, action) => {
             return {
                 ...state,
                 searchTerm: action.payload,
+            };
+        case SET_ATTRACTIONS:
+            return {
+                ...state,
+                attractions: action.payload,
             };
         default:
             return state;

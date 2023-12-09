@@ -19,6 +19,8 @@ import 'leaflet/dist/leaflet.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import { toggleFavorite } from '../redux/actions';
+
 
 
 // Liste des noms d'attractions
@@ -80,11 +82,13 @@ const attractionImages = attractionNames.reduce((acc, name) => {
     return acc;
 }, {});
 
-const Attractions = ({ favorites, toggleFavorite }) => {
-    const dispatch = useDispatch();
-    const rawRideData = useSelector((state) => state.rawRideData);
-    const searchTerm = useSelector((state) => state.searchTerm);
-    const filteredRideData = useSelector((state) => state.filteredRideData);
+const Attractions = () => {
+    const { rawRideData, searchTerm, filteredRideData, favorites } = useSelector(state => ({
+        rawRideData: state.attractions.rawRideData,
+        searchTerm: state.attractions.searchTerm,
+        filteredRideData: state.attractions.filteredRideData,
+        favorites: state.favorites.favorites
+    }));
     const [viewMode, setViewMode] = useState('list'); // 'list', 'map'
     const [lastUpdate, setLastUpdate] = useState(null);
     const [previousWaitTimes, setPreviousWaitTimes] = useState({});
@@ -96,7 +100,11 @@ const Attractions = ({ favorites, toggleFavorite }) => {
         selectedType: 'all', // 'all', 'sans file d'attente', 'famille', 'sensation'
         selectedLand: 'all' // 'all', 'fantasyland', 'frontierland', 'adventureland', 'discoveryland'
     });
+    const dispatch = useDispatch();
 
+    const handleToggleFavorite = (attraction) => {
+        dispatch(toggleFavorite(attraction));
+    };
     useEffect(() => {
         const storedPreviousWaitTimes = localStorage.getItem('previousWaitTimes');
         if (storedPreviousWaitTimes) {
@@ -145,6 +153,9 @@ const Attractions = ({ favorites, toggleFavorite }) => {
     }, []); // Aucune dépendance ici pour éviter des appels multiples
 
     useEffect(() => {
+        if (!rawRideData) {
+            return;
+        }
         const filteredAttractions = rawRideData
             .filter((ride) => {
                 return (
@@ -169,8 +180,7 @@ const Attractions = ({ favorites, toggleFavorite }) => {
     };
     const width = useWindowWidth();
 
-    const allRidesClosed = rawRideData.every((ride) => ride.status === 'CLOSED');
-
+    const allRidesClosed = rawRideData && rawRideData.length > 0 && rawRideData.every((ride) => ride.status === 'CLOSED');
     const getWaitTimeColor = (ride) => {
         let content;
         let backgroundColor = '#F44336'; // Couleur par défaut pour 'indisponible' ou 'fermée'
@@ -180,7 +190,7 @@ const Attractions = ({ favorites, toggleFavorite }) => {
         } else if (ride.status === 'CLOSED') {
             content = 'Fermée';
         } else if (ride.waitTime === null) {
-            content = 'Instantanée';
+            content = 'Direct';
             backgroundColor = '#4CAF50'; // Vert
         } else if (ride.waitTime < 20) {
             content = `${ride.waitTime} min`;
@@ -325,13 +335,15 @@ const Attractions = ({ favorites, toggleFavorite }) => {
                                         <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
                                                 ride.status === 'CLOSED' ? 'Fermée' :
-                                                    ride.waitTime === null ? 'Instantanée' : `${ride.waitTime} min`}
+                                                    ride.waitTime === null ? 'Direct' : `${ride.waitTime} min`}
                                             {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
                                             {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
-                                        <button className={styles.favoriteButton} onClick={() => toggleFavorite(ride)}>
+                                        <button className={styles.favoriteButton} onClick={() => handleToggleFavorite(ride)}>
                                             <FontAwesomeIcon icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart} />
                                         </button>
+
+
                                     </div>
                                 );
                             }) : (
