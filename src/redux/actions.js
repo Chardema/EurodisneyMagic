@@ -31,7 +31,7 @@ export const setAttractions = (attractions) => {
 export const setFavorites = (favorites) => {
     return {
         type: SET_FAVORITES,
-        payload: favorites,
+        payload: favorites, // Utilisez la nouvelle liste de favoris
     };
 };
 

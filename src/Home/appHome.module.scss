@@ -167,3 +167,22 @@
   object-fit: cover;
   border-radius: 10px;
 }
+
+// Ajoutez ce style à votre feuille de style (appHome.module.scss)
+.infoanddelete{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.removeIcon {
+  font-size: 24px; // Ajustez la taille de l'icône en conséquence
+
+  color: #FF0000; // Couleur de l'icône pour la suppression (rouge)
+  cursor: pointer; // Afficher le curseur de type main pour indiquer que c'est cliquable
+  margin-left: 10px; // Espacement à gauche pour séparer l'icône du texte
+  transition: color 0.3s ease; // Transition de couleur lors du survol
+
+  &:hover {
+    color: #FF3333; // Couleur de l'icône au survol (rouge légèrement plus clair)
+  }
+}
