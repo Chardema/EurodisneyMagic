@@ -98,7 +98,7 @@ const HomePage = () => {
                         <div className={styles.noFavoritesMessage}>
                             <p>Vous n'avez pas encore de favoris.</p>
                             <Link to="/attractions" className={styles.linkButton}>
-                                Découvrez les attractions
+                                Ajoutez votre première attraction
                             </Link>
                         </div>
                     )}

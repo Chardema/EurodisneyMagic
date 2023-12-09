@@ -339,8 +339,12 @@ h1 {
 }
 .textCheckbox {
     padding-left: 10px;
+    padding-top: 10px;
 }
-
+.selectOption1{
+    width: 100%;
+    margin-bottom: 10px;
+}
 .checkboxcustom::before {
     content: "";
     position: absolute;
@@ -398,7 +402,8 @@ h1 {
     }
 
     .filterOption {
-        display: block;
+        display: flex;
+        flex-direction: column;
         margin-right: 0;
         margin-bottom: 5px;
     }

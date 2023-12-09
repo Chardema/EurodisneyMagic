@@ -186,3 +186,18 @@
     color: #FF3333; // Couleur de l'icône au survol (rouge légèrement plus clair)
   }
 }
+
+@media (max-width: 768px) {
+  .bottomcontainer {
+    height: 50vh;
+  }
+  .noFavoritesMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+}
+
