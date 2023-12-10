@@ -10,6 +10,8 @@ import { Analytics } from '@vercel/analytics/react';
 import HomePage from "./Home/appHome";
 import {createStore} from "redux";
 import {setFavorites} from "./redux/actions";
+import { setAttractions } from './redux/actions';
+import axios from "axios"; // Assurez-vous d'importer l'action
 
 const App = () => {
     // Chargement initial des favoris depuis localStorage
@@ -30,6 +32,30 @@ const App = () => {
         });
 
         return () => unsubscribe(); // Nettoyage de l'abonnement
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Remplacez cette URL par l'URL de votre API
+                const response = await axios.get('https://eurojourney.azurewebsites.net/api/attractions');
+                const attractionsData = response.data;
+
+                // Dispatcher l'action pour mettre à jour les attractions dans Redux
+                store.dispatch(setAttractions(attractionsData));
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données des attractions:', error);
+            }
+        };
+
+        // Appel initial pour charger les données
+        fetchData();
+
+        // Définir un intervalle pour la mise à jour périodique
+        const intervalId = setInterval(fetchData, 60000); // Mise à jour toutes les 60 secondes
+
+        // Nettoyer l'intervalle lors du démontage du composant
+        return () => clearInterval(intervalId);
     }, []);
 
     return (
