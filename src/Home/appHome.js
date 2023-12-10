@@ -32,14 +32,22 @@ const HomePage = () => {
                 : favorite;
         });
     };
-    // Mise à jour des favoris Redux lorsque les attractions changent
+
     useEffect(() => {
+        console.log('useEffect triggered');
+        console.log('Current attractions:', attractions);
+        console.log('Current favorites:', reduxFavorites);
+
         const updatedFavorites = updateFavorites(reduxFavorites, attractions);
-        // Effectuez une vérification pour voir si les favoris ont réellement changé
+        console.log('Updated favorites:', updatedFavorites);
+
         if (JSON.stringify(updatedFavorites) !== JSON.stringify(reduxFavorites)) {
+            console.log('Updating favorites');
             dispatch(setFavorites(updatedFavorites));
         }
-    }, [attractions, dispatch]);
+    }, [attractions, dispatch, reduxFavorites]);
+
+
 
     const removeFavorite = (favorite) => {
         const updatedFavorites = reduxFavorites.filter(fav => fav.id !== favorite.id);
