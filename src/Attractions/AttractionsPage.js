@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
 import styles from './attractions.module.scss'
 import {formatDate, formatImageName, importImage, useWindowWidth} from "../utils";
-import {
-    setRawRideData,
-    setFilteredRideData,
-    setSearchTerm
-} from '../redux/actions';
+import { setAttractions, setRawRideData, setFilteredRideData, setSearchTerm } from '../redux/actions';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar';
@@ -131,6 +127,7 @@ const Attractions = () => {
 
             const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
             dispatch(setRawRideData(sortedRideData || []));
+            dispatch(setAttractions(sortedRideData || []));
         } catch (error) {
             console.error(error);
             setLastUpdate(new Date());
