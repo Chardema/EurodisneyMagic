@@ -4,7 +4,7 @@ import BottomNav from "../mobileNavbar/mobileNavbar";
 import styles from './appHome.module.scss'; // Votre fichier CSS pour la page d'accueil
 import { useWindowWidth } from '../utils';
 import { formatImageName, importImage } from '../utils';
-import backgroundImage from './../img/MickeysDazzlingChristmasParade.jpg';
+import backgroundImage from './../img/simphonyofcolor.jpg';
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {setFavorites} from "../redux/actions";

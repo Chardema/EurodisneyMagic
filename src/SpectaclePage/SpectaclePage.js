@@ -21,7 +21,8 @@ const showsNames = [
     'Avengers: Power the Night',
     'Disney Stars on Parade ',
     'Magic Over Disney: a nighttime show to the rhythm of Disney and Pixar Music',
-    'Guardians of the Galaxy: Dance Challenge! '
+    'Guardians of the Galaxy: Dance Challenge! ',
+    'Disney Electrical Sky Parade'
 ];
 const attractionShows = showsNames.reduce((acc, name) => {
     const imageName = formatImageName(name);

@@ -47,7 +47,7 @@ const attractionNames = [
     'Princess Pavilion',
     'Dumbo the Flying Elephant',
     "Le Passage Enchanté d'Aladdin",
-    'Autopia®',
+    'Autopia, presented by Avis',
     'Le Carrousel de Lancelot ',
     'Les Mystères du Nautilus',
     'La Tanière du Dragon',
