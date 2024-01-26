@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Analytics } from '@vercel/analytics/react';
 import HomePage from "./Home/appHome";
-import {createStore} from "redux";
 import {setFavorites} from "./redux/actions";
 import { setAttractions } from './redux/actions';
 import axios from "axios"; // Assurez-vous d'importer l'action
