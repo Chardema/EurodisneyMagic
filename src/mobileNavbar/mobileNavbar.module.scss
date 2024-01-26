@@ -1,4 +1,8 @@
 // Dans BottomNav.module.scss
+*{
+  margin: 0;
+  padding: 0;
+}
 .bottomNav {
   display: none;
 
@@ -6,8 +10,8 @@
     display: flex;
     justify-content: space-around;
     position: fixed;
-    bottom: 0;
     width: 100%;
+    bottom: 0;
     height: 80px; // Hauteur accrue
     background-color: #fff;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
