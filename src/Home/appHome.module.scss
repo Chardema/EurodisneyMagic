@@ -105,17 +105,48 @@
   color: #333;
   margin-bottom: 20px;
 }
+.randomAttractions {
+    display: inline-grid;
+    justify-content: space-around;
+    align-items: center;
+    background-color: white;
+    margin-right: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.randomAttractionsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.randomAttractionsImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.randomBlock{
+  padding: 30px;
+}
 
 .attractionscard {
-  width: 100%;
-  display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  background-color: white;
   margin-bottom: 10px;
+}
+
+.allBlock {
+  width: 90%;
 }
 
 .attractionsSection h3 {
@@ -168,6 +199,11 @@
   object-fit: cover;
   border-radius: 10px;
 }
+.noFavoritesMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 // Ajoutez ce style à votre feuille de style (appHome.module.scss)
 .infoanddelete{
@@ -186,6 +222,44 @@
   &:hover {
     color: #FF3333; // Couleur de l'icône au survol (rouge légèrement plus clair)
   }
+}
+
+.popupContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent pour l'effet de superposition */
+}
+
+.popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.popup p {
+  margin-bottom: 10px;
+}
+
+.popup button {
+  margin: 0 5px;
+  padding: 8px 16px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background-color: #0056b3;
 }
 
 @media (max-width: 768px) {

@@ -16,13 +16,14 @@ const showsNames = [
     'The Disney Junior Dream Factory',
     'Frozen: A Musical Invitation',
     'Stitch Live!',
-    'Mickey and the Magician ',
+    'Mickey and the Magician',
     'TOGETHER: a Pixar Musical Adventure',
     'Avengers: Power the Night',
     'Disney Stars on Parade ',
     'Magic Over Disney: a nighttime show to the rhythm of Disney and Pixar Music',
     'Guardians of the Galaxy: Dance Challenge! ',
-    'Disney Electrical Sky Parade'
+    'Disney Electrical Sky Parade',
+    'A Million Splashes of Colour'
 ];
 const attractionShows = showsNames.reduce((acc, name) => {
     const imageName = formatImageName(name);
@@ -68,6 +69,14 @@ const Shows = () => {
         return () => clearInterval(intervalId);
     }, []);
 
+    // Fonction pour comparer les horaires des spectacles
+    const compareShowtimes = (a, b) => {
+        const timeA = new Date(a.showtimes[0].startTime).getTime();
+        const timeB = new Date(b.showtimes[0].startTime).getTime();
+
+        return timeA - timeB;
+    };
+
     return (
         <div>
             {width > 768 && <Navbar />}
@@ -81,7 +90,9 @@ const Shows = () => {
                 {viewMode === 'list' ? (
                     <div className={styles.showsList}>
                         {showsData.length > 0 ? (
-                            showsData.map((show) => (
+                            showsData
+                                .sort(compareShowtimes)
+                                .map((show) => (
                                 <div key={show.id} className={styles.card}>
                                     <img className={styles.showImage} src={attractionShows[show.name]} alt={show.name} />
                                     <h3 className={styles.showName}>{show.name}</h3>
