@@ -20,7 +20,7 @@ import { toggleFavorite } from '../redux/actions';
 
 
 // Liste des noms d'attractions
-const attractionNames = [
+export const attractionNames = [
     'Disneyland Railroad Discoveryland Station',
     'Disneyland Railroad Fantasyland Station',
     'Disneyland Railroad Main Street Station',
@@ -72,7 +72,7 @@ const attractionNames = [
     "Slinky® Dog Zigzag Spin",
     "Les Tapis Volants - Flying Carpets Over Agrabah®"
 ];
-const attractionImages = attractionNames.reduce((acc, name) => {
+export const attractionImages = attractionNames.reduce((acc, name) => {
     const imageName = formatImageName(name);
     acc[name] = importImage(imageName);
     return acc;
@@ -326,7 +326,7 @@ const Attractions = () => {
 
                                 return (
                                     <div key={ride.id} className={styles.card}>
-                                        <img className={imageClass} src={attractionImages[ride.name]} alt={ride.name} />
+                                        <img  src={attractionImages[ride.name]} alt={ride.name} />
                                         <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
                                             <p className={styles.attractionLand}>{ride.land}</p>
