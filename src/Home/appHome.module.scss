@@ -262,6 +262,63 @@
   background-color: #0056b3;
 }
 
+.randomAttractions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.randomAttractions:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.randomAttractionsImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}
+
+.randomAttractionsImage:hover {
+  opacity: 0.9;
+}
+
+.randomAttractionsName {
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.favoriteButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.favoriteButton:focus {
+  outline: none;
+}
+
+/* Style for the heart icons */
+.fa-heart {
+  color: #db2e2e;
+  transition: color 0.3s ease;
+}
+
+.fa-heart:hover {
+  color: #bf2626;
+}
+
 @media (max-width: 768px) {
 
   .noFavoritesMessage {
