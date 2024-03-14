@@ -1,18 +1,14 @@
-
 @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
-
+  
   @keyframes contentChange {
     0% { opacity: 0.5; transform: scale(0.95); }
     100% { opacity: 1; transform: scale(1); }
   }
-.popupContainer {
+  
+  .popupContainer {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,29 +17,46 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.75);
     z-index: 1000;
-    animation: fadeIn 0.5s ease-out; /* Applique l'animation de fondu */
+    animation: fadeIn 0.5s ease-out;
   }
   
   .popup {
     background-color: #fff;
-    padding: 40px; /* Augmenté pour plus d'espace */
-    border-radius: 16px; /* Bordures plus arrondies */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    width: auto; /* Adaptatif selon le contenu, jusqu'à une certaine limite */
-    max-width: 400px; /* Taille maximale */
-    min-height: 200px; /* Hauteur minimale */
-    max-height: 80vh; /* Hauteur maximale pour éviter le dépassement de l'écran */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    animation: contentChange 0.5s ease-out;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: auto;
+    max-width: 500px; /* Ajusté pour une meilleure présentation */
+    overflow-y: auto;
+    animation: contentChange 0.3s ease-out;
+    text-align: center; /* Centre le contenu */
   }
   
-  h2 {
-    margin: 20px 0; /* Plus d'espace autour du titre */
+  .attractionRecommendation {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .attractionRecommendation img {
+    width: 100px; /* Ajusté pour mieux montrer l'image */
+    height: 75px; /* Ajusté pour garder le rapport */
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+  }
+  
+  .attractionRecommendation h3 {
+    flex-grow: 1;
+    margin: 0 10px;
   }
   
   .answerButton {
@@ -51,21 +64,40 @@
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 12px 24px; /* Boutons plus grands */
-    margin: 10px 0; /* Plus d'espace entre les boutons */
+    padding: 10px 20px;
+    margin: 5px 0; /* Moins d'espace entre les boutons pour une apparence plus compacte */
     cursor: pointer;
-    display: block; /* Force les boutons à prendre toute la largeur disponible */
-    width: 100%;
-    box-sizing: border-box; /* S'assure que le padding ne change pas la largeur */
+    display: block; /* Assure que le bouton s'étend */
+    width: calc(100% - 40px); /* S'assure que les boutons ne dépassent pas le padding */
+    box-sizing: border-box;
     transition: background-color 0.3s;
+    font-size: 16px; /* Augmente la taille de la police pour améliorer la lisibilité */
     
     &:hover {
       background-color: #0056b3;
     }
   }
   
+  .answerButton.selected {
+    background-color: #28a745; /* Vert pour les sélectionnés, pour un feedback visuel */
+  }
+  
+  .closeButton {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    
+    &:hover {
+      background-color: #c82333;
+    }
+  }
+  
   .icon {
-    font-size: 48px; /* Icônes plus grandes */
-    margin-bottom: 20px; /* Espace supplémentaire sous l'icône */
+    margin-bottom: 20px;
+    font-size: 48px;
   }
   
