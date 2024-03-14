@@ -1,0 +1,71 @@
+
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes contentChange {
+    0% { opacity: 0.5; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+.popupContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-out; /* Applique l'animation de fondu */
+  }
+  
+  .popup {
+    background-color: #fff;
+    padding: 40px; /* Augmenté pour plus d'espace */
+    border-radius: 16px; /* Bordures plus arrondies */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: auto; /* Adaptatif selon le contenu, jusqu'à une certaine limite */
+    max-width: 400px; /* Taille maximale */
+    min-height: 200px; /* Hauteur minimale */
+    max-height: 80vh; /* Hauteur maximale pour éviter le dépassement de l'écran */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    animation: contentChange 0.5s ease-out;
+  }
+  
+  h2 {
+    margin: 20px 0; /* Plus d'espace autour du titre */
+  }
+  
+  .answerButton {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px; /* Boutons plus grands */
+    margin: 10px 0; /* Plus d'espace entre les boutons */
+    cursor: pointer;
+    display: block; /* Force les boutons à prendre toute la largeur disponible */
+    width: 100%;
+    box-sizing: border-box; /* S'assure que le padding ne change pas la largeur */
+    transition: background-color 0.3s;
+    
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+  
+  .icon {
+    font-size: 48px; /* Icônes plus grandes */
+    margin-bottom: 20px; /* Espace supplémentaire sous l'icône */
+  }
+  

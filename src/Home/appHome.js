@@ -4,11 +4,15 @@ import BottomNav from "../mobileNavbar/mobileNavbar";
 import styles from './appHome.module.scss'; // Votre fichier CSS pour la page d'accueil
 import { useWindowWidth } from '../utils';
 import { formatImageName, importImage } from '../utils';
+import PopupSurvey from '../popupSurvey/popupSurvey';
 import backgroundImage from './../img/simphonyofcolor.jpg';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setFavorites } from "../redux/actions";
+import { setFavorites, toggleFavorite } from "../redux/actions";
 import { RiDeleteBin7Fill } from "react-icons/ri";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { attractionNames, attractionImages } from "../Attractions/AttractionsPage";
 
 const HomePage = () => {
@@ -17,7 +21,7 @@ const HomePage = () => {
     const dispatch = useDispatch();
     const width = useWindowWidth();
     const [recommendedAttractions, setRecommendedAttractions] = useState([]);
-    const [showPopup, setShowPopup] = useState(false);
+    const [showPopup, setShowPopup] = useState(true);
 
     const updateFavorites = (favorites, attractions) => {
         return favorites.map(favorite => {
@@ -28,11 +32,20 @@ const HomePage = () => {
         });
     };
 
-    useEffect(() => {
-        console.log('useEffect triggered');
-        console.log('Current attractions:', attractions);
-        console.log('Current favorites:', reduxFavorites);
+    const closePopup = (userPreferences) => {
+        // Traitez les préférences de l'utilisateur ici si nécessaire
+        setShowPopup(false);
+      };
 
+    const handleToggleFavorite = (attractionName) => {
+        // Trouvez l'attraction dans la liste complète des attractions pour obtenir tous ses détails
+        const attraction = attractions.find(attr => attr.name === attractionName);
+        if (attraction) {
+            dispatch(toggleFavorite(attraction));
+        }
+    };
+
+    useEffect(() => {
         const updatedFavorites = updateFavorites(reduxFavorites, attractions);
         console.log('Updated favorites:', updatedFavorites);
 
@@ -121,30 +134,30 @@ const HomePage = () => {
                                 </Link>
                             </div>
                             <div className={styles.randomBlock}>
-                                <h2>Attractions recommandées</h2>
-                                <div className={styles.randomAttractionsContainer}>
-                                    {recommendedAttractions.map((attractionName, index) => (
-                                        <div key={index} className={styles.randomAttractions}>
-                                            <img src={attractionImages[attractionName]} alt={attractionName} className={styles.randomAttractionsImage} />
-                                            <p className={styles.randomAttractionsName}>{attractionName}</p>
-                                        </div>
-                                    ))}
+                        <h2>Ajoutez votre première attraction:</h2>
+                        <div className={styles.randomAttractionsContainer}>
+                            {recommendedAttractions.map((attractionName, index) => (
+                                <div key={index} className={styles.randomAttractions}>
+                                    <img src={attractionImages[attractionName]} alt={attractionName} className={styles.randomAttractionsImage} />
+                                    <p className={styles.randomAttractionsName}>{attractionName}</p>
+                                    <button onClick={() => handleToggleFavorite(attractionName)}>
+                                        {reduxFavorites.some(fav => fav.name === attractionName) ? (
+                                            <FontAwesomeIcon icon={solidHeart} />
+                                        ) : (
+                                            <FontAwesomeIcon icon={regularHeart} />
+                                        )}
+                                    </button>
                                 </div>
-                            </div>
+                            ))}
+                        </div>
+                    </div>
                         </div>
                     )}
                 </div>
             </div>
             <BottomNav />
-            {/* Afficher la vraie popup */}
-            {showPopup && (
-                <div className={styles.popupContainer}>
-                    <div className={styles.popup}>
-                        <p>Bonjour et bienvenue sur Magic journey, commençons...</p>
-                        <button onClick={() => handleUserPreference(true)}>Fermer</button>
-                    </div>
-                </div>
-            )}
+            {showPopup && <PopupSurvey onClose={closePopup} attractions={attractions} />}
+
         </div>
     );
 };
