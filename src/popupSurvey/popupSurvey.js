@@ -1,38 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import styles from './popupSurvey.module.scss';
-import { FaClock, FaHome } from 'react-icons/fa';
-import { TbRollercoaster } from "react-icons/tb";
+import { FaClock, FaHome, FaLaughBeam } from 'react-icons/fa';
+import { TbRollercoaster } from 'react-icons/tb';
 import { useDispatch } from 'react-redux';
-import { toggleFavorite } from '../redux/actions'; // Assurez-vous que le chemin d'importation est correct
+import { toggleFavorite } from '../redux/actions';
+import { attractionNames, attractionImages } from "../Attractions/AttractionsPage";
 
 const questionIcons = {
   0: <FaHome className={styles.icon} />,
-  1: <TbRollercoaster className={styles.icon}/>,
-  2: <FaClock className={styles.icon} />,
+  1: <TbRollercoaster className={styles.icon} />,
+  2: <FaLaughBeam className={styles.icon} />,
+  3: <FaClock className={styles.icon} />,
 };
 
 const questions = [
   {
     question: "Bonjour et Bienvenue dans Magic Journey, l'application qui vous fera profiter au maximum de Disneyland Paris",
     answers: ['Suivant'],
+    type: 'intro',
   },
   {
     question: "Commençons par vous poser quelques questions afin de vous proposer votre première attraction",
     answers: ['Suivant'],
+    type: 'intro',
   },
   {
     question: "Quel type d'attractions préférez-vous ?",
     answers: ['Famille', 'Sensation', "Sans file d'attente", 'Rencontre avec les personnages'],
+    type: 'typePreference',
   },
   {
     question: "Quelle durée d'attente est acceptable pour vous ?",
     answers: ['Moins de 15 minutes', '15-30 minutes', '30-60 minutes', 'Plus de 60 minutes'],
+    type: 'waitTimePreference',
   },
 ];
 
 const PopupSurvey = ({ onClose, attractions }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [responses, setResponses] = useState([]);
+  const [responses, setResponses] = useState({
+    typePreference: [],
+    waitTimePreference: '',
+  });
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,46 +51,35 @@ const PopupSurvey = ({ onClose, attractions }) => {
     }
   }, [onClose]);
 
-  useEffect(() => {
-    if (currentStep === questions.length) {
-      localStorage.setItem('userPreferences', JSON.stringify(responses));
+  const handleAnswer = (answer, type) => {
+    if (type === 'typePreference') {
+      setResponses(current => ({
+        ...current,
+        typePreference: current.typePreference.includes(answer) ? current.typePreference.filter(item => item !== answer) : [...current.typePreference, answer],
+      }));
+    } else if (type === 'waitTimePreference') {
+      setResponses(current => ({
+        ...current,
+        waitTimePreference: answer,
+      }));
     }
-  }, [currentStep, responses, onClose]);
-
-  const handleAnswer = (answer) => {
-    // Ajouter la réponse à l'état seulement si ce n'est pas "Suivant"
-    if (answer !== 'Suivant') {
-      setResponses(current => [...current, answer]);
-    }
-  
-    // Passer à la question suivante ou procéder à la fermeture
-    // Ce passage à l'étape suivante doit se faire indépendamment de la réponse donnée
+    // Move to the next step for all types of questions, including 'intro'
     setCurrentStep(current => current + 1);
-  
-    // La logique pour traiter la fin du questionnaire et enregistrer dans localStorage
-    // sera gérée dans useEffect basé sur `currentStep` et `responses`
   };
-  
 
   const recommendedAttractions = () => {
-    if (!attractions || responses.length < 4) return [];
-  
-    const preferredType = responses[2];
-    if (!preferredType) return []; 
-  
+    if (!attractions || responses.typePreference.length === 0) return [];
     let maxWaitTime;
-    switch (responses[3]) {
+    switch (responses.waitTimePreference) {
       case 'Moins de 15 minutes': maxWaitTime = 15; break;
       case '15-30 minutes': maxWaitTime = 30; break;
       case '30-60 minutes': maxWaitTime = 60; break;
       case 'Plus de 60 minutes': maxWaitTime = Infinity; break;
       default: maxWaitTime = Infinity;
     }
-    console.log("Attractions before filtering:", attractions);
 
-    // Correction pour utiliser `type` et ajustement pour `waitTime`
     return attractions.filter(attraction =>
-      attraction.type === preferredType && attraction.waitTime <= maxWaitTime
+      responses.typePreference.some(type => attraction.type.includes(type)) && attraction.waitTime <= maxWaitTime
     ).slice(0, 3);
   };
 
@@ -93,7 +91,11 @@ const PopupSurvey = ({ onClose, attractions }) => {
             {questionIcons[currentStep]}
             <h2>{questions[currentStep].question}</h2>
             {questions[currentStep].answers.map((answer, index) => (
-              <button key={index} onClick={() => handleAnswer(answer)} className={styles.answerButton}>
+              <button
+                key={index}
+                onClick={() => handleAnswer(answer, questions[currentStep].type)}
+                className={`${styles.answerButton} ${responses.typePreference.includes(answer) ? styles.selected : ''}`}
+              >
                 {answer}
               </button>
             ))}
@@ -103,11 +105,13 @@ const PopupSurvey = ({ onClose, attractions }) => {
             <h2>Attractions recommandées pour vous</h2>
             {recommendedAttractions().map(attraction => (
               <div key={attraction.id} className={styles.attractionRecommendation}>
+                <img src={attractionImages[attraction.name]} alt={attraction.name} className={styles.attractionImage} />
                 <h3>{attraction.name}</h3>
-                <button onClick={() => dispatch(toggleFavorite(attraction.id))}>Ajouter aux favoris</button>
+                <p>Temps d'attente: {attraction.waitTime} minutes</p>
+                <button onClick={() => dispatch(toggleFavorite(attraction))}>Ajouter aux favoris</button>
               </div>
             ))}
-            <button onClick={onClose}>Terminer</button>
+            <button onClick={onClose} className={styles.closeButton}>Fermer</button>
           </>
         )}
       </div>
