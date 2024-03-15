@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './popupSurvey.module.scss';
 import { FaClock, FaHome, FaLaughBeam } from 'react-icons/fa';
 import { TbRollercoaster } from 'react-icons/tb';
 import { useDispatch } from 'react-redux';
 import { toggleFavorite } from '../redux/actions';
 import CardSwipe from '../CardSwipe/CardSwipe';
-import { useMemo } from 'react';
 
 const questionIcons = {
   0: <FaHome className={styles.icon} />,
@@ -43,86 +42,70 @@ const PopupSurvey = ({ onClose, attractions }) => {
     typePreference: [],
     waitTimePreference: '',
   });
-  const dispatch = useDispatch();
   const [currentAttractionIndex, setCurrentAttractionIndex] = useState(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const storedPreferences = JSON.parse(localStorage.getItem('userPreferences'));
     if (storedPreferences) {
-      setResponses(storedPreferences);
-      onClose();
+      // Assurez-vous que cette mise à jour d'état tient compte des préférences stockées
+      setResponses({
+        typePreference: storedPreferences.typePreference || [],
+        waitTimePreference: storedPreferences.waitTimePreference || '',
+      });
     }
-  }, [onClose]);
+  }, []);
+  
+
+  const recommendedAttractions = useMemo(() => {
+    if (!attractions || !responses.typePreference.length) return [];
+  
+    let maxWaitTime;
+    switch (responses.waitTimePreference) {
+      case 'Moins de 15 minutes': maxWaitTime = 15; break;
+      case '15-30 minutes': maxWaitTime = 30; break;
+      case '30-60 minutes': maxWaitTime = 60; break;
+      case 'Plus de 60 minutes': maxWaitTime = Infinity; break;
+      default: maxWaitTime = Infinity;
+    }
+  
+    return attractions.filter(attraction =>
+        (responses.typePreference.length === 0 || responses.typePreference.some(type => attraction.type.includes(type))) &&
+        attraction.waitTime <= maxWaitTime
+      );
+    }, [attractions, responses]);
+
+  const onSwipeLeft = useCallback(() => {
+    if (currentAttractionIndex < recommendedAttractions.length - 1) {
+      setCurrentAttractionIndex(current => current + 1);
+    }
+  }, [currentAttractionIndex, recommendedAttractions.length]);
+
+  const onSwipeRight = useCallback((attraction) => {
+    dispatch(toggleFavorite(attraction));
+    if (currentAttractionIndex < recommendedAttractions.length - 1) {
+      setCurrentAttractionIndex(current => current + 1);
+    }
+  }, [dispatch, currentAttractionIndex, recommendedAttractions.length]);
+
+  const handleAnswer = useCallback((answer, type) => {
+    setResponses(current => ({
+      ...current,
+      [type]: type === 'typePreference'
+        ? current.typePreference.includes(answer)
+          ? current.typePreference.filter(item => item !== answer)
+          : [...current.typePreference, answer]
+        : answer,
+    }));
+    setCurrentStep(current => current + 1);
+  }, []);
 
   useEffect(() => {
     if (currentStep === questions.length) {
       localStorage.setItem('userPreferences', JSON.stringify(responses));
     }
   }, [currentStep, responses]);
-
-  const handleAnswer = (answer, type) => {
-    if (type === 'typePreference') {
-      setResponses(current => ({
-        ...current,
-        typePreference: current.typePreference.includes(answer) ? current.typePreference.filter(item => item !== answer) : [...current.typePreference, answer],
-      }));
-    } else if (type === 'waitTimePreference') {
-      setResponses(current => ({
-        ...current,
-        waitTimePreference: answer,
-      }));
-    }
-    // Move to the next step for all types of questions, including 'intro'
-    setCurrentStep(current => current + 1);
-  };
-
-  const recommendedAttractions = useMemo(() => {
-    if (!attractions || responses.typePreference.length === 0) return [];
-  
-    let maxWaitTime;
-    switch (responses.waitTimePreference) {
-      case 'Moins de 15 minutes':
-        maxWaitTime = 15;
-        break;
-      case '15-30 minutes':
-        maxWaitTime = 30;
-        break;
-      case '30-60 minutes':
-        maxWaitTime = 60;
-        break;
-      case 'Plus de 60 minutes':
-        maxWaitTime = Infinity;
-        break;
-      default:
-        maxWaitTime = Infinity;
-    }
-  
-    // Filtre les attractions basé sur un critère OU pour le type et le temps d'attente
-    return attractions.filter(attraction =>
-      responses.typePreference.some(type => attraction.type.includes(type)) ||
-      attraction.waitTime <= maxWaitTime
-    );
-  }, [attractions, responses.typePreference, responses.waitTimePreference]);
-
-  const filteredAttractions = recommendedAttractions;
-
-  const onSwipeLeft = (attraction) => {
-    console.log('Pass', attraction.name);
-    moveToNextAttraction();
-  };
-
-  const onSwipeRight = useCallback((attraction) => {
-    console.log('Add to favorites', attraction.name);
-    dispatch(toggleFavorite(attraction));
-    moveToNextAttraction();
-  }, [dispatch]);
-
-  const moveToNextAttraction = () => {
-    if (currentAttractionIndex < filteredAttractions.length - 1) {
-      setCurrentAttractionIndex((currentIndex) => currentIndex + 1);
-    }
-    // Ne pas automatiquement fermer le popup pour laisser l'utilisateur fermer manuellement
-  };
+  const allAttractionsSwiped = currentAttractionIndex >= recommendedAttractions.length;
 
   return (
     <div className={styles.popupContainer}>
@@ -135,7 +118,8 @@ const PopupSurvey = ({ onClose, attractions }) => {
               <button
                 key={index}
                 onClick={() => handleAnswer(answer, questions[currentStep].type)}
-                className={`${styles.answerButton} ${responses.typePreference.includes(answer) ? styles.selected : ''}`}
+                className={`${styles.answerButton} ${(responses[questions[currentStep].type] || []).includes(answer) ? styles.selected : ''}`}
+
               >
                 {answer}
               </button>
@@ -144,16 +128,24 @@ const PopupSurvey = ({ onClose, attractions }) => {
         ) : (
           <>
             <h2>Attractions recommandées pour vous</h2>
-            {filteredAttractions.length > 0 && (
+            {recommendedAttractions.length > 0 ? (
+                <>
+                {!allAttractionsSwiped ?(
               <CardSwipe
-                attraction={filteredAttractions[currentAttractionIndex]}
-                onSwipeLeft={onSwipeLeft}
-                onSwipeRight={onSwipeRight}
+                key={recommendedAttractions[currentAttractionIndex].id}
+                attraction={recommendedAttractions[currentAttractionIndex]}
+                onSwipeLeft={() => onSwipeLeft()}
+                onSwipeRight={() => onSwipeRight(recommendedAttractions[currentAttractionIndex])}
               />
+                ) : ( 
+                    <p>Toutes les attractions recommandées ont été parcourues. Appuyez sur "Fermer" pour continuer.</p>
+                )}
+                </>
+            ) : (
+                <p>Aucune attraction disponible correspondant à vos préférences.</p>  
             )}
-            {currentAttractionIndex === filteredAttractions.length - 1 && (
-              <button onClick={onClose} className={styles.closeButton}>Fermer</button>
-            )}
+
+            <button onClick={onClose} className={styles.closeButton}>Fermer</button>
           </>
         )}
       </div>
