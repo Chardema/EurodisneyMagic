@@ -1,90 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from "../Navbar/Navbar";
-import BottomNav from "../mobileNavbar/mobileNavbar";
-import styles from './appHome.module.scss'; // Votre fichier CSS pour la page d'accueil
-import { useWindowWidth } from '../utils';
-import { formatImageName, importImage } from '../utils';
-import PopupSurvey from '../popupSurvey/popupSurvey';
-import backgroundImage from './../img/simphonyofcolor.jpg';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setFavorites, toggleFavorite } from "../redux/actions";
 import { RiDeleteBin7Fill } from "react-icons/ri";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as solidHeart, faHeart as regularHeart } from '@fortawesome/free-solid-svg-icons';
+import Navbar from "../Navbar/Navbar";
+import BottomNav from "../mobileNavbar/mobileNavbar";
+import PopupSurvey from '../popupSurvey/popupSurvey';
+import { setFavorites, toggleFavorite } from "../redux/actions";
+import { useSwipeable } from 'react-swipeable';
+import backgroundImage from './../img/simphonyofcolor.jpg';
+import styles from './appHome.module.scss';
 import { attractionNames, attractionImages } from "../Attractions/AttractionsPage";
+
+// Assuming useWindowWidth is a custom hook you've created:
+import { useWindowWidth } from '../utils';
+
+// Define the FavoriteCard component
+const FavoriteCard = ({ favorite, onRemove, getWaitTimeColor }) => {
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: () => onRemove(favorite),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true
+    });
+
+    return (
+        <div {...swipeHandlers} className={styles.attractionscard}>
+            <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
+            <h3>{favorite.name}</h3>
+            <div className={styles.infoanddelete}>
+                <div className={`${styles.waitTimeCircle} ${getWaitTimeColor(favorite)}`}>
+                    {favorite.status === 'CLOSED' ? 'Fermée' :
+                    favorite.status === 'DOWN' ? 'Indispo' :
+                    favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
+                </div>
+                <RiDeleteBin7Fill
+                    className={styles.removeIcon}
+                    onClick={() => onRemove(favorite)}
+                />
+            </div>
+        </div>
+    );
+};
 
 const HomePage = () => {
     const reduxFavorites = useSelector(state => state.favorites.favorites);
     const attractions = useSelector(state => state.attractions.attractions);
     const dispatch = useDispatch();
-    const width = useWindowWidth();
+    const width = useWindowWidth(); // This needs to be a hook that returns the current window width
     const [recommendedAttractions, setRecommendedAttractions] = useState([]);
-    const [showPopup, setShowPopup] = useState(true);
+    const [showPopup, setShowPopup] = useState(false);
 
     const updateFavorites = (favorites, attractions) => {
         return favorites.map(favorite => {
             const updatedAttraction = attractions.find(attr => attr.id === favorite.id);
-            return updatedAttraction
-                ? { ...favorite, waitTime: updatedAttraction.waitTime, status: updatedAttraction.status }
-                : favorite;
+            return updatedAttraction ? { ...favorite, waitTime: updatedAttraction.waitTime, status: updatedAttraction.status } : favorite;
         });
     };
 
-    const closePopup = (userPreferences) => {
-        // Traitez les préférences de l'utilisateur ici si nécessaire
-        setShowPopup(false);
-      };
-
-    const handleToggleFavorite = (attractionName) => {
-        // Trouvez l'attraction dans la liste complète des attractions pour obtenir tous ses détails
-        const attraction = attractions.find(attr => attr.name === attractionName);
-        if (attraction) {
-            dispatch(toggleFavorite(attraction));
-        }
-    };
-
-    useEffect(() => {
-        const updatedFavorites = updateFavorites(reduxFavorites, attractions);
-        console.log('Updated favorites:', updatedFavorites);
-
-        if (JSON.stringify(updatedFavorites) !== JSON.stringify(reduxFavorites)) {
-            console.log('Updating favorites');
-            dispatch(setFavorites(updatedFavorites));
-        }
-
-        // Vérifiez si les informations sur les attractions sont disponibles dans le cache
-        if (!attractions.length) {
-            setShowPopup(true); // Affichez la popup si les informations ne sont pas disponibles
-        }
-    }, [attractions, dispatch, reduxFavorites]);
-
-    useEffect(() => {
-        // Sélectionnez aléatoirement un nombre spécifique d'attractions recommandées
-        const numberOfRecommendedAttractions = 6;
-        const shuffledAttractionNames = attractionNames.sort(() => 0.5 - Math.random());
-        const selectedAttractions = shuffledAttractionNames.slice(0, numberOfRecommendedAttractions);
-
-        // Mettez à jour l'état pour afficher les attractions recommandées
-        setRecommendedAttractions(selectedAttractions);
-    }, []);
-
     const removeFavorite = (favorite) => {
         const updatedFavorites = reduxFavorites.filter(fav => fav.id !== favorite.id);
-        dispatch(setFavorites(updatedFavorites)); // Mettre à jour les favoris sans déclencher à nouveau le composant
-    };
-
-    const handleUserPreference = (preference) => {
-        // Traitez la préférence de l'utilisateur ici
-        console.log('User preference:', preference);
-        setShowPopup(false); // Masquez la popup après avoir traité la préférence de l'utilisateur
+        dispatch(setFavorites(updatedFavorites));
     };
 
     const getWaitTimeColor = (attraction) => {
-        if (attraction.status === 'CLOSED') {
-            return styles.gray;
-        } else if (attraction.status === 'DOWN') {
+        if (attraction.status === 'CLOSED' || attraction.status === 'DOWN') {
             return styles.gray;
         } else if (attraction.waitTime <= 15) {
             return styles.green;
@@ -92,6 +72,30 @@ const HomePage = () => {
             return styles.yellow;
         } else {
             return styles.red;
+        }
+    };
+
+    useEffect(() => {
+        const updatedFavorites = updateFavorites(reduxFavorites, attractions);
+        if (JSON.stringify(updatedFavorites) !== JSON.stringify(reduxFavorites)) {
+            dispatch(setFavorites(updatedFavorites));
+        }
+    }, [attractions, dispatch, reduxFavorites]);
+
+    useEffect(() => {
+        const shuffledAttractionNames = attractionNames.sort(() => 0.5 - Math.random());
+        const selectedAttractions = shuffledAttractionNames.slice(0, 6);
+        setRecommendedAttractions(selectedAttractions);
+    }, []);
+
+    const closePopup = () => {
+        setShowPopup(false);
+    };
+
+    const handleToggleFavorite = (attractionName) => {
+        const attraction = attractions.find(attr => attr.name === attractionName);
+        if (attraction) {
+            dispatch(toggleFavorite(attraction));
         }
     };
 
@@ -108,56 +112,26 @@ const HomePage = () => {
                     {reduxFavorites.length > 0 ? (
                         <div className={styles.attractionsSection}>
                             {reduxFavorites.map(favorite => (
-                                <div key={favorite.id} className={styles.attractionscard}>
-                                    <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
-                                    <h3>{favorite.name}</h3>
-                                    <div className={styles.infoanddelete}>
-                                        <div className={`${styles.waitTimeCircle} ${getWaitTimeColor(favorite)}`}>
-                                            {favorite.status === 'CLOSED' ? 'Fermée' :
-                                                favorite.status === 'DOWN' ? 'Indispo' :
-                                                    favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
-                                        </div>
-                                        <RiDeleteBin7Fill
-                                            className={`${styles.removeIcon} ${styles.favoriteIcon}`}
-                                            onClick={() => removeFavorite(favorite)}
-                                        />
-                                    </div>
-                                </div>
+                                <FavoriteCard
+                                    key={favorite.id}
+                                    favorite={favorite}
+                                    onRemove={removeFavorite}
+                                    getWaitTimeColor={getWaitTimeColor}
+                                />
                             ))}
                         </div>
                     ) : (
-                        <div className={styles.allBlock}>
-                            <div className={styles.noFavoritesMessage}>
-                                <p>Vous n'avez pas encore de favoris.</p>
-                                <Link to="/attractions" className={styles.linkButton}>
-                                    Ajoutez votre première attraction
-                                </Link>
-                            </div>
-                            <div className={styles.randomBlock}>
-                        <h2>Ajoutez votre première attraction:</h2>
-                        <div className={styles.randomAttractionsContainer}>
-                            {recommendedAttractions.map((attractionName, index) => (
-                                <div key={index} className={styles.randomAttractions}>
-                                    <img src={attractionImages[attractionName]} alt={attractionName} className={styles.randomAttractionsImage} />
-                                    <p className={styles.randomAttractionsName}>{attractionName}</p>
-                                    <button onClick={() => handleToggleFavorite(attractionName)}>
-                                        {reduxFavorites.some(fav => fav.name === attractionName) ? (
-                                            <FontAwesomeIcon icon={solidHeart} />
-                                        ) : (
-                                            <FontAwesomeIcon icon={regularHeart} />
-                                        )}
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                        <div className={styles.noFavoritesMessage}>
+                            <p>Vous n'avez pas encore de favoris.</p>
+                            <Link to="/attractions" className={styles.linkButton}>
+                                Ajoutez votre première attraction
+                            </Link>
                         </div>
                     )}
                 </div>
             </div>
-            <BottomNav />
+            {width <= 768 && <BottomNav />}
             {showPopup && <PopupSurvey onClose={closePopup} attractions={attractions} />}
-
         </div>
     );
 };
