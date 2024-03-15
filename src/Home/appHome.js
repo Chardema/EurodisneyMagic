@@ -18,14 +18,37 @@ import { useWindowWidth } from '../utils';
 
 // Define the FavoriteCard component
 const FavoriteCard = ({ favorite, onRemove, getWaitTimeColor }) => {
-    const swipeHandlers = useSwipeable({
-        onSwipedLeft: () => onRemove(favorite),
-        preventDefaultTouchmoveEvent: true,
-        trackMouse: true
+    const [swipeProgress, setSwipeProgress] = useState(0);
+    const [swipeAction, setSwipeAction] = useState(false);
+
+    const handlers = useSwipeable({
+        onSwiping: (eventData) => {
+            const progress = Math.abs(eventData.deltaX);
+            setSwipeProgress(progress);
+            setSwipeAction(eventData.dir === 'Left');
+        },
+        onSwiped: (eventData) => {
+            if (swipeAction && swipeProgress > window.innerWidth * 0.25) {
+                onRemove(favorite);
+            }
+            setSwipeProgress(0);
+            setSwipeAction(false);
+        },
+        trackMouse: true,
     });
 
+    const indicatorStyle = {
+        width: swipeAction ? `${Math.min(swipeProgress / window.innerWidth * 100 * 2, 100)}%` : '0%',
+        opacity: swipeAction ? 1 : 0,
+    };
+
     return (
-        <div {...swipeHandlers} className={styles.attractionscard}>
+        <div {...handlers} className={styles.attractionscard}>
+            <div className={styles.deleteIndicator} style={indicatorStyle}>
+                <div className={styles.deleteIndicatorContent}>
+                    Supprimer
+                </div>
+            </div>
             <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
             <h3>{favorite.name}</h3>
             <div className={styles.infoanddelete}>
@@ -34,10 +57,6 @@ const FavoriteCard = ({ favorite, onRemove, getWaitTimeColor }) => {
                     favorite.status === 'DOWN' ? 'Indispo' :
                     favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
                 </div>
-                <RiDeleteBin7Fill
-                    className={styles.removeIcon}
-                    onClick={() => onRemove(favorite)}
-                />
             </div>
         </div>
     );
