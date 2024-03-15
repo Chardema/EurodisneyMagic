@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { RiDeleteBin7Fill } from "react-icons/ri";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import Navbar from "../Navbar/Navbar";
 import BottomNav from "../mobileNavbar/mobileNavbar";
 import PopupSurvey from '../popupSurvey/popupSurvey';
-import { setFavorites, toggleFavorite } from "../redux/actions";
+import { setFavorites } from "../redux/actions";
 import { useSwipeable } from 'react-swipeable';
 import backgroundImage from './../img/simphonyofcolor.jpg';
 import styles from './appHome.module.scss';
@@ -117,7 +114,7 @@ const HomePage = () => {
     const shuffledAttractionNames = [...attractionNames].sort(() => 0.5 - Math.random());
     const selectedAttractions = shuffledAttractionNames.slice(0, 6);
     // Assuming setRecommendedAttractions is used to set state somewhere in this component or its children
-  }, [attractionNames]);
+  }, []);
 
   useEffect(() => {
     // Vérifiez si userPreferences existe dans le localStorage
