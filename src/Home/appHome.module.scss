@@ -7,34 +7,22 @@
   color: #333;
 }
 
-h3 {
-  flex-grow: 1;
-  margin: 0 10px; /* Espace entre le titre et l'image/le cercle d'attente */
-  font-size: 1rem; /* Taille de police pour le titre */
-  color: #333;
-}
-
-.topcontainer {
+.topcontainer, .bottomcontainer {
   position: relative;
   overflow: hidden;
   width: 100%;
-  .heroSection {
-    position: relative;
-    width: 100%;
-    height: 300px; // Ou la hauteur que vous souhaitez pour votre image de fond
-    .heroImage {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
 }
-.bottomcontainer p {
-  text-align: center;
+
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 300px; /* Ajustez la hauteur selon vos besoins */
 }
-.bottomcontainer h2 {
-  text-align: center;
-  margin-bottom: 18px;
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .content {
@@ -43,21 +31,15 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  padding: 20px;
 }
 
-.attractionsSection {
+.attractionsSection, .randomAttractionsContainer {
   width: 100%;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.attractionsSection h3 {
-  padding-top: 10px;
 }
 
 .linkButton {
@@ -68,54 +50,10 @@ h3 {
   text-decoration: none;
   border-radius: 5px;
   transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
 }
 
-.attractionsSection {
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.attractionsSection h2 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-}
-.randomAttractions {
-    display: inline-grid;
-    justify-content: space-around;
-    align-items: center;
-    background-color: white;
-    margin-right: 10px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-.randomAttractionsContainer {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.randomAttractionsImage {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-.randomBlock{
-  padding: 30px;
+.linkButton:hover {
+  background-color: #0056b3;
 }
 
 .attractionscard {
@@ -126,213 +64,94 @@ h3 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin-bottom: 20px;
+  transition: transform 0.3s ease;
   position: relative;
+  width: calc(100% - 20px); /* Pour l'espacement */
   padding: 10px;
   transition: box-shadow 0.3s ease;
 }
-.attractionscard:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-.attractionscard::before {
-  content: '';
+
+.deleteIndicator {
   position: absolute;
-  top: 0;
   right: 0;
+  top: 0;
   bottom: 0;
+  width: 0%; /* Commence caché */
+  background-color: rgba(255, 0, 0, 0.7); /* Rouge semi-transparent */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Alignez le texte à droite */
+  padding-right: 20px; /* Espace pour le texte à partir du bord droit */
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: width 0.3s ease;
+  pointer-events: none;
+}
+
+.deleteIndicatorContent {
+  opacity: 0; /* Commence caché */
+  transition: opacity 0.3s ease;
+  white-space: nowrap; /* Empêche le texte de passer à la ligne */
+}
+
+/* Affichage conditionnel lors du swipe */
+.swiping-to-delete:before {
+  content: "Supprimer";
+  position: absolute;
   left: 0;
-  background-color: red; /* Ou une couleur d'arrière-plan d'effacement qui correspond à votre design */
-  z-index: -1;
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.3s ease-out;
-}
-
-/* Lorsqu'une carte est activée pour le swipe, scale le pseudo-élément */
-.attractionscard.swipe-active::before {
-  transform: scaleX(1);
-}
-
-.allBlock {
-  width: 90%;
-}
-
-.attractionsSection h3 {
-  font-size: 18px;
-  color: #333;
-}
-
-.attractionsSection p {
-  font-size: 16px;
-  color: #666;
-}
-.favoriteAttraction {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.7); /* Fond rouge semi-transparent */
+  color: #fff;
   display: flex;
   align-items: center;
-}
-.waitTimeCircle {
-  margin-right: 10px; /* Espace entre le cercle d'attente et l'icône de suppression */
-  padding: 5px; /* Espace intérieur pour le cercle d'attente */
-  display: flex;
   justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  font-size: 0.875rem; /* Taille de police pour le texte à l'intérieur du cercle */
-  width: 40px; /* Taille du cercle d'attente */
-  height: 40px; /* Taille du cercle d'attente */
-  flex-shrink: 0;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
 }
 
-.green {
-  background-color: #008000;
+.swiping-to-delete:before {
+  opacity: 1;
 }
 
-.yellow {
-  background-color: orange;
-}
-
-.red {
-  background-color: #FF0000;
-}
-
-.gray {
-  background-color: #808080;
-}
-.favoriteImage {
-  width: 100px; /* Taille de l'image */
-  height: 100px; /* Taille de l'image */
-  object-fit: cover;
-  border-radius: 10px;
+.waitTimeCircle, .removeIcon {
   margin-right: 10px;
 }
 
-.noFavoritesMessage {
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.favoriteImage {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 10px;
 }
 
 .infoanddelete {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  flex-grow: 1;
 }
+
 .removeIcon {
-  font-size: 1.5rem; /* Taille de l'icône de suppression */
-  color: #FF0000; /* Couleur de l'icône de suppression */
+  font-size: 24px;
+  color: #FF0000;
   cursor: pointer;
-  transition: color 0.3s ease;
 }
 
 .removeIcon:hover {
-  color: #CC0000; /* Couleur de l'icône de suppression au survol */
+  color: #CC0000;
 }
 
-.popupContainer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent pour l'effet de superposition */
-}
-
-.popup {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  text-align: center;
-}
-
-.popup p {
-  margin-bottom: 10px;
-}
-
-.popup button {
-  margin: 0 5px;
-  padding: 8px 16px;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.popup button:hover {
-  background-color: #0056b3;
-}
-
-.randomAttractions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 10px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.randomAttractions:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.randomAttractionsImage {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: opacity 0.2s ease;
-}
-
-.randomAttractionsImage:hover {
-  opacity: 0.9;
-}
-
-.randomAttractionsName {
-  margin: 10px 0;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.favoriteButton {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 5px;
-  margin-bottom: 10px;
-}
-
-.favoriteButton:focus {
-  outline: none;
-}
-
-/* Style for the heart icons */
-.fa-heart {
-  color: #db2e2e;
-  transition: color 0.3s ease;
-}
-
-.fa-heart:hover {
-  color: #bf2626;
-}
-
+/* Adaptations responsives */
 @media (max-width: 768px) {
-
-  .noFavoritesMessage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
+  .homePage, .topcontainer, .bottomcontainer, .content, .attractionsSection {
+    padding: 10px;
   }
 
+  .heroSection {
+    height: 200px; /* Hauteur ajustée pour les appareils mobiles */
+  }
 }
-
