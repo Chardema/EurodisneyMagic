@@ -5,6 +5,7 @@ import { TbRollercoaster } from 'react-icons/tb';
 import { useDispatch } from 'react-redux';
 import { toggleFavorite } from '../redux/actions';
 import { attractionImages } from "../Attractions/AttractionsPage";
+import CardSwipe from '../CardSwipe/CardSwipe';
 
 const questionIcons = {
   0: <FaHome className={styles.icon} />,
@@ -43,6 +44,7 @@ const PopupSurvey = ({ onClose, attractions }) => {
     waitTimePreference: '',
   });
   const dispatch = useDispatch();
+  const [currentAttractionIndex, setCurrentAttractionIndex] = useState(0);
 
   useEffect(() => {
     const storedPreferences = JSON.parse(localStorage.getItem('userPreferences'));
@@ -102,6 +104,26 @@ const PopupSurvey = ({ onClose, attractions }) => {
     ).slice(0, 3); // Limite les résultats aux 3 premiers
   };
 
+  const filteredAttractions = recommendedAttractions();
+
+  const onSwipeLeft = (attraction) => {
+    console.log('Pass', attraction.name);
+    moveToNextAttraction();
+  };
+
+  const onSwipeRight = (attraction) => {
+    console.log('Add to favorites', attraction.name);
+    dispatch(toggleFavorite(attraction));
+    moveToNextAttraction();
+  };
+
+  const moveToNextAttraction = () => {
+    if (currentAttractionIndex < filteredAttractions.length - 1) {
+      setCurrentAttractionIndex((currentIndex) => currentIndex + 1);
+    }
+    // Ne pas automatiquement fermer le popup pour laisser l'utilisateur fermer manuellement
+  };
+
   return (
     <div className={styles.popupContainer}>
       <div className={styles.popup}>
@@ -122,15 +144,16 @@ const PopupSurvey = ({ onClose, attractions }) => {
         ) : (
           <>
             <h2>Attractions recommandées pour vous</h2>
-            {recommendedAttractions().map(attraction => (
-              <div key={attraction.id} className={styles.attractionRecommendation}>
-                <img src={attractionImages[attraction.name]} alt={attraction.name} className={styles.attractionImage} />
-                <h3>{attraction.name}</h3>
-                <p>Temps d'attente: {attraction.waitTime} minutes</p>
-                <button onClick={() => dispatch(toggleFavorite(attraction))}>Ajouter aux favoris</button>
-              </div>
-            ))}
-            <button onClick={onClose} className={styles.closeButton}>Fermer</button>
+            {filteredAttractions.length > 0 && (
+              <CardSwipe
+                attraction={filteredAttractions[currentAttractionIndex]}
+                onSwipeLeft={onSwipeLeft}
+                onSwipeRight={onSwipeRight}
+              />
+            )}
+            {currentAttractionIndex === filteredAttractions.length - 1 && (
+              <button onClick={onClose} className={styles.closeButton}>Fermer</button>
+            )}
           </>
         )}
       </div>
