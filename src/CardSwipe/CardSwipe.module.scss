@@ -1,23 +1,35 @@
 .card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    cursor: grab;
-  }
-  
-  .image {
-    width: 100%;
-    height: auto; // Ajustez selon vos besoins pour garder le ratio de l'image
-  }
-  
-  .title {
-    padding: 10px;
-    text-align: center;
-  }
-  
-  
-  /* Ajoutez des styles pour les animations ou transitions de swipe ici */
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  transition: background-color 0.5s ease;
+}
+
+.swipeLeft .imageWrapper {
+  transform: translateX(-100%);
+  background-color: rgba(255, 0, 0, 0.5); /* Rouge transparent */
+}
+
+.swipeRight .imageWrapper {
+  transform: translateX(100%);
+  background-color: rgba(0, 255, 0, 0.5); /* Vert transparent */
+}
+
+.image {
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s ease-in-out;
+}
+
+h3 {
+  padding : 10px;
+}
