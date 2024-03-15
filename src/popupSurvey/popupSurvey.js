@@ -76,18 +76,30 @@ const PopupSurvey = ({ onClose, attractions }) => {
 
   const recommendedAttractions = () => {
     if (!attractions || responses.typePreference.length === 0) return [];
+  
     let maxWaitTime;
     switch (responses.waitTimePreference) {
-      case 'Moins de 15 minutes': maxWaitTime = 15; break;
-      case '15-30 minutes': maxWaitTime = 30; break;
-      case '30-60 minutes': maxWaitTime = 60; break;
-      case 'Plus de 60 minutes': maxWaitTime = Infinity; break;
-      default: maxWaitTime = Infinity;
+      case 'Moins de 15 minutes':
+        maxWaitTime = 15;
+        break;
+      case '15-30 minutes':
+        maxWaitTime = 30;
+        break;
+      case '30-60 minutes':
+        maxWaitTime = 60;
+        break;
+      case 'Plus de 60 minutes':
+        maxWaitTime = Infinity;
+        break;
+      default:
+        maxWaitTime = Infinity;
     }
-
+  
+    // Filtre les attractions basé sur un critère OU pour le type et le temps d'attente
     return attractions.filter(attraction =>
-      responses.typePreference.some(type => attraction.type.includes(type)) && attraction.waitTime <= maxWaitTime
-    ).slice(0, 3);
+      responses.typePreference.some(type => attraction.type.includes(type)) ||
+      attraction.waitTime <= maxWaitTime
+    ).slice(0, 3); // Limite les résultats aux 3 premiers
   };
 
   return (
