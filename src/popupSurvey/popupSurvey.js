@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './popupSurvey.module.scss';
-import { FaClock, FaHome, FaLaughBeam } from 'react-icons/fa';
+import { FaClock, FaHome, FaLaughBeam, FaHeart, FaTimesCircle } from 'react-icons/fa';
 import { TbRollercoaster } from 'react-icons/tb';
 import { useDispatch } from 'react-redux';
 import { toggleFavorite } from '../redux/actions';
 import CardSwipe from '../CardSwipe/CardSwipe';
+import { attractionImages } from '../Attractions/AttractionsPage';
 
 const questionIcons = {
   0: <FaHome className={styles.icon} />,
@@ -44,18 +45,17 @@ const PopupSurvey = ({ onClose, attractions }) => {
   });
   const [currentAttractionIndex, setCurrentAttractionIndex] = useState(0);
   const dispatch = useDispatch();
+  const [hasSwipedAllAttractions, setHasSwipedAllAttractions] = useState(false);
 
   useEffect(() => {
     const storedPreferences = JSON.parse(localStorage.getItem('userPreferences'));
     if (storedPreferences) {
-      // Assurez-vous que cette mise à jour d'état tient compte des préférences stockées
       setResponses({
         typePreference: storedPreferences.typePreference || [],
         waitTimePreference: storedPreferences.waitTimePreference || '',
       });
     }
   }, []);
-  
 
   const recommendedAttractions = useMemo(() => {
     if (!attractions || !responses.typePreference.length) return [];
@@ -73,11 +73,13 @@ const PopupSurvey = ({ onClose, attractions }) => {
         (responses.typePreference.length === 0 || responses.typePreference.some(type => attraction.type.includes(type))) &&
         attraction.waitTime <= maxWaitTime
       );
-    }, [attractions, responses]);
+  }, [attractions, responses]);
 
   const onSwipeLeft = useCallback(() => {
     if (currentAttractionIndex < recommendedAttractions.length - 1) {
       setCurrentAttractionIndex(current => current + 1);
+    } else {
+      setHasSwipedAllAttractions(true);
     }
   }, [currentAttractionIndex, recommendedAttractions.length]);
 
@@ -85,6 +87,8 @@ const PopupSurvey = ({ onClose, attractions }) => {
     dispatch(toggleFavorite(attraction));
     if (currentAttractionIndex < recommendedAttractions.length - 1) {
       setCurrentAttractionIndex(current => current + 1);
+    } else {
+      setHasSwipedAllAttractions(true);
     }
   }, [dispatch, currentAttractionIndex, recommendedAttractions.length]);
 
@@ -105,7 +109,6 @@ const PopupSurvey = ({ onClose, attractions }) => {
       localStorage.setItem('userPreferences', JSON.stringify(responses));
     }
   }, [currentStep, responses]);
-  const allAttractionsSwiped = currentAttractionIndex >= recommendedAttractions.length;
 
   return (
     <div className={styles.popupContainer}>
@@ -119,7 +122,6 @@ const PopupSurvey = ({ onClose, attractions }) => {
                 key={index}
                 onClick={() => handleAnswer(answer, questions[currentStep].type)}
                 className={`${styles.answerButton} ${(responses[questions[currentStep].type] || []).includes(answer) ? styles.selected : ''}`}
-
               >
                 {answer}
               </button>
@@ -128,23 +130,25 @@ const PopupSurvey = ({ onClose, attractions }) => {
         ) : (
           <>
             <h2>Attractions recommandées pour vous</h2>
-            {recommendedAttractions.length > 0 ? (
-                <>
-                {!allAttractionsSwiped ?(
-              <CardSwipe
-                key={recommendedAttractions[currentAttractionIndex].id}
-                attraction={recommendedAttractions[currentAttractionIndex]}
-                onSwipeLeft={() => onSwipeLeft()}
-                onSwipeRight={() => onSwipeRight(recommendedAttractions[currentAttractionIndex])}
-              />
-                ) : ( 
-                    <p>Toutes les attractions recommandées ont été parcourues. Appuyez sur "Fermer" pour continuer.</p>
-                )}
-                </>
+            {recommendedAttractions.length > 0 && !hasSwipedAllAttractions ? (
+              <>
+                <CardSwipe
+                  key={recommendedAttractions[currentAttractionIndex].id}
+                  attraction={{ 
+                    ...recommendedAttractions[currentAttractionIndex],
+                    image: attractionImages[recommendedAttractions[currentAttractionIndex].name]
+                  }}
+                  onSwipeLeft={onSwipeLeft}
+                  onSwipeRight={() => onSwipeRight(recommendedAttractions[currentAttractionIndex])}
+                />
+                <div className={styles.actionButtons}>
+                  <FaTimesCircle className={styles.passIcon} onClick={onSwipeLeft} />
+                  <FaHeart className={styles.favoriteIcon} onClick={() => onSwipeRight(recommendedAttractions[currentAttractionIndex])} />
+                </div>
+              </>
             ) : (
-                <p>Aucune attraction disponible correspondant à vos préférences.</p>  
+              <p>Toutes les attractions recommandées ont été parcourues. Appuyez sur "Fermer" pour continuer.</p>
             )}
-
             <button onClick={onClose} className={styles.closeButton}>Fermer</button>
           </>
         )}

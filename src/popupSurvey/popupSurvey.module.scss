@@ -23,6 +23,9 @@
   }
   
   .popup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -47,6 +50,7 @@
   }
   
   .attractionRecommendation img {
+    border-radius: 10px;
     width: 100px; /* Ajusté pour mieux montrer l'image */
     height: 75px; /* Ajusté pour garder le rapport */
     object-fit: cover;
@@ -100,4 +104,35 @@
     margin-bottom: 20px;
     font-size: 48px;
   }
+
+  .actionButtons {
+    display: flex;
+    justify-content: center;
+    gap: 50px; /* Ajustez l'espacement selon vos besoins */
+    margin-bottom: 20px; /* Espace avant le bouton Fermer */
+  }
+  
+  .passIcon, .favoriteIcon {
+    cursor: pointer;
+    font-size: 50px; /* Ajustez la taille selon vos besoins */
+  }
+  
+  .favoriteIcon {
+    color: red; /* Cœur en rouge */
+    /* Pour ajouter un cercle autour de l'icône, vous pouvez utiliser un pseudo-élément ou un wrapper */
+  }
+  
+  /* Exemple d'ajout d'un cercle autour de l'icône de cœur */
+  .favoriteIcon::before {
+    content: '';
+    position: absolute;
+    top: -5px; /* Ajustez selon la taille de l'icône */
+    left: -5px;
+    width: 34px; /* Ajustez selon la taille de l'icône */
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid red; /* Cercle rouge */
+    z-index: -1;
+  }
+  
   
