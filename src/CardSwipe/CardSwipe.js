@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSwipeable } from 'react-swipeable';
-import styles from './CardSwipe.module.scss'; // Assurez-vous de créer ce fichier CSS
+import styles from './CardSwipe.module.scss'; // Assurez-vous de créer ou d'ajuster ce fichier CSS
 
 const CardSwipe = ({ attraction, onSwipeLeft, onSwipeRight }) => {
   const handlers = useSwipeable({
@@ -13,12 +13,10 @@ const CardSwipe = ({ attraction, onSwipeLeft, onSwipeRight }) => {
   return (
     <div {...handlers} className={styles.card}>
       <img src={attraction.image} alt={attraction.name} className={styles.image} />
-      <div className={styles.details}>
-        <h3>{attraction.name}</h3>
-        <p>Temps d'attente: {attraction.waitTime} minutes</p>
-      </div>
+      <h3 className={styles.title}>{attraction.name}</h3>
     </div>
   );
 };
 
 export default CardSwipe;
+
