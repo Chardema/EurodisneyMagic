@@ -4,7 +4,7 @@ import { FaClock, FaHome, FaLaughBeam } from 'react-icons/fa';
 import { TbRollercoaster } from 'react-icons/tb';
 import { useDispatch } from 'react-redux';
 import { toggleFavorite } from '../redux/actions';
-import { attractionNames, attractionImages } from "../Attractions/AttractionsPage";
+import { attractionImages } from "../Attractions/AttractionsPage";
 
 const questionIcons = {
   0: <FaHome className={styles.icon} />,
@@ -45,11 +45,18 @@ const PopupSurvey = ({ onClose, attractions }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const storedPreferences = localStorage.getItem('userPreferences');
+    const storedPreferences = JSON.parse(localStorage.getItem('userPreferences'));
     if (storedPreferences) {
+      setResponses(storedPreferences);
       onClose();
     }
   }, [onClose]);
+
+  useEffect(() => {
+    if (currentStep === questions.length) {
+      localStorage.setItem('userPreferences', JSON.stringify(responses));
+    }
+  }, [currentStep, responses]);
 
   const handleAnswer = (answer, type) => {
     if (type === 'typePreference') {
