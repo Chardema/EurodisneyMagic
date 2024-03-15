@@ -1,3 +1,38 @@
+@keyframes swipeHint {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.swipeHintAnimation {
+  animation: swipeHint 1s ease-in-out infinite;
+}
+
+.waitTimeCircle.green {
+  background-color: #4CAF50; /* Vert pour les faibles temps d'attente */
+}
+
+.waitTimeCircle.yellow {
+  background-color: #FFEB3B; /* Jaune pour les temps d'attente moyens */
+}
+
+.waitTimeCircle.red {
+  background-color: #F44336; /* Rouge pour les longs temps d'attente */
+}
+
+.waitTimeCircle.gray {
+  background-color: #9E9E9E; /* Gris pour les attractions fermées ou en panne */
+}
+
 .homePage {
   display: flex;
   flex-direction: column;
@@ -16,7 +51,7 @@
 .heroSection {
   position: relative;
   width: 100%;
-  height: 300px; /* Ajustez la hauteur selon vos besoins */
+  height: 300px;
 }
 
 .heroImage {
@@ -34,40 +69,44 @@
   padding-top: 20px;
 }
 
-.attractionsSection, .randomAttractionsContainer {
-  width: 100%;
+.attractionsSection {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
-}
-
-.linkButton {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #007BFF;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.linkButton:hover {
-  background-color: #0056b3;
+  gap: 20px;
 }
 
 .attractionscard {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  margin-bottom: 20px;
-  transition: transform 0.3s ease;
   position: relative;
-  padding: 10px;
-  transition: box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 10px;
+  padding: 20px;
+  width: calc(100% - 20px); /* Adjust for mobile */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.attractionscard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 768px) {
+  .attractionscard {
+    width: calc(50% - 20px); /* Adjust for tablets */
+  }
+}
+
+@media (min-width: 1024px) {
+  .attractionscard {
+    width: calc(33.333% - 20px); /* Adjust for desktop */
+  }
 }
 
 .deleteIndicator {
@@ -75,41 +114,56 @@
   right: 0;
   top: 0;
   bottom: 0;
-  width: 0%; /* Commence caché */
-  background-color: rgba(255, 0, 0, 0.7); /* Rouge semi-transparent */
+  width: 0%;
+  background-color: rgba(255, 0, 0, 0.7);
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Alignez le texte à droite */
-  padding-right: 20px; /* Espace pour le texte à partir du bord droit */
+  justify-content: center;
+  padding-right: 20px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, opacity 0.3s ease;
   pointer-events: none;
 }
 
 .deleteIndicatorContent {
-  opacity: 0; /* Commence caché */
+  opacity: 0;
   transition: opacity 0.3s ease;
-  white-space: nowrap; /* Empêche le texte de passer à la ligne */
-}
-
-.waitTimeCircle, .removeIcon {
-  margin-right: 10px;
+  white-space: nowrap;
 }
 
 .favoriteImage {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 200px;
   object-fit: cover;
   border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.waitTimeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.waitTimeCircle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 0.875rem;
+  width: 50px;
+  height: 50px;
   margin-right: 10px;
 }
 
-.infoanddelete {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-grow: 1;
+.waitTimeText {
+  font-size: 1rem;
+  color: #333;
 }
 
 .removeIcon {
@@ -122,9 +176,21 @@
   color: #CC0000;
 }
 
-/* Adaptations responsives */
+.linkButton {
+  padding: 10px 20px;
+  background: linear-gradient(45deg, #007BFF, #0056b3);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.linkButton:hover {
+  background-color: #0056b3;
+}
+
 @media (max-width: 768px) {
-  .heroSection {
-    height: 200px; /* Hauteur ajustée pour les appareils mobiles */
+  .bottomcontainer {
+    margin-bottom: 80px; /* Adjust this value based on your mobile navbar's height */
   }
 }
