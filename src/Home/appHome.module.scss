@@ -7,6 +7,13 @@
   color: #333;
 }
 
+h3 {
+  flex-grow: 1;
+  margin: 0 10px; /* Espace entre le titre et l'image/le cercle d'attente */
+  font-size: 1rem; /* Taille de police pour le titre */
+  color: #333;
+}
+
 .topcontainer {
   position: relative;
   overflow: hidden;
@@ -21,30 +28,6 @@
       object-fit: cover;
     }
   }
-}
-.bottomcontainer {
-  .content {
-    background-color: transparent; // fond transparent pour montrer l'image
-    // Autres styles...
-
-    .attractionsSection {
-      background-color: #fff; // ou tout autre couleur de fond pour les cartes
-      border-radius: 20px; // Bordures arrondies pour les cartes individuelles
-      margin: -20px auto 0; // Négatif margin pour chevaucher le bord arrondi du heroSection
-      width: calc(100% - 40px); // Ajustez la largeur pour prendre en compte le padding
-      padding: 20px; // Ajustez selon votre contenu
-      // Autres styles...
-    }
-  }
-}
-.bottomcontainer {
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 .bottomcontainer p {
   text-align: center;
@@ -136,13 +119,37 @@
 }
 
 .attractionscard {
-  justify-content: space-between;
+  display: flex;
   align-items: center;
+  background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  background-color: white;
-  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: relative;
+  padding: 10px;
+  transition: box-shadow 0.3s ease;
+}
+.attractionscard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.attractionscard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: red; /* Ou une couleur d'arrière-plan d'effacement qui correspond à votre design */
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease-out;
+}
+
+/* Lorsqu'une carte est activée pour le swipe, scale le pseudo-élément */
+.attractionscard.swipe-active::before {
+  transform: scaleX(1);
 }
 
 .allBlock {
@@ -163,16 +170,15 @@
   align-items: center;
 }
 .waitTimeCircle {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #007BFF;
-  color: #fff;
+  margin-right: 10px; /* Espace entre le cercle d'attente et l'icône de suppression */
+  padding: 5px; /* Espace intérieur pour le cercle d'attente */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
-  margin-right: 10px;
+  border-radius: 50%;
+  font-size: 0.875rem; /* Taille de police pour le texte à l'intérieur du cercle */
+  width: 40px; /* Taille du cercle d'attente */
+  height: 40px; /* Taille du cercle d'attente */
   flex-shrink: 0;
 }
 
@@ -192,36 +198,35 @@
   background-color: #808080;
 }
 .favoriteImage {
-  width: 100px;
-  height: 100px;
-  margin-right: 10px;
-  margin-left: 10px;
+  width: 100px; /* Taille de l'image */
+  height: 100px; /* Taille de l'image */
   object-fit: cover;
   border-radius: 10px;
+  margin-right: 10px;
 }
+
 .noFavoritesMessage {
+  padding-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-// Ajoutez ce style à votre feuille de style (appHome.module.scss)
-.infoanddelete{
+.infoanddelete {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 .removeIcon {
-  font-size: 24px; // Ajustez la taille de l'icône en conséquence
+  font-size: 1.5rem; /* Taille de l'icône de suppression */
+  color: #FF0000; /* Couleur de l'icône de suppression */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
 
-  color: #FF0000; // Couleur de l'icône pour la suppression (rouge)
-  cursor: pointer; // Afficher le curseur de type main pour indiquer que c'est cliquable
-  margin-left: 10px; // Espacement à gauche pour séparer l'icône du texte
-  transition: color 0.3s ease; // Transition de couleur lors du survol
-
-  &:hover {
-    color: #FF3333; // Couleur de l'icône au survol (rouge légèrement plus clair)
-  }
+.removeIcon:hover {
+  color: #CC0000; /* Couleur de l'icône de suppression au survol */
 }
 
 .popupContainer {
