@@ -9,8 +9,8 @@ import { attractionImages } from '../Attractions/AttractionsPage';
 
 const questionIcons = {
   0: <FaHome className={styles.icon} />,
-  1: <TbRollercoaster className={styles.icon} />,
-  2: <FaLaughBeam className={styles.icon} />,
+  2: <TbRollercoaster className={styles.icon} />,
+  1: <FaLaughBeam className={styles.icon} />,
   3: <FaClock className={styles.icon} />,
 };
 
