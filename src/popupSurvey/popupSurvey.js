@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './popupSurvey.module.scss';
 import { FaClock, FaHome, FaLaughBeam } from 'react-icons/fa';
 import { TbRollercoaster } from 'react-icons/tb';
 import { useDispatch } from 'react-redux';
 import { toggleFavorite } from '../redux/actions';
-import { attractionImages } from "../Attractions/AttractionsPage";
 import CardSwipe from '../CardSwipe/CardSwipe';
+import { useMemo } from 'react';
 
 const questionIcons = {
   0: <FaHome className={styles.icon} />,
@@ -76,7 +76,7 @@ const PopupSurvey = ({ onClose, attractions }) => {
     setCurrentStep(current => current + 1);
   };
 
-  const recommendedAttractions = () => {
+  const recommendedAttractions = useMemo(() => {
     if (!attractions || responses.typePreference.length === 0) return [];
   
     let maxWaitTime;
@@ -101,21 +101,21 @@ const PopupSurvey = ({ onClose, attractions }) => {
     return attractions.filter(attraction =>
       responses.typePreference.some(type => attraction.type.includes(type)) ||
       attraction.waitTime <= maxWaitTime
-    ).slice(0, 3); // Limite les résultats aux 3 premiers
-  };
+    );
+  }, [attractions, responses.typePreference, responses.waitTimePreference]);
 
-  const filteredAttractions = recommendedAttractions();
+  const filteredAttractions = recommendedAttractions;
 
   const onSwipeLeft = (attraction) => {
     console.log('Pass', attraction.name);
     moveToNextAttraction();
   };
 
-  const onSwipeRight = (attraction) => {
+  const onSwipeRight = useCallback((attraction) => {
     console.log('Add to favorites', attraction.name);
     dispatch(toggleFavorite(attraction));
     moveToNextAttraction();
-  };
+  }, [dispatch]);
 
   const moveToNextAttraction = () => {
     if (currentAttractionIndex < filteredAttractions.length - 1) {
