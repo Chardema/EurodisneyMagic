@@ -1,37 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSwipeable } from 'react-swipeable';
-import styles from './CardSwipe.module.scss';
+import styles from './CardSwipe.module.scss'; // Assurez-vous de créer ce fichier CSS
 
 const CardSwipe = ({ attraction, onSwipeLeft, onSwipeRight }) => {
-  const [swipeDirection, setSwipeDirection] = useState('');
-
   const handlers = useSwipeable({
-    onSwiping: (eventData) => {
-      setSwipeDirection(eventData.dir);
-    },
-    onSwipedLeft: () => {
-      setSwipeDirection('');
-      onSwipeLeft(attraction);
-    },
-    onSwipedRight: () => {
-      setSwipeDirection('');
-      onSwipeRight(attraction);
-    },
+    onSwipedLeft: () => onSwipeLeft(attraction),
+    onSwipedRight: () => onSwipeRight(attraction),
+    preventDefaultTouchmoveEvent: true,
     trackMouse: true
   });
 
-  let cardStyle = {};
-  if (swipeDirection === 'Left') {
-    cardStyle = { transform: 'rotate(-10deg)' };
-  } else if (swipeDirection === 'Right') {
-    cardStyle = { transform: 'rotate(10deg)' };
-  }
-
   return (
-    <div {...handlers} className={styles.card} style={cardStyle}>
+    <div {...handlers} className={styles.card}>
       <img src={attraction.image} alt={attraction.name} className={styles.image} />
       <div className={styles.details}>
         <h3>{attraction.name}</h3>
+        <p>Temps d'attente: {attraction.waitTime} minutes</p>
       </div>
     </div>
   );
