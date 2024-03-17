@@ -9,13 +9,12 @@ import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar';
 import './attractions.module.scss';
 import BottomNav from "../mobileNavbar/mobileNavbar";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { toggleFavorite } from '../redux/actions';
+import AttractionsMap from "../attractionsMap/attractionsMap";
 
 
 
@@ -178,40 +177,24 @@ const Attractions = () => {
     const width = useWindowWidth();
 
     const allRidesClosed = rawRideData && rawRideData.length > 0 && rawRideData.every((ride) => ride.status === 'CLOSED');
-    const getWaitTimeColor = (ride) => {
+    const getWaitTimeColor = (waitTime) => {
         let content;
-        let backgroundColor = '#F44336'; // Couleur par défaut pour 'indisponible' ou 'fermée'
+        let backgroundColor = '#F44336'; // Couleur par défaut
 
-        if (ride.status === 'DOWN') {
-            content = 'Indispo';
-        } else if (ride.status === 'CLOSED') {
-            content = 'Fermée';
-        } else if (ride.waitTime === null) {
+        if (waitTime === null) {
             content = 'Direct';
             backgroundColor = '#4CAF50'; // Vert
-        } else if (ride.waitTime < 20) {
-            content = `${ride.waitTime} min`;
+        } else if (waitTime < 20) {
+            content = `${waitTime} min`;
             backgroundColor = '#4CAF50'; // Vert
-        } else if (ride.waitTime < 40) {
-            content = `${ride.waitTime} min`;
+        } else if (waitTime < 40) {
+            content = `${waitTime} min`;
             backgroundColor = '#FFC107'; // Jaune
         } else {
-            content = `${ride.waitTime} min`;
+            content = `${waitTime} min`;
         }
 
-
-        return `<div style="
-        background-color: ${backgroundColor}; 
-        color: white; 
-        width: 40px; 
-        height: 40px; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        border-radius: 50%; 
-        font-weight: bold; 
-        font-size: 10px;
-    ">${content}</div>`;
+        return `<div style="background-color: ${backgroundColor}; color: white; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; font-size: 10px;">${content}</div>`;
     };
 
     return (
@@ -352,50 +335,12 @@ const Attractions = () => {
                     )}
                 </div>
                     ) : (
-                <MapContainer
-                    center={[48.872, 2.775]} // Coordonnées centrales du parc
-                    zoom={15}
-                    scrollWheelZoom={true}
-                    style={{ height: '80vh', width: '100vw' } }
-                    maxBounds={[[48.850, 2.770], [48.877, 2.785]]} // Limite de déplacement
-                    minZoom={15} // Limite de zoom minimum
-                >
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
-                            {filteredRideData.map((ride) => {
-                                // Assurez-vous que les coordonnées existent et qu'elles sont dans un format correct
-                                if (ride.coordinates && ride.coordinates.length === 2) {
-                                    return (
-                                        <Marker
-                                            key={ride.id}
-                                            position={ride.coordinates}
-                                            icon={L.divIcon({
-                                                className: '',
-                                                html: getWaitTimeColor(ride),
-                                            })}
-                                        >
-                                            <Popup>
-                                                <div className={styles.popupContent}>
-                                                    <img
-                                                        src={attractionImages[ride.name]}
-                                                        alt={ride.name}
-                                                        className={styles.popupImage}
-                                                    />
-                                                    <div>{ride.name}</div>
-                                                    <div>{ride.type}</div>
-                                                </div>
-                                            </Popup>
-                                        </Marker>
-                                    );
-                                }
-                                return null; // Si les coordonnées ne sont pas disponibles, ne pas rendre le Marker
-                            })}
-                        </MapContainer>
-                        )}
+                <div style={{height: '80vh', width: '100vw'}}>
+                    <AttractionsMap attractions={filteredRideData} getWaitTimeColor={getWaitTimeColor} />
+                </div>
+            )}
             <div className={styles.mobilecontainer}>
-                    <BottomNav />
+                <BottomNav/>
             </div>
         </div>
     );
