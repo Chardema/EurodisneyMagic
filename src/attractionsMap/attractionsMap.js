@@ -11,22 +11,42 @@ const AttractionsMap = ({ attractions, getWaitTimeColor }) => {
     const [route, setRoute] = useState(null);
     const [userLocation, setUserLocation] = useState([48.872, 2.775]); // Coordonnées par défaut de Paris
     const [errorMessage, setErrorMessage] = useState('');
+    const [routeDuration, setRouteDuration] = useState(null);
 
     useEffect(() => {
+        let watchId;
         if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
+            // Commence à écouter les changements de position
+            watchId = navigator.geolocation.watchPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
                     setUserLocation([latitude, longitude]);
+                    // Si une attraction est sélectionnée, recalculez l'itinéraire vers elle
+                    if (selectedAttraction) {
+                        calculateRoute([latitude, longitude], selectedAttraction.coordinates);
+                    }
                 },
                 (error) => {
                     console.error("Erreur lors de l'accès à la localisation :", error);
+                },
+                {
+                    enableHighAccuracy: true, // Utilisez la localisation haute précision si disponible
+                    maximumAge: 0, // Accepte seulement les données de localisation fraîches
+                    timeout: 5000, // Temps d'attente maximum pour obtenir la localisation
                 }
             );
         } else {
             console.log("La géolocalisation n'est pas prise en charge par ce navigateur.");
         }
-    }, []);
+
+        // Nettoyage lors du démontage du composant
+        return () => {
+            if (watchId !== undefined) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+        };
+    }, [selectedAttraction]); // Ajoutez `selectedAttraction` comme dépendance si vous voulez recalculer l'itinéraire lorsque l'attraction sélectionnée change
+
 
     const handleMarkerClick = (attraction) => {
         setSelectedAttraction(attraction);
@@ -49,21 +69,28 @@ const AttractionsMap = ({ attractions, getWaitTimeColor }) => {
             const response = await axios.get(`https://api.openrouteservice.org/v2/directions/foot-walking?api_key=${apiKey}&start=${startCoordinates[1]},${startCoordinates[0]}&end=${destinationCoordinates[1]},${destinationCoordinates[0]}`);
             if (response.data.features && response.data.features.length > 0) {
                 const coordinates = response.data.features[0].geometry.coordinates;
-                // Simplifiez les points si nécessaire pour améliorer les performances
-                // const simplifiedCoordinates = simplify(coordinates.map(coord => ({x: coord[0], y: coord[1]})), 0.0001).map(point => [point.y, point.x]);
                 const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
                 setRoute({geometry: {coordinates: latLngs}});
+
+                // Mettez à jour la durée de l'itinéraire ici
+                const durationSeconds = response.data.features[0].properties.segments.reduce((total, segment) => total + segment.duration, 0);
+                const durationMinutes = Math.round(durationSeconds / 60); // Convertissez en minutes
+                setRouteDuration(durationMinutes);
+
                 setErrorMessage('');
             } else {
                 setErrorMessage("Aucun itinéraire trouvé.");
                 setRoute(null);
+                setRouteDuration(null);
             }
         } catch (error) {
             console.error('Erreur lors du calcul de l’itinéraire :', error);
             setErrorMessage("Erreur lors du calcul de l'itinéraire.");
             setRoute(null);
+            setRouteDuration(null);
         }
     };
+
 
     return (
         <MapContainer center={[48.872, 2.775]} zoom={15} style={{ height: '80vh', width: '100vw' }}>
@@ -87,6 +114,11 @@ const AttractionsMap = ({ attractions, getWaitTimeColor }) => {
                             <div>
                                 {attraction.name}
                                 <br />
+                                {selectedAttraction && selectedAttraction.id === attraction.id && routeDuration && (
+                                    <div>
+                                        Durée à pied : {routeDuration} min
+                                    </div>
+                                )}
                                 <button className="go-button" onClick={() => handleRequestRoute(attraction.coordinates)}>Go</button>
                             </div>
                         </Popup>
