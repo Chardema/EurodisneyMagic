@@ -1,50 +1,25 @@
 /* Navbar.css */
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
 .navbar {
-    display: none;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around; /* Ajusté pour une meilleure répartition des liens */
     padding: 20px;
     background-color: #F0F0F0;
 }
 
-.navbartitle {
-    flex-grow: 1;
-    text-align: center;
-}
-.navLinks {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 1s, opacity 1s ease;
-}
-
-.showMenu {
-    opacity: 1;
-    max-height: 500px;
-}
-
-.menuIcon {
-    cursor: pointer;
-    font-size: 24px;
-    transition: tranform 1s ease;
-}
-
-.menuIcon.open {
-    transform: rotate(90deg);
-}
 .navbar ul {
     list-style: none;
+    display: flex; /* Affichage en ligne des liens */
     padding: 0;
     margin: 0;
-    text-align: center;
+    align-items: center;
+    justify-content: center;
 }
 
 .navbar li {
-    margin-top: 10px;
+    padding: 0 20px; /* Espacement entre les éléments de la liste */
 }
 
 .navbar a {
@@ -52,19 +27,16 @@
     color: black;
     font-weight: bold;
     font-size: 18px;
-    font-family: Nunito, sans-serif;
+    font-family: 'Nunito', sans-serif;
 }
 
-
 @media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
+    .navbar ul {
+        flex-direction: column; /* Les liens sont disposés en colonne sur les petits écrans */
+        text-align: center;
     }
-    .menuIcon {
-        order: 1; /* Place l'icône du menu à droite */
-        font-size: 30px; /* Taille plus grande pour les appareils mobiles */
-    }
-    .navLinks {
-        order: 2; /* Place les liens sous le titre */
+
+    .navbar li {
+        margin-top: 10px; /* Espacement vertical entre les éléments de la liste pour les petits écrans */
     }
 }
