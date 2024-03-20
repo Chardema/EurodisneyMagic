@@ -42,3 +42,13 @@ export const toggleFavorite = (attraction) => {
     };
 };
 
+export const TOGGLE_FAVORITE_SHOW = 'TOGGLE_FAVORITE_SHOW';
+
+// Exemple de fonction pour ajouter un spectacle aux favoris
+
+export const toggleFavoriteShow = show => ({
+    type: TOGGLE_FAVORITE_SHOW,
+    payload: show,
+});
+
+
