@@ -63,6 +63,19 @@ const FavoriteCard = ({ favorite, onRemove, getWaitTimeColor }) => {
     opacity: swipeAction ? 1 : 0,
   };
 
+  if (favorite.type === 'SHOW') {
+    return (
+        <div {...handlers} className={`${styles.attractionscard} ${showHint ? 'swipeHintAnimation' : ''}`}>
+          <div className={styles.deleteIndicator} style={indicatorStyle}>
+            <div className={styles.deleteIndicatorContent}>Supprimer</div>
+          </div>
+          <img src={favorite.image} alt={favorite.name} className={styles.favoriteImage} />
+          <h3 className={styles.attractionTitle}>{favorite.name}</h3>
+          <p>Prochain horaire : {favorite.Showtime}</p> {/* Exemple de donnée spécifique aux spectacles */}
+        </div>
+    );
+  }
+
   return (
     <div {...handlers} className={`${styles.attractionscard} ${showHint ? 'swipeHintAnimation' : ''}`}>
       <div className={styles.deleteIndicator} style={indicatorStyle}>
@@ -82,6 +95,7 @@ const FavoriteCard = ({ favorite, onRemove, getWaitTimeColor }) => {
     </div>
   );
 };
+
 
 const HomePage = () => {
   const reduxFavorites = useSelector(state => state.favorites.favorites);
@@ -153,9 +167,9 @@ const HomePage = () => {
           ) : (
             <div className={styles.noFavoritesMessage}>
               <p>Vous n'avez pas encore de favoris.</p>
-              <Link to="/attractions" className={styles.linkButton}>
-                Ajoutez votre première attraction
-              </Link>
+              <button onClick={() => setShowPopup(true)} className={styles.linkButton}>
+                Refaire le quiz
+              </button>
             </div>
           )}
         </div>
