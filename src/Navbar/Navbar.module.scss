@@ -30,6 +30,15 @@
     font-family: 'Nunito', sans-serif;
 }
 
+.navbar a:hover {
+    color: #4A90E2; /* Change la couleur du texte au survol */
+    background-color: #E0E0E0; /* Ajoute un fond légèrement gris au survol */
+    padding: 5px 10px; /* Augmente légèrement le padding pour un effet de "bouton" */
+    border-radius: 5px; /* Arrondit les coins pour un look plus doux */
+    transition: all 0.3s ease; /* Transition douce pour les changements de style */
+}
+
+
 @media (max-width: 768px) {
     .navbar ul {
         flex-direction: column; /* Les liens sont disposés en colonne sur les petits écrans */
