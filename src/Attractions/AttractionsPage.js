@@ -15,6 +15,7 @@ import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { toggleFavorite } from '../redux/actions';
 import AttractionsMap from "../attractionsMap/attractionsMap";
+import AttractionModal from "../modalAttractions/modalAttractions";
 
 
 
@@ -96,9 +97,15 @@ const Attractions = () => {
         selectedLand: 'all' // 'all', 'fantasyland', 'frontierland', 'adventureland', 'discoveryland'
     });
     const dispatch = useDispatch();
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedAttraction, setSelectedAttraction] = useState(null);
 
     const handleToggleFavorite = (attraction) => {
         dispatch(toggleFavorite(attraction));
+    };
+    const openModalWithAttraction = (attraction) => {
+        setSelectedAttraction(attraction);
+        setModalOpen(true);
     };
     useEffect(() => {
         const storedPreviousWaitTimes = localStorage.getItem('previousWaitTimes');
@@ -308,21 +315,25 @@ const Attractions = () => {
                                 const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : '';
 
                                 return (
-                                    <div key={ride.id} className={styles.card}>
-                                        <img  src={attractionImages[ride.name]} alt={ride.name} />
+                                    <div key={ride.id} className={styles.card}
+                                         onClick={() => openModalWithAttraction(ride)}>
+                                        <img src={attractionImages[ride.name]} alt={ride.name}/>
                                         <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
                                             <p className={styles.attractionLand}>{ride.land}</p>
                                         </div>
-                                        <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
+                                        <div
+                                            className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
                                                 ride.status === 'CLOSED' ? 'Fermée' :
                                                     ride.waitTime === null ? 'Direct' : `${ride.waitTime} min`}
                                             {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
                                             {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
-                                        <button className={styles.favoriteButton} onClick={() => handleToggleFavorite(ride)}>
-                                            <FontAwesomeIcon icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart} />
+                                        <button className={styles.favoriteButton}
+                                                onClick={() => handleToggleFavorite(ride)}>
+                                            <FontAwesomeIcon
+                                                icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart}/>
                                         </button>
 
 
@@ -342,6 +353,11 @@ const Attractions = () => {
             <div className={styles.mobilecontainer}>
                 <BottomNav/>
             </div>
+            <AttractionModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                attractionDetails={selectedAttraction || {}} // Ou fournir une structure par défaut pour les détails
+            />
         </div>
     );
 };
