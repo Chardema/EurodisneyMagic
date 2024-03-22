@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 export const formatDate = (dateString) => {
     if (!dateString) return 'Date invalide';
 
@@ -10,6 +11,26 @@ export const formatDate = (dateString) => {
         return 'Date invalide';
     }
 };
+
+
+
+export const fetchFullShowInfo = async (showId) => {
+    try {
+        // Récupère tous les spectacles
+        const response = await axios.get('https://eurojourney.azurewebsites.net/api/shows');
+        const shows = response.data;
+
+        // Filtrer pour obtenir le spectacle spécifique par son ID
+        const specificShow = shows.find(show => show.id === showId);
+
+        return specificShow;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des informations complètes du spectacle:', error);
+        return null; // Retourner une structure de données par défaut ou null
+    }
+};
+
+
 
 
 export const useWindowWidth = () => {

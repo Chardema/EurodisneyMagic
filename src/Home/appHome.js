@@ -7,8 +7,8 @@ import { setFavorites } from "../redux/actions";
 import { useSwipeable } from 'react-swipeable';
 import backgroundImage from './../img/simphonyofcolor.jpg';
 import styles from './appHome.module.scss';
-import { attractionNames, attractionImages } from "../Attractions/AttractionsPage";
-import { useWindowWidth } from '../utils';
+import { attractionImages } from "../Attractions/AttractionsPage";
+import {formatImageName, importImage, useWindowWidth} from '../utils';
 
 const getWaitTimeColor = (attraction) => {
     if (attraction.status === 'CLOSED' || attraction.status === 'DOWN') {
@@ -21,11 +21,24 @@ const getWaitTimeColor = (attraction) => {
       return 'red';
     }
 };
-
 const FavoriteCard = ({ favorite, onRemove }) => {
   const [swipeProgress, setSwipeProgress] = useState(0);
   const [swipeAction, setSwipeAction] = useState(false);
   const [showHint, setShowHint] = useState(true);
+  const [nextShowtime, setNextShowtime] = useState(null);
+
+  useEffect(() => {
+    if (favorite.type === 'SHOW') {
+      const now = new Date();
+      const futureShowtimes = favorite.showtimes.filter(showtime =>
+          new Date(showtime.startTime) > now
+      ).sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+
+      setNextShowtime(futureShowtimes.length > 0 ? futureShowtimes[0] : null);
+    }
+  }, [favorite.showtimes]);
+
+
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -50,30 +63,43 @@ const FavoriteCard = ({ favorite, onRemove }) => {
     trackMouse: true
   });
 
+  console.log(favorite)
+
   const indicatorStyle = {
     width: swipeAction ? `${Math.min(swipeProgress / window.innerWidth * 100 * 2, 100)}%` : '0%',
     opacity: swipeAction ? 1 : 0,
   };
 
   return (
-    <div {...handlers} className={`${styles.attractionscard} ${showHint ? styles.swipeHintAnimation : ''}`}>
-      <div className={styles.deleteIndicator} style={indicatorStyle}>
-        <div className={styles.deleteIndicatorContent}>Supprimer</div>
-      </div>
-      <img src={favorite.type === 'SHOW' ? favorite.image : attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
-      <h3 className={styles.attractionTitle}>{favorite.name}</h3>
-      {favorite.type === 'SHOW' ? (
-        <p>Prochain horaire : {favorite.showTime}</p>
-      ) : (
-        <div className={styles.waitTimeContainer}>
-          <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
-            {favorite.status === 'CLOSED' ? 'Fermée' :
-            favorite.status === 'DOWN' ? 'Indispo' :
-            favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
-          </div>
+      <div {...handlers} className={`${styles.attractionscard} ${showHint ? styles.swipeHintAnimation : ''}`}>
+        <div className={styles.deleteIndicator} style={indicatorStyle}>
+          <div className={styles.deleteIndicatorContent}>Supprimer</div>
         </div>
-      )}
-    </div>
+        {favorite.type === 'SHOW' ? (
+            <>
+              <img className={styles.favoriteImage} src={importImage(formatImageName(favorite.name))}
+                   alt={favorite.name}/>
+              <h3 className={styles.attractionTitle}>{favorite.name}</h3>
+              {nextShowtime ? (
+                  <p>Prochaine représentation : {new Date(nextShowtime.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+              ) : (
+                  <p>Non disponible</p>
+              )}
+            </>
+        ) : (
+            <>
+              <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
+              <h3 className={styles.attractionTitle}>{favorite.name}</h3>
+              <div className={styles.waitTimeContainer}>
+                <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
+                  {favorite.status === 'CLOSED' ? 'Fermée' :
+                      favorite.status === 'DOWN' ? 'Indispo' :
+                          favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
+                </div>
+              </div>
+            </>
+        )}
+      </div>
   );
 };
 
@@ -84,6 +110,7 @@ const HomePage = () => {
   const width = useWindowWidth();
   const [showPopup, setShowPopup] = useState(false);
   const [favoritesFilter, setFavoritesFilter] = useState('all');
+  const [filteredFavorites, setFilteredFavorites] = useState(reduxFavorites); // Stocker les favoris filtrés
 
   const updateFavorites = useCallback((favorites, attractions) => {
     return favorites.map(favorite => {
@@ -91,9 +118,6 @@ const HomePage = () => {
       return updatedAttraction ? { ...favorite, waitTime: updatedAttraction.waitTime, status: updatedAttraction.status } : favorite;
     });
   }, []);
-
-  // Vérifiez si vous avez à la fois des attractions et des spectacles dans les favoris
-const hasBothTypesOfFavorites = reduxFavorites.some(fav => fav.type === 'ATTRACTION') && reduxFavorites.some(fav => fav.type === 'SHOW');
 
   const removeFavorite = useCallback((favorite) => {
     const updatedFavorites = reduxFavorites.filter(fav => fav.id !== favorite.id);
@@ -108,9 +132,12 @@ const hasBothTypesOfFavorites = reduxFavorites.some(fav => fav.type === 'ATTRACT
   }, [attractions, dispatch, reduxFavorites, updateFavorites]);
 
   useEffect(() => {
-    const shuffledAttractionNames = [...attractionNames].sort(() => 0.5 - Math.random());
-    // Assuming setRecommendedAttractions is a missing part of your state management
-  }, []);
+    setFilteredFavorites(reduxFavorites.filter(favorite => {
+      if (favoritesFilter === 'all') return true;
+      if (favoritesFilter === 'attractions') return favorite.type !== 'SHOW';
+      return favorite.type === 'SHOW'; // Filtre par spectacles
+    }));
+  }, [favoritesFilter, reduxFavorites]);
 
   useEffect(() => {
     const userPreferences = localStorage.getItem('userPreferences');
@@ -121,27 +148,19 @@ const hasBothTypesOfFavorites = reduxFavorites.some(fav => fav.type === 'ATTRACT
 
   const closePopup = () => setShowPopup(false);
 
-  const filteredFavorites = reduxFavorites.filter(favorite => {
-    if (favoritesFilter === 'all') return true;
-    if (favoritesFilter === 'attractions') return favorite.type !== 'SHOW';
-    return favorite.type === 'SHOW'; // Defaults to showing only shows if 'shows' is selected
-  });
-
   return (
-    <div className={styles.homePage}>
-      {width > 768 && <Navbar />}
-      <div className={styles.topcontainer}>
-        <div className={styles.heroSection}>
-          <img src={backgroundImage} alt="Disneyland Paris" className={styles.heroImage} />
+      <div className={styles.homePage}>
+        {width > 768 && <Navbar />}
+        <div className={styles.topcontainer}>
+          <div className={styles.heroSection}>
+            <img src={backgroundImage} alt="Disneyland Paris" className={styles.heroImage} />
+          </div>
+          <div className={styles.filterButtons}>
+            <button onClick={() => setFavoritesFilter('all')} className={favoritesFilter === 'all' ? styles.active : ''}>Tous</button>
+            <button onClick={() => setFavoritesFilter('attractions')} className={favoritesFilter === 'attractions' ? styles.active : ''}>Attractions</button>
+            <button onClick={() => setFavoritesFilter('shows')} className={favoritesFilter === 'shows' ? styles.active : ''}>Spectacles</button>
+          </div>
         </div>
-        {hasBothTypesOfFavorites && (
-      <div className={styles.filterButtons}>
-        <button onClick={() => setFavoritesFilter('all')} className={favoritesFilter === 'all' ? styles.active : ''}>Tous</button>
-        <button onClick={() => setFavoritesFilter('attractions')} className={favoritesFilter === 'attractions' ? styles.active : ''}>Attractions</button>
-        <button onClick={() => setFavoritesFilter('shows')} className={favoritesFilter === 'shows' ? styles.active : ''}>Spectacles</button>
-      </div>
-    )}
-      </div>
       <div className={styles.bottomcontainer}>
         <div className={styles.content}>
           {filteredFavorites.length > 0 ? (
