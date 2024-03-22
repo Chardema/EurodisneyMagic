@@ -30,18 +30,18 @@ const favoritesReducer = (state = initialState, action) => {
             }
         case TOGGLE_FAVORITE_SHOW:
             const show = action.payload;
-            const showExists = state.favorites.find(fav => fav.id === show.id);
-            if (showExists) {
+            const exists = state.favorites.some(fav => fav.id === show.id);
+            if (exists) {
+                // Supprimer le spectacle des favoris si déjà présent
                 return {
                     ...state,
                     favorites: state.favorites.filter(fav => fav.id !== show.id),
                 };
             } else {
-                // Supposons que vous avez une logique similaire pour mettre à jour les spectacles
-                const updatedShow = state.shows.find(s => s.id === show.id) || show;
+                // Ajouter le spectacle aux favoris, en incluant tous les showtimes
                 return {
                     ...state,
-                    favorites: [...state.favorites, updatedShow],
+                    favorites: [...state.favorites, show],
                 };
             }
         case SET_FAVORITES:

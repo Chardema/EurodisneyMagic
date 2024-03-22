@@ -9,7 +9,7 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { toggleFavoriteShow } from '../redux/actions'; // Assurez-vous que cette action existe et est correctement importée
 import Navbar from "../Navbar/Navbar";
 import BottomNav from "../mobileNavbar/mobileNavbar";
-import { formatImageName, importImage, useWindowWidth } from "../utils";
+import { formatImageName, importImage, useWindowWidth,fetchFullShowInfo } from "../utils";
 import styles from './spectacle.module.scss';
 
 const Shows = () => {
@@ -19,13 +19,22 @@ const Shows = () => {
     const favorites = useSelector(state => state.favorites.favorites);
     const dispatch = useDispatch();
 
-    const handleToggleFavorite = (show) => {
-        // Déterminer si le spectacle est déjà dans les favoris
+    const handleToggleFavorite = async (show) => {
         const isFavorited = favorites.some(fav => fav.id === show.id);
+
+        let showWithFullInfo = show;
+        if (!isFavorited) {
+            // Récupérer les informations complètes uniquement si le spectacle n'est pas déjà dans les favoris
+            showWithFullInfo = await fetchFullShowInfo(show.id) || show; // Utiliser les données existantes comme fallback
+        }
+
         // Enrichir le spectacle avec un type avant de dispatcher
-        const showWithEntityType = { ...show, type: 'SHOW' };
-        dispatch(toggleFavoriteShow(isFavorited ? show.id : showWithEntityType));
+        const showWithEntityType = { ...showWithFullInfo, type: 'SHOW' };
+        dispatch(toggleFavoriteShow(showWithEntityType));
     };
+
+
+
 
     useEffect(() => {
         const fetchData = async () => {
