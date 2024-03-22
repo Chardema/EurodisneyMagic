@@ -15,27 +15,4 @@
   background: white;
   padding: 20px;
   border-radius: 8px;
-  max-width: 30%;
-}
-.closeModal {
-  background-color: white;
-  color: #007BFF;
-  border: 1px solid #007BFF;
-  border-radius: 5px;
-  padding: 10px 15px;
-  margin: 10px 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.closeModal:hover {
-  background-color: #007BFF;
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .modalContent{
-    max-width: 60%;
-  }
 }

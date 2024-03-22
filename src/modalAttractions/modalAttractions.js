@@ -10,7 +10,7 @@ const AttractionModal = ({ isOpen, onClose, attractionDetails }) => {
             <div className={styles.modalContent}>
                 <h2>{attractionDetails.name}</h2>
                 <p>{attractionDetails.description}</p>
-                <button className={styles.closeModal} onClick={onClose}>Fermer</button>
+                <button onClick={onClose}>Fermer</button>
             </div>
         </div>
     );

@@ -65,6 +65,7 @@ h1 {
 // Styles pour les cartes individuelles d'attractions
 .card {
     position: relative;
+    cursor: pointer;
     background-color: #FFFFFF;
     border: 1px solid #ddd;
     display: flex;
