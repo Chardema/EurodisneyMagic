@@ -161,33 +161,42 @@ const HomePage = () => {
             <button onClick={() => setFavoritesFilter('shows')} className={favoritesFilter === 'shows' ? styles.active : ''}>Spectacles</button>
           </div>
         </div>
-      <div className={styles.bottomcontainer}>
-        <div className={styles.content}>
-          {filteredFavorites.length > 0 ? (
-            <div className={styles.attractionsSection}>
-              {filteredFavorites.map(favorite => (
-                <FavoriteCard
-                  key={favorite.id}
-                  favorite={favorite}
-                  onRemove={removeFavorite}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className={styles.noFavoritesMessage}>
-              <p>Vous n'avez pas encore de favoris.</p>
-              <button onClick={() => setShowPopup(true)} className={styles.linkButton}>
-                Refaire le quiz
-              </button>
-            </div>
-          )}
+        <div className={styles.bottomcontainer}>
+          <div className={styles.content}>
+            {filteredFavorites.length > 0 ? (
+                <div className={styles.attractionsSection}>
+                  {filteredFavorites.map(favorite => (
+                      <FavoriteCard
+                          key={favorite.id}
+                          favorite={favorite}
+                          onRemove={removeFavorite}
+                      />
+                  ))}
+                </div>
+            ) : (
+                <div className={styles.noFavoritesMessage}>
+                  <p>Vous n'avez pas encore de favoris.</p>
+                  <button onClick={() => setShowPopup(true)} className={styles.linkButton}>
+                    Refaire le quiz
+                  </button>
+                </div>
+            )}
+          </div>
+          <div className={styles.buyMeABeerContainer}>
+            <p>Cette application n'a aucune affilitation officielle avec Disneyland Paris <br />
+              N'hésitez pas à me soutenir !</p>
+            <a href="https://www.buymeacoffee.com/8w7bkbktqs4">
+              <img
+                  src="https://img.buymeacoffee.com/button-api/?text=Buy me a beer&emoji=🍺&slug=8w7bkbktqs4&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"
+                  alt="Buy me a beer"/>
+            </a>
+          </div>
         </div>
+        {width <= 768 && <BottomNav/>}
+        {showPopup && <PopupSurvey onClose={closePopup} attractions={attractions}/>}
       </div>
-      {width <= 768 && <BottomNav />}
-      {showPopup && <PopupSurvey onClose={closePopup} attractions={attractions} />}
-    </div>
-      );
-    };
-    
-    export default HomePage;
+  );
+};
+
+export default HomePage;
     
