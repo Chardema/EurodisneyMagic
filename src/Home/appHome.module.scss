@@ -242,7 +242,7 @@
 }
 
 .linkButton:hover {
-  background-color: #e65545; /* Couleur plus foncée au survol */
+  background-color: #007bff; /* Couleur plus foncée au survol */
   transform: scale(1.05); /* Effet de zoom léger au survol */
 }
 
@@ -250,6 +250,28 @@
 .linkButton:active {
   outline: none;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ff6f61; /* Focus ring pour l'accessibilité */
+}
+
+.buyMeABeerContainer {
+  background-color: white;
+  border-radius: 10px;
+  width: calc(100% - 20px);
+  margin: 10px;
+}
+.buyMeABeerContainer p {
+  text-decoration: none;
+  padding: 10px;
+  margin-bottom: 10px;
+
+}
+
+.buyMeABeerContainer a img {
+  transition: transform 0.3s ease;
+  padding: 0 10px;
+}
+
+.buyMeABeerContainer a:hover img {
+  transform: scale(1.05);
 }
 
 
