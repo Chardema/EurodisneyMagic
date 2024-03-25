@@ -134,6 +134,7 @@ const PopupSurvey = ({ onClose, attractions }) => {
   return (
       <div className={styles.popupContainer}>
         <div className={styles.popup}>
+        <FaTimesCircle className={styles.closeIcon} onClick={onClose} />
           {currentStep < questions.length ? (
               <>
                 {questionIcons[currentStep]}

@@ -241,6 +241,33 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre douce pour la profondeur */
 }
 
+.toggleButton {
+  background-color: white; /* Fond blanc pour l'état non actif */
+  color: #007BFF; /* Texte bleu pour l'état non actif */
+  border: 2px solid #007BFF; /* Bordure bleue cohérente avec le reste */
+  border-radius: 15px; /* Arrondi cohérent avec le reste des éléments */
+  padding: 10px 15px; /* Augmentation de la taille du padding pour agrandir le bouton */
+  margin: 0 10px; /* Espacement entre les boutons */
+  font-size: 16px; /* Taille de police cohérente */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.toggleButton.active {
+  background-color: #007BFF; /* Fond bleu pour l'état actif */
+  color: white; /* Texte blanc pour l'état actif */
+}
+
+.toggleButton:hover {
+  background-color: #0056b3; /* Couleur plus foncée au survol pour l'état non sélectionné */
+  color: white;
+}
+
+.toggleButton.active:hover {
+  background-color: #e6f3ff; /* Couleur plus claire au survol pour l'état sélectionné */
+  color: #0056b3;
+}
+
 .linkButton:hover {
   background-color: #007bff; /* Couleur plus foncée au survol */
   transform: scale(1.05); /* Effet de zoom léger au survol */
@@ -273,6 +300,40 @@
 .buyMeABeerContainer a:hover img {
   transform: scale(1.05);
 }
+
+.minimalistMode {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Assurez-vous que la largeur s'adapte au conteneur parent */
+}
+
+.minimalistModeCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between; /* Ou 'center' selon le besoin */
+  padding: 10px; /* Ajoutez du padding selon le besoin */
+  width: 100%; /* Assurez-vous que la largeur est correcte */
+}
+
+/* Style pour le titre et le conteneur du temps d'attente pour un meilleur contrôle */
+.attractionTitle, .waitTimeContainer {
+  margin: 0 10px; /* Ajustez l'espacement selon le besoin */
+}
+
+p {
+  margin: 0;
+}
+
+.minimalistMode .attractionTitle, .minimalistMode .waitTimeContainer {
+  margin: 0 10px; /* Espacement horizontal entre les éléments */
+}
+
+
+
+
 
 
 @media (max-width: 768px) {
