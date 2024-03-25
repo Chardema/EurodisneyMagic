@@ -21,7 +21,7 @@ const getWaitTimeColor = (attraction) => {
       return 'red';
     }
 };
-const FavoriteCard = ({ favorite, onRemove }) => {
+const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
   const [swipeProgress, setSwipeProgress] = useState(0);
   const [swipeAction, setSwipeAction] = useState(false);
   const [showHint, setShowHint] = useState(true);
@@ -71,36 +71,55 @@ const FavoriteCard = ({ favorite, onRemove }) => {
   };
 
   return (
-      <div {...handlers} className={`${styles.attractionscard} ${showHint ? styles.swipeHintAnimation : ''}`}>
-        <div className={styles.deleteIndicator} style={indicatorStyle}>
-          <div className={styles.deleteIndicatorContent}>Supprimer</div>
-        </div>
-        {favorite.type === 'SHOW' ? (
-            <>
-              <img className={styles.favoriteImage} src={importImage(formatImageName(favorite.name))}
-                   alt={favorite.name}/>
-              <h3 className={styles.attractionTitle}>{favorite.name}</h3>
-              {nextShowtime ? (
-                  <p>Prochaine représentation : {new Date(nextShowtime.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-              ) : (
-                  <p>Non disponible</p>
-              )}
-            </>
-        ) : (
-            <>
-              <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
-              <h3 className={styles.attractionTitle}>{favorite.name}</h3>
-              <div className={styles.waitTimeContainer}>
-                <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
-                  {favorite.status === 'CLOSED' ? 'Fermée' :
-                      favorite.status === 'DOWN' ? 'Indispo' :
-                          favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
-                </div>
-              </div>
-            </>
-        )}
+    <div {...handlers} className={`${styles.attractionscard} ${showHint ? styles.swipeHintAnimation : ''} ${isMinimalistMode ? styles.minimalistModeCard : ''}`}>
+      <div className={styles.deleteIndicator} style={indicatorStyle}>
+        <div className={styles.deleteIndicatorContent}>Supprimer</div>
       </div>
+      {!isMinimalistMode && favorite.type === 'SHOW' && (
+        <>
+          <img className={styles.favoriteImage} src={importImage(formatImageName(favorite.name))} alt={favorite.name}/>
+          <h3 className={styles.attractionTitle}>{favorite.name}</h3>
+          {nextShowtime ? (
+            <p>Prochaine représentation : {new Date(nextShowtime.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          ) : (
+            <p>Non disponible</p>
+          )}
+        </>
+      )}
+      {!isMinimalistMode && favorite.type !== 'SHOW' && (
+        <>
+          <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
+          <h3 className={styles.attractionTitle}>{favorite.name}</h3>
+          <div className={styles.waitTimeContainer}>
+            <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
+              {favorite.status === 'CLOSED' ? 'Fermée' :
+                  favorite.status === 'DOWN' ? 'Indispo' :
+                      favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
+            </div>
+          </div>
+        </>
+      )}
+      {isMinimalistMode && (
+        <>
+          <h3 className={styles.attractionTitle}>{favorite.name}</h3>
+          {favorite.type !== 'SHOW' ? (
+            <div className={styles.waitTimeContainer}>
+              <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
+                {favorite.status === 'CLOSED' ? 'Fermée' :
+                    favorite.status === 'DOWN' ? 'Indispo' :
+                        favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
+              </div>
+            </div>
+          ) : nextShowtime ? (
+            <p>Prochaine représentation : {new Date(nextShowtime.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          ) : (
+            <p>Non disponible</p>
+          )}
+        </>
+      )}
+    </div>
   );
+  
 };
 
 const HomePage = () => {
@@ -111,6 +130,9 @@ const HomePage = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [favoritesFilter, setFavoritesFilter] = useState('all');
   const [filteredFavorites, setFilteredFavorites] = useState(reduxFavorites); // Stocker les favoris filtrés
+  const [isMinimalistMode, setIsMinimalistMode] = useState(false);
+
+  const toggleViewMode = () => setIsMinimalistMode(!isMinimalistMode);
 
   const updateFavorites = useCallback((favorites, attractions) => {
     return favorites.map(favorite => {
@@ -161,6 +183,25 @@ const HomePage = () => {
             <button onClick={() => setFavoritesFilter('shows')} className={favoritesFilter === 'shows' ? styles.active : ''}>Spectacles</button>
           </div>
         </div>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <button 
+  aria-label="Vue en liste" 
+  onClick={() => setIsMinimalistMode(true)} 
+  className={`${styles.toggleButton} ${isMinimalistMode ? styles.active : ''}`}
+>
+  <i className="fas fa-list"></i>
+</button>
+<button 
+  aria-label="Vue en carte" 
+  onClick={() => setIsMinimalistMode(false)} 
+  className={`${styles.toggleButton} ${!isMinimalistMode ? styles.active : ''}`}
+>
+  <i className="fas fa-th-large"></i>
+</button>
+
+</div>
+
+
         <div className={styles.bottomcontainer}>
           <div className={styles.content}>
             {filteredFavorites.length > 0 ? (
@@ -170,6 +211,7 @@ const HomePage = () => {
                           key={favorite.id}
                           favorite={favorite}
                           onRemove={removeFavorite}
+                          isMinimalistMode={isMinimalistMode}
                       />
                   ))}
                 </div>
