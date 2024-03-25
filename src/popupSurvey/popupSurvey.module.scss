@@ -23,6 +23,7 @@
   }
   
   .popup {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,6 +36,15 @@
     overflow-y: auto;
     animation: contentChange 0.3s ease-out;
     text-align: center; /* Centre le contenu */
+  }
+
+  .closeIcon {
+    position: absolute;
+    top: 10px; /* Ajustez selon l'espacement désiré du haut */
+    right: 10px; /* Ajustez selon l'espacement désiré de la droite */
+    cursor: pointer;
+    color: #333; /* Ou toute autre couleur adaptée à votre design */
+    font-size: 24px; /* Ajustez la taille selon vos préférences */
   }
   
   .attractionRecommendation {
