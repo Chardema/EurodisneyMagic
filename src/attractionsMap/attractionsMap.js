@@ -93,8 +93,11 @@ const AttractionsMap = ({ attractions, getWaitTimeColor }) => {
                         position={attraction.coordinates}
                         icon={L.divIcon({
                             className: 'custom-marker-icon',
-                            html: `<div style="padding: 15px; display: flex; justify-content: center; background-color: rgba(255, 255, 255, 0.9); border-radius: 5px; text-align: center;">${attraction.waitTime !== null ? `${attraction.waitTime} min` : 'Indispo'}</div>`
-                        })}
+                            html: `
+                              <div class="marker-bubble">
+                                <div>${attraction.waitTime !== null ? `${attraction.waitTime} min` : 'Indispo'}</div>
+                              </div>`
+                          })}
                         eventHandlers={{
                             click: () => handleMarkerClick(attraction),
                         }}

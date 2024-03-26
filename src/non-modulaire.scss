@@ -1,0 +1,21 @@
+.custom-marker-icon {
+    .marker-bubble {
+      padding: 6px 10px;
+      background: white;
+      border-radius: 18px;
+      border: 2px solid #004ba0;
+      display: flex;
+      width: 37px;
+      height: 40px;
+      justify-content: center;
+      align-items: center;
+      transform: translate(-50%, -50%); /* Centrer le marker par rapport à la position du marker */
+    }
+  
+    .marker-icon {
+      background-size: cover;
+      width: 30px; /* Ou la taille de votre choix */
+      height: 30px; /* Ou la taille de votre choix */
+    }
+  }
+  
