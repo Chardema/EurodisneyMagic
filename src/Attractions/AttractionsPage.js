@@ -325,7 +325,7 @@ const Attractions = () => {
                                             className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
                                                 ride.status === 'CLOSED' ? 'Fermée' :
-                                                    ride.waitTime === null ? 'Direct' : `${ride.waitTime} min`}
+                                                    ride.waitTime === null ? 'Sans file' : `${ride.waitTime} min`}
                                             {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
                                             {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
