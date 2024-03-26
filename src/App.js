@@ -10,7 +10,9 @@ import { Analytics } from '@vercel/analytics/react';
 import HomePage from "./Home/appHome";
 import {setFavorites} from "./redux/actions";
 import { setAttractions } from './redux/actions';
-import axios from "axios"; // Assurez-vous d'importer l'action
+import axios from "axios";
+import './non-modulaire.scss';
+
 
 const App = () => {
     // Chargement initial des favoris depuis localStorage
