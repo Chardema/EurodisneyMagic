@@ -63,8 +63,6 @@ const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
     trackMouse: true
   });
 
-  console.log(favorite)
-
   const indicatorStyle = {
     width: swipeAction ? `${Math.min(swipeProgress / window.innerWidth * 100 * 2, 100)}%` : '0%',
     opacity: swipeAction ? 1 : 0,
