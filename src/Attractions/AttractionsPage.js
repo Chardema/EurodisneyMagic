@@ -315,10 +315,9 @@ const Attractions = () => {
                                 const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : '';
 
                                 return (
-                                    <div key={ride.id} className={styles.card}
-                                         onClick={() => openModalWithAttraction(ride)}>
+                                    <div key={ride.id} className={styles.card}>
                                         <img src={attractionImages[ride.name]} alt={ride.name}/>
-                                        <div className={styles.cardText}>
+                                        <div className={styles.cardText} onClick={() => openModalWithAttraction(ride)}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
                                             <p className={styles.attractionLand}>{ride.land}</p>
                                         </div>
