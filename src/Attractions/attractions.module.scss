@@ -341,11 +341,10 @@ h1 {
 }
 .textCheckbox {
     padding-left: 10px;
-    padding-top: 10px;
 }
 .selectOption1{
     width: 100%;
-    margin-bottom: 10px;
+    margin-right: 5px;
 }
 .checkboxcustom::before {
     content: "";
@@ -380,6 +379,15 @@ h1 {
 
 // Media queries pour les ajustements responsifs
 @media (max-width: 768px) {
+
+    .selectOption1{
+        margin-right: 0;
+    }
+
+    .textCheckbox {
+        padding-left: 10px;
+        padding-top: 10px;
+    }
     .container {
         max-width: 100%;
     }
