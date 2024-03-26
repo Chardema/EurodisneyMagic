@@ -153,7 +153,7 @@ const Attractions = () => {
         fetchData();
         const intervalId = setInterval(fetchData, 60000);
         return () => clearInterval(intervalId);
-    }, []); // Aucune dépendance ici pour éviter des appels multiples
+    }, []);
 
     useEffect(() => {
         if (!rawRideData) {
@@ -355,7 +355,7 @@ const Attractions = () => {
             <AttractionModal
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
-                attractionDetails={selectedAttraction || {}} // Ou fournir une structure par défaut pour les détails
+                attractionDetails={selectedAttraction || {}}
             />
         </div>
     );
