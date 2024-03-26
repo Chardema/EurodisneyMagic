@@ -171,11 +171,10 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background-color: #007bff;
   color: #fff;
   font-size: 0.875rem;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   margin-right: 10px;
 }
 
@@ -311,17 +310,22 @@
 
 .minimalistModeCard {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between; /* Ou 'center' selon le besoin */
-  padding: 10px; /* Ajoutez du padding selon le besoin */
-  width: 100%; /* Assurez-vous que la largeur est correcte */
+  justify-content: center; /* Align items to the start of the container */
+  padding: 10px; /* Adjust padding as needed */
+  width: 33%; /* Ensure the width fits the parent container */
 }
 
-/* Style pour le titre et le conteneur du temps d'attente pour un meilleur contrôle */
+/* Style for the title and the wait time container for better control */
 .attractionTitle, .waitTimeContainer {
-  margin: 0 10px; /* Ajustez l'espacement selon le besoin */
+  margin: 0 10px; /* Adjust spacing as needed */
 }
+
+.minimalistMode .attractionTitle, .minimalistMode .waitTimeContainer {
+  margin: 0 10px; /* Horizontal spacing between elements */
+}
+
 
 p {
   margin: 0;
