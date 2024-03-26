@@ -210,7 +210,7 @@ const Attractions = () => {
             <div className = {styles.header}>
                 <div className={styles.modeSwitch}>
                     <button className={viewMode === 'list' ? 'active' : ''} onClick={() => setViewMode('list')}>Liste</button>
-                    <button className={viewMode === 'map' ? 'active' : ''} onClick={() => setViewMode('map')}>Plan</button>
+                    <button className={viewMode === 'map' ? 'active' : ''} onClick={() => setViewMode('map')}>Itinéraire</button>
                 </div>
             </div>
             {viewMode === 'list' ? (
