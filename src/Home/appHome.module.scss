@@ -162,7 +162,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
   width: 100%;
 }
 
@@ -313,8 +312,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center; /* Align items to the start of the container */
-  padding: 10px; /* Adjust padding as needed */
-  width: 33%; /* Ensure the width fits the parent container */
+  width: 30%; /* Ensure the width fits the parent container */
 }
 
 /* Style for the title and the wait time container for better control */
