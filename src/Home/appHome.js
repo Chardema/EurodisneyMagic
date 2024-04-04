@@ -9,6 +9,7 @@ import backgroundImage from './../img/simphonyofcolor.jpg';
 import styles from './appHome.module.scss';
 import { attractionImages } from "../Attractions/AttractionsPage";
 import {formatImageName, importImage, useWindowWidth} from '../utils';
+import ModalAttractions from "../modalAttractions/modalAttractions";
 
 const getWaitTimeColor = (attraction) => {
     if (attraction.status === 'CLOSED' || attraction.status === 'DOWN') {
@@ -26,7 +27,14 @@ const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
   const [swipeAction, setSwipeAction] = useState(false);
   const [showHint, setShowHint] = useState(true);
   const [nextShowtime, setNextShowtime] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAttraction, setSelectedAttraction] = useState(null);
 
+
+  const openModalWithAttraction = (attraction) => {
+    setSelectedAttraction(attraction);
+    setModalOpen(true);
+  };
   useEffect(() => {
     if (favorite.type === 'SHOW') {
       const now = new Date();
@@ -85,22 +93,9 @@ const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
         </>
       )}
       {!isMinimalistMode && favorite.type !== 'SHOW' && (
-        <>
-          <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage} />
-          <h3 className={styles.attractionTitle}>{favorite.name}</h3>
-          <div className={styles.waitTimeContainer}>
-            <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
-              {favorite.status === 'CLOSED' ? 'Fermée' :
-                  favorite.status === 'DOWN' ? 'Indispo' :
-                      favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
-            </div>
-          </div>
-        </>
-      )}
-      {isMinimalistMode && (
-        <>
-          <h3 className={styles.attractionTitle}>{favorite.name}</h3>
-          {favorite.type !== 'SHOW' ? (
+          <>
+            <img src={attractionImages[favorite.name]} alt={favorite.name} className={styles.favoriteImage}/>
+            <h3 className={styles.attractionTitle}>{favorite.name}</h3>
             <div className={styles.waitTimeContainer}>
               <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
                 {favorite.status === 'CLOSED' ? 'Fermée' :
@@ -108,16 +103,39 @@ const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
                         favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
               </div>
             </div>
+          </>
+      )}
+      {isMinimalistMode && (
+          <>
+            <h3 className={styles.attractionTitle}>{favorite.name}</h3>
+            {favorite.type !== 'SHOW' ? (
+                <div className={styles.waitTimeContainer}>
+                <div className={`${styles.waitTimeCircle} ${styles[getWaitTimeColor(favorite)]}`}>
+                  {favorite.status === 'CLOSED' ? 'Fermée' :
+                      favorite.status === 'DOWN' ? 'Indispo' :
+                          favorite.waitTime === null ? 'Direct' : `${favorite.waitTime} min`}
+                </div>
+                <button
+                    onClick={() => {
+                    }}
+                    className={styles.confirmButton}
+                >
+                  + d'infos
+                </button>
+              </div>
           ) : nextShowtime ? (
-            <p>Prochaine représentation : {new Date(nextShowtime.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+              <p>Prochaine représentation : {new Date(nextShowtime.startTime).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</p>
           ) : (
-            <p>Non disponible</p>
+              <p>Non disponible</p>
           )}
         </>
       )}
     </div>
   );
-  
+
 };
 
 const HomePage = () => {

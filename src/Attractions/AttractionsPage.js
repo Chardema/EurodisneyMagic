@@ -317,9 +317,10 @@ const Attractions = () => {
                                 return (
                                     <div key={ride.id} className={styles.card}>
                                         <img src={attractionImages[ride.name]} alt={ride.name}/>
-                                        <div className={styles.cardText} onClick={() => openModalWithAttraction(ride)}>
+                                        <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
                                             <p className={styles.attractionLand}>{ride.land}</p>
+                                            <button className={styles.modalButton}  onClick={() => openModalWithAttraction(ride)}>Détails</button>
                                         </div>
                                         <div
                                             className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
