@@ -72,4 +72,4 @@ app.get('*', (req, res) => {
 // Démarrage du serveur
 app.listen(port, () => {
     console.log(`Serveur Express en cours d'exécution sur le port ${port}`);
-});
+};
