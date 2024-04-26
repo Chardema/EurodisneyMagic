@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import axios from 'axios';
 import L from 'leaflet';
-import styles from './attractionsMap.module.scss';
+import apikey from "../config";
 
 const AttractionsMap = ({ attractions, getWaitTimeColor }) => {
     const [selectedAttraction, setSelectedAttraction] = useState(null);
@@ -57,7 +57,7 @@ const AttractionsMap = ({ attractions, getWaitTimeColor }) => {
 
     const calculateRoute = async (startCoordinates, destinationCoordinates) => {
         try {
-            const apiKey = '5b3ce3597851110001cf62483f9fb5d6194f46139e925f786fde38a0';
+            const apiKey = apikey
             const response = await axios.get(`https://api.openrouteservice.org/v2/directions/foot-walking?api_key=${apiKey}&start=${startCoordinates[1]},${startCoordinates[0]}&end=${destinationCoordinates[1]},${destinationCoordinates[0]}`);
             if (response.data.features && response.data.features.length > 0) {
                 const coordinates = response.data.features[0].geometry.coordinates;
