@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_KEY = 'e58d393ecefe611db214805b39c74a9c'; // Remplacez par votre clé API OpenWeather
+const API_KEY = process.env.OPENW_API_KEY; // Remplacez par votre clé API OpenWeather
 const LATITUDE = 48.8719;  // Latitude de Disneyland Paris
 const LONGITUDE = 2.7769;  // Longitude de Disneyland Paris
 
