@@ -21,6 +21,20 @@
     z-index: 1000;
     animation: fadeIn 0.5s ease-out;
   }
+
+  .confirmButton {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
   
   .popup {
     position: relative;
@@ -48,30 +62,27 @@
   }
   
   .attractionRecommendation {
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    margin: 10px 0;
-    padding: 10px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f8f9fa; /* Couleur de fond légère */
+    margin: 10px 0; /* Espace entre les recommandations */
   }
   
   .attractionRecommendation img {
-    border-radius: 10px;
-    width: 100px; /* Ajusté pour mieux montrer l'image */
-    height: 75px; /* Ajusté pour garder le rapport */
-    object-fit: cover;
-    border-radius: 8px;
-    margin-right: 15px;
+    width: 100px; /* Ajustez la taille de l'image selon vos besoins */
+    height: 100px; /* Ajustez la taille de l'image selon vos besoins */
+    border-radius: 8px; /* Coins arrondis pour l'image */
   }
   
   .attractionRecommendation h3 {
     flex-grow: 1;
-    margin: 0 10px;
+    margin: 10px;
   }
+.attractionRecommendation h2 {
+  font-size: 20px;
+}
   
   .answerButton {
     background-color: #007bff;

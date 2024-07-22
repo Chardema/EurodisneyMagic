@@ -36,6 +36,11 @@ const questions = [
     answers: ['Moins de 15 minutes', '15-30 minutes', '30-60 minutes', 'Plus de 60 minutes'],
     type: 'waitTimePreference',
   },
+  {
+    question: "Pouvez-vous faire des attractions de Type sensation forte ?",
+    answers: ['Oui', 'Non'],
+    type: 'SensationQuestion',
+  },
 ];
 
 const PopupSurvey = ({ onClose, attractions }) => {

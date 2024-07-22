@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../Navbar/Navbar";
 import BottomNav from "../mobileNavbar/mobileNavbar";
 import PopupSurvey from '../popupSurvey/popupSurvey';
+import LoadingScreen from "../loadingscreen/loadingScreen";
 import { setFavorites } from "../redux/actions";
 import { useSwipeable } from 'react-swipeable';
 import backgroundImage from './../img/simphonyofcolor.jpg';
@@ -121,13 +122,14 @@ const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
 };
 
 const HomePage = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const reduxFavorites = useSelector(state => state.favorites.favorites);
   const attractions = useSelector(state => state.attractions.attractions);
   const dispatch = useDispatch();
   const width = useWindowWidth();
   const [showPopup, setShowPopup] = useState(false);
   const [favoritesFilter, setFavoritesFilter] = useState('all');
-  const [filteredFavorites, setFilteredFavorites] = useState(reduxFavorites); // Stocker les favoris filtrés
+  const [filteredFavorites, setFilteredFavorites] = useState(reduxFavorites);
   const [isMinimalistMode, setIsMinimalistMode] = useState(false);
 
   const toggleViewMode = () => setIsMinimalistMode(!isMinimalistMode);
@@ -155,7 +157,7 @@ const HomePage = () => {
     setFilteredFavorites(reduxFavorites.filter(favorite => {
       if (favoritesFilter === 'all') return true;
       if (favoritesFilter === 'attractions') return favorite.type !== 'SHOW';
-      return favorite.type === 'SHOW'; // Filtre par spectacles
+      return favorite.type === 'SHOW';
     }));
   }, [favoritesFilter, reduxFavorites]);
 
@@ -168,73 +170,80 @@ const HomePage = () => {
 
   const closePopup = () => setShowPopup(false);
 
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+
   return (
-      <div className={styles.homePage}>
-        {width > 768 && <Navbar />}
-        <div className={styles.topcontainer}>
-          <div className={styles.heroSection}>
-            <img src={backgroundImage} alt="Disneyland Paris" className={styles.heroImage} />
-          </div>
-          <div className={styles.filterButtons}>
-            <button onClick={() => setFavoritesFilter('all')} className={favoritesFilter === 'all' ? styles.active : ''}>Tous</button>
-            <button onClick={() => setFavoritesFilter('attractions')} className={favoritesFilter === 'attractions' ? styles.active : ''}>Attractions</button>
-            <button onClick={() => setFavoritesFilter('shows')} className={favoritesFilter === 'shows' ? styles.active : ''}>Spectacles</button>
-          </div>
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <button 
-  aria-label="Vue en liste" 
-  onClick={() => setIsMinimalistMode(true)} 
-  className={`${styles.toggleButton} ${isMinimalistMode ? styles.active : ''}`}
->
-  <i className="fas fa-list"></i>
-</button>
-<button 
-  aria-label="Vue en carte" 
-  onClick={() => setIsMinimalistMode(false)} 
-  className={`${styles.toggleButton} ${!isMinimalistMode ? styles.active : ''}`}
->
-  <i className="fas fa-th-large"></i>
-</button>
-
-</div>
-
-
-        <div className={styles.bottomcontainer}>
-          <div className={styles.content}>
-            {filteredFavorites.length > 0 ? (
-                <div className={styles.attractionsSection}>
-                  {filteredFavorites.map(favorite => (
-                      <FavoriteCard
-                          key={favorite.id}
-                          favorite={favorite}
-                          onRemove={removeFavorite}
-                          isMinimalistMode={isMinimalistMode}
-                      />
-                  ))}
+      <>
+        {isLoading ? (
+            <LoadingScreen onLoadingComplete={handleLoadingComplete} />
+        ) : (
+            <div className={styles.homePage}>
+              {width > 768 && <Navbar />}
+              <div className={styles.topcontainer}>
+                <div className={styles.heroSection}>
+                  <img src={backgroundImage} alt="Disneyland Paris" className={styles.heroImage} />
                 </div>
-            ) : (
-                <div className={styles.noFavoritesMessage}>
-                  <p>Vous n'avez pas encore de favoris.</p>
-                  <button onClick={() => setShowPopup(true)} className={styles.linkButton}>
-                    Refaire le quiz
-                  </button>
+                <div className={styles.filterButtons}>
+                  <button onClick={() => setFavoritesFilter('all')} className={favoritesFilter === 'all' ? styles.active : ''}>Tous</button>
+                  <button onClick={() => setFavoritesFilter('attractions')} className={favoritesFilter === 'attractions' ? styles.active : ''}>Attractions</button>
+                  <button onClick={() => setFavoritesFilter('shows')} className={favoritesFilter === 'shows' ? styles.active : ''}>Spectacles</button>
                 </div>
-            )}
-          </div>
-          <div className={styles.buyMeABeerContainer}>
-            <p>Cette application n'a aucune affilitation officielle avec Disneyland Paris <br />
-              N'hésitez pas à me soutenir !</p>
-            <a href="https://www.buymeacoffee.com/8w7bkbktqs4">
-              <img
-                  src="https://img.buymeacoffee.com/button-api/?text=Buy me a beer&emoji=🍺&slug=8w7bkbktqs4&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"
-                  alt="Buy me a beer"/>
-            </a>
-          </div>
-        </div>
-        {width <= 768 && <BottomNav/>}
-        {showPopup && <PopupSurvey onClose={closePopup} attractions={attractions}/>}
-      </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <button
+                    aria-label="Vue en liste"
+                    onClick={() => setIsMinimalistMode(true)}
+                    className={`${styles.toggleButton} ${isMinimalistMode ? styles.active : ''}`}
+                >
+                  <i className="fas fa-list"></i>
+                </button>
+                <button
+                    aria-label="Vue en carte"
+                    onClick={() => setIsMinimalistMode(false)}
+                    className={`${styles.toggleButton} ${!isMinimalistMode ? styles.active : ''}`}
+                >
+                  <i className="fas fa-th-large"></i>
+                </button>
+              </div>
+              <div className={styles.bottomcontainer}>
+                <div className={styles.content}>
+                  {filteredFavorites.length > 0 ? (
+                      <div className={styles.attractionsSection}>
+                        {filteredFavorites.map(favorite => (
+                            <FavoriteCard
+                                key={favorite.id}
+                                favorite={favorite}
+                                onRemove={removeFavorite}
+                                isMinimalistMode={isMinimalistMode}
+                            />
+                        ))}
+                      </div>
+                  ) : (
+                      <div className={styles.noFavoritesMessage}>
+                        <p>Vous n'avez pas encore de favoris.</p>
+                        <button onClick={() => setShowPopup(true)} className={styles.linkButton}>
+                          Refaire le quiz
+                        </button>
+                      </div>
+                  )}
+                </div>
+                <div className={styles.buyMeABeerContainer}>
+                  <p>Cette application n'a aucune affilitation officielle avec Disneyland Paris <br />
+                    N'hésitez pas à me soutenir !</p>
+                  <a href="https://www.buymeacoffee.com/8w7bkbktqs4">
+                    <img
+                        src="https://img.buymeacoffee.com/button-api/?text=Buy me a beer&emoji=🍺&slug=8w7bkbktqs4&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"
+                        alt="Buy me a beer"/>
+                  </a>
+                </div>
+              </div>
+              {width <= 768 && <BottomNav />}
+              {showPopup && <PopupSurvey onClose={closePopup} attractions={attractions}/>}
+            </div>
+        )}
+      </>
   );
 };
 
