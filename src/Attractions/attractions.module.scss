@@ -78,7 +78,6 @@ h1 {
     }
 }
 .cardText {
-    cursor: pointer;
     h3 {
         font-size: 1.4em;
         margin: 0;
@@ -186,7 +185,24 @@ h1 {
     align-items: center;
     justify-content: center;
 }
+.modalButton {
+    background-color: white;
+    color: #007BFF;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 5px 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
 
+}
+
+.modalButton:hover
+{
+        background-color: #007BFF;
+        color: white;
+}
 .header {
     display: flex;
     justify-content: center;

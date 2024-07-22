@@ -9,6 +9,7 @@
   }
   
   .popupContainer {
+    background-color: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,7 +42,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fff;
+    background-color: #f0f0f0;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -85,10 +86,10 @@
 }
   
   .answerButton {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
+    background-color: white;
+    color: black;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
     padding: 10px 20px;
     margin: 5px 0; /* Moins d'espace entre les boutons pour une apparence plus compacte */
     cursor: pointer;
@@ -99,12 +100,14 @@
     font-size: 16px; /* Augmente la taille de la police pour améliorer la lisibilité */
     
     &:hover {
-      background-color: #0056b3;
+      background-color: #007BFF;
+      color: white;
     }
   }
   
   .answerButton.selected {
-    background-color: #28a745; /* Vert pour les sélectionnés, pour un feedback visuel */
+    background-color: #007BFF; /* Vert pour les sélectionnés, pour un feedback visuel */
+    color: white;
   }
   
   .closeButton {
@@ -132,7 +135,22 @@
     gap: 50px; /* Ajustez l'espacement selon vos besoins */
     margin-bottom: 20px; /* Espace avant le bouton Fermer */
   }
-  
+  .confirmButton {
+    background-color: white;
+    color: #007BFF;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 5px 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .confirmButton:hover {
+    background-color: #007BFF;
+    color: white;
+  }
   .passIcon, .favoriteIcon {
     cursor: pointer;
     font-size: 50px; /* Ajustez la taille selon vos besoins */

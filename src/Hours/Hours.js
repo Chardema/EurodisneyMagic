@@ -105,54 +105,54 @@ const Hours = () => {
                 {showWeatherInfo && (
                     <>
                         <div className={`${styles.dateChangePanel} ${showWeatherInfo ? styles.dateChangePanelOpen : ''}`}>
-                        {selectedDay !== todayString && (
-                            <div className={styles.todayButtonContainer}>
-                                <button onClick={function(event){ goToToday(); setShowWeatherInfo(false)}} className={styles.todayButton}>Aujourd'hui</button>
+                            {selectedDay !== todayString && (
+                                <div className={styles.todayButtonContainer}>
+                                    <button onClick={function(event){ goToToday(); setShowWeatherInfo(false)}} className={styles.todayButton}>Aujourd'hui</button>
+                                </div>
+                            )}
+                            <div className={styles.datePickerContainer}>
+                                <input
+                                    type="date"
+                                    value={selectedDay}
+                                    onChange={e => {
+                                        setSelectedDay(e.target.value);
+                                        setShowWeatherInfo(false); // Ajoutez ceci pour fermer le panneau
+                                    }}
+                                    min={todayString}
+                                    max={maxDateStringFormatted}
+                                    className={styles.datePicker}
+                                />
                             </div>
-                        )}
-                        <div className={styles.datePickerContainer}>
-                            <input
-                                type="date"
-                                value={selectedDay}
-                                onChange={e => {
-                                    setSelectedDay(e.target.value);
-                                    setShowWeatherInfo(false); // Ajoutez ceci pour fermer le panneau
-                                }}
-                                min={todayString}
-                                max={maxDateStringFormatted}
-                                className={styles.datePicker}
-                            />
                         </div>
-                   </div>
                     </>
                 )}
-                    <div className={styles.weatherInfo}>
-                        {isToday(selectedDay) && weather && weather.main && (
-                            <div>
-                                <img
-                                    src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
-                                    alt="Weather Icon"
-                                    width={40}
-                                    height={40}
-                                />
-                                <p> {Math.round(weather.main.temp)}°C </p>
-                            </div>
-                        )}
-                        {!isToday(selectedDay) && isForecastAvailable && weatherForecast && weatherForecast.length > 0 ? (
-                            <div>
-                                <img
-                                    src={`https://openweathermap.org/img/w/${weatherForecast[0].weather[0].icon}.png`}
-                                    alt="Weather Icon"
-                                    width={40}
-                                    height={40}
-                                />
-                                <p>{Math.round(weatherForecast[0].main.temp)}°C</p>
-                                <p>Prévisions : {weatherDescriptions[weatherForecast[0].weather[0].main] || weatherForecast[0].weather[0].main}</p>
-                            </div>
-                        ) : (
-                            !isToday(selectedDay) && !isForecastAvailable && <p>Les prévisions météorologiques ne sont pas encore disponibles pour cette date.</p>
-                        )}
-                    </div>
+                <div className={styles.weatherInfo}>
+                    {isToday(selectedDay) && weather && weather.main && (
+                        <div>
+                            <img
+                                src={`https://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
+                                alt="Weather Icon"
+                                width={40}
+                                height={40}
+                            />
+                            <p> {Math.round(weather.main.temp)}°C </p>
+                        </div>
+                    )}
+                    {!isToday(selectedDay) && isForecastAvailable && weatherForecast && weatherForecast.length > 0 ? (
+                        <div>
+                            <img
+                                src={`https://openweathermap.org/img/w/${weatherForecast[0].weather[0].icon}.png`}
+                                alt="Weather Icon"
+                                width={40}
+                                height={40}
+                            />
+                            <p>{Math.round(weatherForecast[0].main.temp)}°C</p>
+                            <p>Prévisions : {weatherDescriptions[weatherForecast[0].weather[0].main] || weatherForecast[0].weather[0].main}</p>
+                        </div>
+                    ) : (
+                        !isToday(selectedDay) && !isForecastAvailable && <p>Les prévisions météorologiques ne sont pas encore disponibles pour cette date.</p>
+                    )}
+                </div>
                 <div className={styles.allparks}>
                     <div className={styles.disneyland}>
                         <div className={styles.hours}>
