@@ -22,7 +22,7 @@ const questions = [
     type: 'intro',
   },
   {
-    question: "Commençons par vous poser quelques questions afin de vous proposer votre première attraction",
+    question: "Commençons par quelques questions pour découvrir votre première attraction",
     answers: ['Suivant'],
     type: 'intro',
   },
@@ -37,7 +37,7 @@ const questions = [
     type: 'waitTimePreference',
   },
   {
-    question: "Pouvez-vous faire des attractions de Type sensation forte ?",
+    question: "Pouvez-vous faire des attractions à sensation forte ?",
     answers: ['Oui', 'Non'],
     type: 'SensationQuestion',
   },

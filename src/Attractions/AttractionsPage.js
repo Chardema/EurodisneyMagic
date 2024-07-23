@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
-import styles from './attractions.module.scss'
-import {formatDate, formatImageName, importImage, useWindowWidth} from "../utils";
+import styles from './attractions.module.scss';
+import { formatImageName, importImage, useWindowWidth } from "../utils";
 import { setAttractions, setRawRideData, setFilteredRideData, setSearchTerm } from '../redux/actions';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -16,7 +16,6 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { toggleFavorite } from '../redux/actions';
 import AttractionsMap from "../attractionsMap/attractionsMap";
 import AttractionModal from "../modalAttractions/modalAttractions";
-
 
 
 // Liste des noms d'attractions
@@ -77,7 +76,6 @@ export const attractionImages = attractionNames.reduce((acc, name) => {
     acc[name] = importImage(imageName);
     return acc;
 }, {});
-
 const Attractions = () => {
     const { rawRideData, searchTerm, filteredRideData, favorites } = useSelector(state => ({
         rawRideData: state.attractions.rawRideData,
@@ -107,6 +105,7 @@ const Attractions = () => {
         setSelectedAttraction(attraction);
         setModalOpen(true);
     };
+
     useEffect(() => {
         const storedPreviousWaitTimes = localStorage.getItem('previousWaitTimes');
         if (storedPreviousWaitTimes) {
@@ -123,13 +122,23 @@ const Attractions = () => {
             const newPreviousWaitTimes = rideData.reduce((acc, ride) => {
                 acc[ride.id] = {
                     currentWaitTime: ride.waitTime,
-                    previousWaitTime: ride.previousWaitTime,
-                    hadPreviousWaitTime: ride.previousWaitTime != null
+                    previousWaitTime: previousWaitTimes[ride.id]?.currentWaitTime || null,
+                    hadPreviousWaitTime: previousWaitTimes[ride.id]?.currentWaitTime != null
                 };
                 return acc;
             }, {});
 
             setPreviousWaitTimes(newPreviousWaitTimes);
+            localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
+
+            // Envoyer les temps d'attente au serveur
+            await Promise.all(rideData.map(ride => {
+                return axios.post('/api/wait-times', {
+                    attractionId: ride.id,
+                    attractionName: ride.name,
+                    waitTime: ride.waitTime
+                });
+            }));
 
             const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
             dispatch(setRawRideData(sortedRideData || []));
@@ -141,7 +150,6 @@ const Attractions = () => {
             setIsDataLoaded(true);
         }
     };
-
 
     const getWaitTimeStyle = (waitTime) => {
         if (waitTime < 20) return styles.waitTimeShort;
@@ -207,7 +215,7 @@ const Attractions = () => {
     return (
         <div className={styles.bodyAttraction}>
             {width > 768 && <Navbar />}
-            <div className = {styles.header}>
+            <div className={styles.header}>
                 <div className={styles.modeSwitch}>
                     <button className={viewMode === 'list' ? 'active' : ''} onClick={() => setViewMode('list')}>Liste</button>
                     <button className={viewMode === 'map' ? 'active' : ''} onClick={() => setViewMode('map')}>Itinéraire</button>
@@ -279,24 +287,24 @@ const Attractions = () => {
                             </label>
                         </div>
                         <div className={styles.allbutton}>
-                                    <button
-                                        className={`${styles.button} ${filters.selectedPark === 'all' ? styles.buttonSelected : ''}`}
-                                        onClick={() => setFilters({...filters, selectedPark: 'all'})}
-                                    >
-                                        Tous les Parcs
-                                    </button>
-                                    <button
-                                        className={`${styles.button} ${filters.selectedPark === 'dae968d5-630d-4719-8b06-3d107e944401' ? styles.buttonSelected : ''}`}
-                                        onClick={() => setFilters({...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401'})}
-                                    >
-                                        Parc Disneyland
-                                    </button>
-                                    <button
-                                        className={`${styles.button} ${filters.selectedPark === 'ca888437-ebb4-4d50-aed2-d227f7096968' ? styles.buttonSelected : ''}`}
-                                        onClick={() => setFilters({...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968'})}
-                                    >
-                                        Walt Disney Studios
-                                    </button>
+                            <button
+                                className={`${styles.button} ${filters.selectedPark === 'all' ? styles.buttonSelected : ''}`}
+                                onClick={() => setFilters({ ...filters, selectedPark: 'all' })}
+                            >
+                                Tous les Parcs
+                            </button>
+                            <button
+                                className={`${styles.button} ${filters.selectedPark === 'dae968d5-630d-4719-8b06-3d107e944401' ? styles.buttonSelected : ''}`}
+                                onClick={() => setFilters({ ...filters, selectedPark: 'dae968d5-630d-4719-8b06-3d107e944401' })}
+                            >
+                                Parc Disneyland
+                            </button>
+                            <button
+                                className={`${styles.button} ${filters.selectedPark === 'ca888437-ebb4-4d50-aed2-d227f7096968' ? styles.buttonSelected : ''}`}
+                                onClick={() => setFilters({ ...filters, selectedPark: 'ca888437-ebb4-4d50-aed2-d227f7096968' })}
+                            >
+                                Walt Disney Studios
+                            </button>
                         </div>
                     </div>
 
@@ -316,27 +324,22 @@ const Attractions = () => {
 
                                 return (
                                     <div key={ride.id} className={styles.card}>
-                                        <img src={attractionImages[ride.name]} alt={ride.name}/>
+                                        <img src={attractionImages[ride.name]} alt={ride.name} />
                                         <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
                                             <p className={styles.attractionLand}>{ride.land}</p>
-                                            <button className={styles.modalButton}  onClick={() => openModalWithAttraction(ride)}>Détails</button>
+                                            <button className={styles.modalButton} onClick={() => openModalWithAttraction(ride)}>Détails</button>
                                         </div>
-                                        <div
-                                            className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
+                                        <div className={`${styles.waitTime} ${waitTimeClass} ${isIncreased || isDecreased ? styles.pulseAnimation : ''}`}>
                                             {ride.status === 'DOWN' ? 'Indispo' :
                                                 ride.status === 'CLOSED' ? 'Fermée' :
                                                     ride.waitTime === null ? 'Sans file' : `${ride.waitTime} min`}
                                             {isIncreased && <span className={styles.arrowUp}>⬆️</span>}
                                             {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
-                                        <button className={styles.favoriteButton}
-                                                onClick={() => handleToggleFavorite(ride)}>
-                                            <FontAwesomeIcon
-                                                icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart}/>
+                                        <button className={styles.favoriteButton} onClick={() => handleToggleFavorite(ride)}>
+                                            <FontAwesomeIcon icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart} />
                                         </button>
-
-
                                     </div>
                                 );
                             }) : (
@@ -345,13 +348,13 @@ const Attractions = () => {
                         </div>
                     )}
                 </div>
-                    ) : (
-                <div style={{height: '80vh', width: '100vw'}}>
+            ) : (
+                <div style={{ height: '80vh', width: '100vw' }}>
                     <AttractionsMap attractions={filteredRideData} getWaitTimeColor={getWaitTimeColor} />
                 </div>
             )}
             <div className={styles.mobilecontainer}>
-                <BottomNav/>
+                <BottomNav />
             </div>
             <AttractionModal
                 isOpen={modalOpen}
@@ -363,4 +366,3 @@ const Attractions = () => {
 };
 
 export default Attractions;
-
