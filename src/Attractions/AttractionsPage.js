@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from "axios";
+import axios from 'axios';
 import styles from './attractions.module.scss';
-import { formatImageName, importImage, useWindowWidth } from "../utils";
+import { formatImageName, importImage, useWindowWidth } from '../utils';
 import { setAttractions, setRawRideData, setFilteredRideData, setSearchTerm } from '../redux/actions';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Navbar from './../Navbar/Navbar';
 import './attractions.module.scss';
-import BottomNav from "../mobileNavbar/mobileNavbar";
+import BottomNav from '../mobileNavbar/mobileNavbar';
 import 'leaflet/dist/leaflet.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { toggleFavorite } from '../redux/actions';
-import AttractionsMap from "../attractionsMap/attractionsMap";
-import AttractionModal from "../modalAttractions/modalAttractions";
+import AttractionsMap from '../attractionsMap/attractionsMap';
+import AttractionModal from '../modalAttractions/modalAttractions';
 
-
-// Liste des noms d'attractions
 export const attractionNames = [
     'Disneyland Railroad Discoveryland Station',
     'Disneyland Railroad Fantasyland Station',
@@ -71,11 +69,13 @@ export const attractionNames = [
     "Slinky® Dog Zigzag Spin",
     "Les Tapis Volants - Flying Carpets Over Agrabah®"
 ];
+
 export const attractionImages = attractionNames.reduce((acc, name) => {
     const imageName = formatImageName(name);
     acc[name] = importImage(imageName);
     return acc;
 }, {});
+
 const Attractions = () => {
     const { rawRideData, searchTerm, filteredRideData, favorites } = useSelector(state => ({
         rawRideData: state.attractions.rawRideData,
@@ -83,17 +83,19 @@ const Attractions = () => {
         filteredRideData: state.attractions.filteredRideData,
         favorites: state.favorites.favorites
     }));
-    const [viewMode, setViewMode] = useState('list'); // 'list', 'map'
+
+    const [viewMode, setViewMode] = useState('list');
     const [lastUpdate, setLastUpdate] = useState(null);
     const [previousWaitTimes, setPreviousWaitTimes] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [filters, setFilters] = useState({
         showShortWaitTimesOnly: false,
         hideClosedRides: false,
-        selectedPark: 'all', // 'all', 'disneyland', 'studio'
-        selectedType: 'all', // 'all', 'sans file d'attente', 'famille', 'sensation'
-        selectedLand: 'all' // 'all', 'fantasyland', 'frontierland', 'adventureland', 'discoveryland'
+        selectedPark: 'all',
+        selectedType: 'all',
+        selectedLand: 'all'
     });
+
     const dispatch = useDispatch();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedAttraction, setSelectedAttraction] = useState(null);
@@ -101,6 +103,7 @@ const Attractions = () => {
     const handleToggleFavorite = (attraction) => {
         dispatch(toggleFavorite(attraction));
     };
+
     const openModalWithAttraction = (attraction) => {
         setSelectedAttraction(attraction);
         setModalOpen(true);
@@ -120,10 +123,10 @@ const Attractions = () => {
             setLastUpdate(new Date());
 
             const newPreviousWaitTimes = rideData.reduce((acc, ride) => {
-                acc[ride.id] = {
+                acc[ride._id] = {
                     currentWaitTime: ride.waitTime,
-                    previousWaitTime: previousWaitTimes[ride.id]?.currentWaitTime || null,
-                    hadPreviousWaitTime: previousWaitTimes[ride.id]?.currentWaitTime != null
+                    previousWaitTime: previousWaitTimes[ride._id]?.currentWaitTime || null,
+                    hadPreviousWaitTime: previousWaitTimes[ride._id]?.currentWaitTime != null
                 };
                 return acc;
             }, {});
@@ -131,35 +134,32 @@ const Attractions = () => {
             setPreviousWaitTimes(newPreviousWaitTimes);
             localStorage.setItem('previousWaitTimes', JSON.stringify(newPreviousWaitTimes));
 
-            // Envoyer les temps d'attente au serveur
+            // Envoyer les temps d'attente au serveur, sauf si l'attraction est fermée ou sans file d'attente
             await Promise.all(rideData.map(ride => {
-                return axios.post('/api/wait-times', {
-                    attractionId: ride.id,
-                    attractionName: ride.name,
-                    waitTime: ride.waitTime
-                });
+                const waitTime = ride.waitTime !== undefined ? ride.waitTime : null;
+                if (ride._id && ride.name && waitTime !== null && ride.status !== 'CLOSED' && ride.status !== 'DOWN') {
+                    return axios.post('https://eurojourney.azurewebsites.net/api/wait-times', {
+                        attractionId: ride._id,
+                        attractionName: ride.name,
+                        waitTime: waitTime
+                    });
+                }
             }));
 
             const sortedRideData = rideData.sort((a, b) => a.waitTime - b.waitTime);
             dispatch(setRawRideData(sortedRideData || []));
             dispatch(setAttractions(sortedRideData || []));
         } catch (error) {
-            console.error(error);
+            console.error('Erreur lors de la récupération des attractions:', error);
             setLastUpdate(new Date());
         } finally {
             setIsDataLoaded(true);
         }
     };
 
-    const getWaitTimeStyle = (waitTime) => {
-        if (waitTime < 20) return styles.waitTimeShort;
-        if (waitTime < 40) return styles.waitTimeMedium;
-        return styles.waitTimeLong;
-    };
-
     useEffect(() => {
         fetchData();
-        const intervalId = setInterval(fetchData, 60000);
+        const intervalId = setInterval(fetchData, 900000); // Toutes les 15 minutes
         return () => clearInterval(intervalId);
     }, []);
 
@@ -178,7 +178,7 @@ const Attractions = () => {
                     ride.name.toLowerCase().includes(searchTerm.toLowerCase())
                 );
             })
-            .sort((a, b) => a.waitTime - b.waitTime); // Tri par temps d'attente
+            .sort((a, b) => a.waitTime - b.waitTime);
         dispatch(setFilteredRideData(filteredAttractions));
     }, [rawRideData, searchTerm, filters, dispatch]);
 
@@ -189,28 +189,10 @@ const Attractions = () => {
     const handleSearchChange = (event) => {
         dispatch(setSearchTerm(event.target.value));
     };
+
     const width = useWindowWidth();
 
     const allRidesClosed = rawRideData && rawRideData.length > 0 && rawRideData.every((ride) => ride.status === 'CLOSED');
-    const getWaitTimeColor = (waitTime) => {
-        let content;
-        let backgroundColor = '#F44336'; // Couleur par défaut
-
-        if (waitTime === null) {
-            content = 'Direct';
-            backgroundColor = '#4CAF50'; // Vert
-        } else if (waitTime < 20) {
-            content = `${waitTime} min`;
-            backgroundColor = '#4CAF50'; // Vert
-        } else if (waitTime < 40) {
-            content = `${waitTime} min`;
-            backgroundColor = '#FFC107'; // Jaune
-        } else {
-            content = `${waitTime} min`;
-        }
-
-        return `<div style="background-color: ${backgroundColor}; color: white; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; font-size: 10px;">${content}</div>`;
-    };
 
     return (
         <div className={styles.bodyAttraction}>
@@ -253,7 +235,6 @@ const Attractions = () => {
                                 className={styles.selectOption}
                             >
                                 <option value="all">Types d'attractions</option>
-                                <option value="all">Toutes</option>
                                 <option value="Famille">Famille</option>
                                 <option value="Sensation">Sensation</option>
                                 <option value="Sans file d’attente">Sans file d’attente</option>
@@ -315,7 +296,7 @@ const Attractions = () => {
                     ) : (
                         <div className={styles.attractionsList}>
                             {filteredRideData.length > 0 ? filteredRideData.map((ride) => {
-                                const waitTimeInfo = previousWaitTimes[ride.id];
+                                const waitTimeInfo = previousWaitTimes[ride._id];
                                 const isIncreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
                                 const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
                                 const isWaitTimeHigh = ride.waitTime >= 40;
@@ -323,7 +304,7 @@ const Attractions = () => {
                                 const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : '';
 
                                 return (
-                                    <div key={ride.id} className={styles.card}>
+                                    <div key={ride._id} className={styles.card}>
                                         <img src={attractionImages[ride.name]} alt={ride.name} />
                                         <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
@@ -338,7 +319,7 @@ const Attractions = () => {
                                             {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
                                         <button className={styles.favoriteButton} onClick={() => handleToggleFavorite(ride)}>
-                                            <FontAwesomeIcon icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart} />
+                                            <FontAwesomeIcon icon={favorites.some(fav => fav._id === ride._id) ? solidHeart : regularHeart} />
                                         </button>
                                     </div>
                                 );
@@ -350,7 +331,7 @@ const Attractions = () => {
                 </div>
             ) : (
                 <div style={{ height: '80vh', width: '100vw' }}>
-                    <AttractionsMap attractions={filteredRideData} getWaitTimeColor={getWaitTimeColor} />
+                    <AttractionsMap attractions={filteredRideData} getWaitTimeColor={(waitTime) => `<div>${waitTime} min</div>`} />
                 </div>
             )}
             <div className={styles.mobilecontainer}>
