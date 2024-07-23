@@ -6,10 +6,12 @@ import PopupSurvey from '../popupSurvey/popupSurvey';
 import LoadingScreen from "../loadingscreen/loadingScreen";
 import { setFavorites } from "../redux/actions";
 import { useSwipeable } from 'react-swipeable';
-import backgroundImage from './../img/simphonyofcolor.jpg';
+import backgroundImage from './../img/disneyete2024.jpg';
 import styles from './appHome.module.scss';
 import { attractionImages } from "../Attractions/AttractionsPage";
 import {formatImageName, importImage, useWindowWidth} from '../utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faList, faThLarge } from '@fortawesome/free-solid-svg-icons';
 import ModalAttractions from "../modalAttractions/modalAttractions";
 
 const getWaitTimeColor = (attraction) => {
@@ -28,16 +30,9 @@ const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
   const [swipeAction, setSwipeAction] = useState(false);
   const [showHint, setShowHint] = useState(true);
   const [nextShowtime, setNextShowtime] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedAttraction, setSelectedAttraction] = useState(null);
 
-
-  const openModalWithAttraction = (attraction) => {
-    setSelectedAttraction(attraction);
-    setModalOpen(true);
-  };
   useEffect(() => {
-    if (favorite.type === 'SHOW') {
+    if (favorite.type === 'SHOW' && favorite.showtimes) {
       const now = new Date();
       const futureShowtimes = favorite.showtimes.filter(showtime =>
           new Date(showtime.startTime) > now
@@ -45,10 +40,8 @@ const FavoriteCard = ({ favorite, onRemove, isMinimalistMode }) => {
 
       setNextShowtime(futureShowtimes.length > 0 ? futureShowtimes[0] : null);
     }
-  }, [favorite.showtimes]);
+  }, [favorite]);
 
-
-  
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowHint(false);
@@ -215,14 +208,15 @@ const HomePage = () => {
                     onClick={() => setIsMinimalistMode(true)}
                     className={`${styles.toggleButton} ${isMinimalistMode ? styles.active : ''}`}
                 >
-                  <i className="fas fa-list"></i>
+                  <FontAwesomeIcon icon={faList} />
+
                 </button>
                 <button
                     aria-label="Vue en carte"
                     onClick={() => setIsMinimalistMode(false)}
                     className={`${styles.toggleButton} ${!isMinimalistMode ? styles.active : ''}`}
                 >
-                  <i className="fas fa-th-large"></i>
+                  <FontAwesomeIcon icon={faThLarge} />
                 </button>
               </div>
               <div className={styles.bottomcontainer}>
