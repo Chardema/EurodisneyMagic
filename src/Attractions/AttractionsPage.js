@@ -123,10 +123,10 @@ const Attractions = () => {
             setLastUpdate(new Date());
 
             const newPreviousWaitTimes = rideData.reduce((acc, ride) => {
-                acc[ride._id] = {
+                acc[ride.id] = {
                     currentWaitTime: ride.waitTime,
-                    previousWaitTime: previousWaitTimes[ride._id]?.currentWaitTime || null,
-                    hadPreviousWaitTime: previousWaitTimes[ride._id]?.currentWaitTime != null
+                    previousWaitTime: previousWaitTimes[ride.id]?.currentWaitTime || null,
+                    hadPreviousWaitTime: previousWaitTimes[ride.id]?.currentWaitTime != null
                 };
                 return acc;
             }, {});
@@ -137,11 +137,12 @@ const Attractions = () => {
             // Envoyer les temps d'attente au serveur, sauf si l'attraction est fermée ou sans file d'attente
             await Promise.all(rideData.map(ride => {
                 const waitTime = ride.waitTime !== undefined ? ride.waitTime : null;
-                if (ride._id && ride.name && waitTime !== null && ride.status !== 'CLOSED' && ride.status !== 'DOWN') {
+                if (ride.id && ride.name && waitTime !== null && ride.status !== 'CLOSED' && ride.status !== 'DOWN') {
                     return axios.post('https://eurojourney.azurewebsites.net/api/wait-times', {
-                        attractionId: ride._id,
+                        attractionId: ride.id,
                         attractionName: ride.name,
-                        waitTime: waitTime
+                        waitTime: waitTime,
+                        status: ride.status
                     });
                 }
             }));
@@ -159,7 +160,7 @@ const Attractions = () => {
 
     useEffect(() => {
         fetchData();
-        const intervalId = setInterval(fetchData, 900000); // Toutes les 15 minutes
+        const intervalId = setInterval(fetchData, 60000); // Toutes les minutes
         return () => clearInterval(intervalId);
     }, []);
 
@@ -296,7 +297,7 @@ const Attractions = () => {
                     ) : (
                         <div className={styles.attractionsList}>
                             {filteredRideData.length > 0 ? filteredRideData.map((ride) => {
-                                const waitTimeInfo = previousWaitTimes[ride._id];
+                                const waitTimeInfo = previousWaitTimes[ride.id];
                                 const isIncreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime > waitTimeInfo.previousWaitTime;
                                 const isDecreased = waitTimeInfo && waitTimeInfo.hadPreviousWaitTime && waitTimeInfo.currentWaitTime < waitTimeInfo.previousWaitTime;
                                 const isWaitTimeHigh = ride.waitTime >= 40;
@@ -304,7 +305,7 @@ const Attractions = () => {
                                 const waitTimeClass = isWaitTimeHigh ? styles.waitTimeHigh : '';
 
                                 return (
-                                    <div key={ride._id} className={styles.card}>
+                                    <div key={ride.id} className={styles.card}>
                                         <img src={attractionImages[ride.name]} alt={ride.name} />
                                         <div className={styles.cardText}>
                                             <h3 className={styles.attractionName}>{ride.name}</h3>
@@ -319,7 +320,7 @@ const Attractions = () => {
                                             {isDecreased && <span className={styles.arrowDown}>⬇️</span>}
                                         </div>
                                         <button className={styles.favoriteButton} onClick={() => handleToggleFavorite(ride)}>
-                                            <FontAwesomeIcon icon={favorites.some(fav => fav._id === ride._id) ? solidHeart : regularHeart} />
+                                            <FontAwesomeIcon icon={favorites.some(fav => fav.id === ride.id) ? solidHeart : regularHeart} />
                                         </button>
                                     </div>
                                 );
