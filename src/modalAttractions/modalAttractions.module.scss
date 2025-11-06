@@ -1,82 +1,303 @@
+@import '../Styles/disneyTheme';
+
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease;
+  overflow-y: auto;
+  padding: $spacing-md;
 }
 
 .modalContent {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
+  padding: $spacing-xl;
+  border-radius: $radius-xl;
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: $shadow-xl;
+  animation: slideInUp 0.4s ease-out;
+
+  /* Scrollbar personnalisé */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $disney-blue-primary;
+    border-radius: 10px;
+
+    &:hover {
+      background: $disney-blue-dark;
+    }
+  }
 }
 
 .closeModal {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
+  top: $spacing-md;
+  right: $spacing-md;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
-  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-round;
+  font-size: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+  transition: all $transition-fast;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: $text-primary;
+    transform: rotate(90deg);
+  }
+
+  &:active {
+    transform: rotate(90deg) scale(0.9);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-lg;
+  padding-right: 40px; // Space for close button
+  gap: $spacing-md;
 }
 
 .attractionTitle {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: $text-primary;
+  flex: 1;
+  line-height: 1.3;
+  @include gradient-text;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.openBadge,
+.closedBadge {
+  padding: 8px 16px;
+  border-radius: $radius-xl;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: $shadow-sm;
+}
+
+.openBadge {
+  background: linear-gradient(135deg, $status-green, #34ce57);
+  color: white;
+}
+
+.closedBadge {
+  background: linear-gradient(135deg, $status-gray, #757575);
+  color: white;
 }
 
 .attractionDescription {
-  margin-bottom: 20px;
-  line-height: 1.6;
+  margin-bottom: $spacing-lg;
+  line-height: 1.7;
+  color: $text-secondary;
+  font-size: 15px;
+  padding: $spacing-md;
+  background: #f8f9ff;
+  border-radius: $radius-md;
+  border-left: 4px solid $disney-blue-primary;
 }
 
-.waitTimesTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-  }
-
-  th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-  }
-
-  tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  tr:hover {
-    background-color: #f1f1f1;
-  }
+.infoSection {
+  display: flex;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
 }
 
-.hint {
+.infoItem {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: white;
+  border-radius: $radius-md;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: $text-primary;
+
+  .infoIcon {
+    font-size: 18px;
+  }
 }
 
-.hintIcon {
-  margin-right: 10px;
-  font-size: 24px;
-  color: #f39c12;
+.loadingPrediction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  color: $text-secondary;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(95, 37, 159, 0.1);
+    border-top-color: $disney-purple;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: $spacing-md;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    color: $text-secondary;
+  }
+}
+
+.closedMessage {
+  text-align: center;
+  padding: $spacing-xl;
+  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+  border-radius: $radius-lg;
+  border: 2px solid #d0d0d0;
+
+  .closedIcon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: $spacing-md;
+    opacity: 0.6;
+  }
+
+  h3 {
+    margin: 0 0 $spacing-sm 0;
+    font-size: 20px;
+    color: $text-primary;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-size: 14px;
+  }
+}
+
+.fastPassTip {
+  background: linear-gradient(135deg, #FFF9E6, #FFF3CC);
+  border: 2px solid $disney-gold;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+  box-shadow: 0 4px 12px rgba(245, 197, 24, 0.2);
+
+  .tipIcon {
+    font-size: 24px;
+    color: $disney-gold;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+
+    strong {
+      color: #333;
+      font-weight: 700;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@include mobile {
+  .modalContent {
+    padding: $spacing-lg;
+    border-radius: $radius-lg;
+    max-width: 100%;
+  }
+
+  .attractionTitle {
+    font-size: 22px;
+  }
+
+  .modalHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .statusBadge {
+    width: 100%;
+  }
+
+  .openBadge,
+  .closedBadge {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .infoSection {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  .infoItem {
+    width: 100%;
+  }
 }

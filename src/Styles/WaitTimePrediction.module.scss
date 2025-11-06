@@ -1,0 +1,309 @@
+@import './disneyTheme';
+
+.predictionContainer {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-lg;
+    margin: $spacing-md 0;
+    border: 2px solid rgba(95, 37, 159, 0.1);
+    animation: slideInUp 0.5s ease-out;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+
+    h3 {
+        font-size: 20px;
+        color: $disney-purple;
+        margin: 0;
+        font-weight: 700;
+    }
+}
+
+.confidence {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-size: 14px;
+
+    .label {
+        color: $text-secondary;
+        font-weight: 500;
+    }
+
+    .confidenceBar {
+        width: 100px;
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .confidenceFill {
+        height: 100%;
+        background: linear-gradient(90deg, $disney-blue-light, $disney-purple);
+        transition: width 1s ease-out;
+        animation: shimmer 2s infinite;
+        background-size: 200% 100%;
+    }
+
+    .value {
+        color: $disney-purple;
+        font-weight: 700;
+    }
+}
+
+.recommendation {
+    background: linear-gradient(135deg, $disney-blue-primary, $disney-purple);
+    color: white;
+    padding: $spacing-md;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+    box-shadow: $shadow-magic;
+
+    .magicIcon {
+        font-size: 24px;
+        animation: sparkle 2s infinite;
+    }
+
+    p {
+        margin: 0;
+        line-height: 1.5;
+        font-size: 15px;
+        font-weight: 500;
+    }
+}
+
+.timeSaved {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #333;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+    animation: pulse 2s infinite;
+
+    .clockIcon {
+        font-size: 20px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+
+        strong {
+            font-weight: 700;
+            font-size: 16px;
+        }
+    }
+}
+
+.periodsChart {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    margin: $spacing-lg 0;
+}
+
+.periodCard {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: $radius-md;
+    padding: $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    transition: all $transition-normal;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        transform: translateX(4px);
+        box-shadow: $shadow-md;
+    }
+
+    &.best {
+        border-color: $disney-blue-primary;
+        background: linear-gradient(to right, rgba(0, 99, 178, 0.05) 0%, white 100%);
+        box-shadow: 0 0 20px rgba(0, 99, 178, 0.1);
+    }
+
+    &.worst {
+        border-color: #e0e0e0;
+        opacity: 0.8;
+    }
+}
+
+.periodIcon {
+    font-size: 32px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9ff, #ffffff);
+    border-radius: $radius-sm;
+}
+
+.periodInfo {
+    flex: 1;
+
+    h4 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        color: $text-primary;
+        font-weight: 600;
+    }
+
+    .periodTime {
+        font-size: 13px;
+        color: $text-secondary;
+    }
+}
+
+.periodWait {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+
+    .waitTime {
+        font-size: 28px;
+        font-weight: 700;
+        color: $disney-blue-primary;
+        line-height: 1;
+    }
+
+    .waitLabel {
+        font-size: 12px;
+        color: $text-secondary;
+        margin-top: 2px;
+    }
+}
+
+.bestBadge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: $disney-blue-primary;
+    color: white;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: $shadow-sm;
+}
+
+.insights {
+    background: #f8f9ff;
+    border-radius: $radius-md;
+    padding: $spacing-md;
+    margin-top: $spacing-md;
+
+    h4 {
+        margin: 0 0 $spacing-sm 0;
+        font-size: 15px;
+        color: $disney-purple;
+        font-weight: 600;
+    }
+
+    .insight {
+        padding: $spacing-sm;
+        margin: $spacing-sm 0;
+        background: white;
+        border-radius: $radius-sm;
+        font-size: 14px;
+        color: $text-primary;
+        line-height: 1.4;
+        border-left: 3px solid $disney-gold;
+    }
+}
+
+.noPrediction {
+    text-align: center;
+    padding: $spacing-xl;
+    color: $text-secondary;
+
+    .icon {
+        font-size: 48px;
+        display: block;
+        margin-bottom: $spacing-md;
+        animation: pulse 2s infinite;
+    }
+
+    p {
+        margin: $spacing-sm 0;
+        font-size: 16px;
+        color: $text-primary;
+        font-weight: 500;
+    }
+
+    small {
+        font-size: 13px;
+        color: $text-secondary;
+    }
+}
+
+.disclaimer {
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid #e0e0e0;
+
+    small {
+        font-size: 12px;
+        color: $text-light;
+        line-height: 1.4;
+        display: block;
+    }
+}
+
+@include mobile {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .confidence {
+        width: 100%;
+        justify-content: space-between;
+
+        .confidenceBar {
+            flex: 1;
+            margin: 0 $spacing-sm;
+        }
+    }
+
+    .periodCard {
+        padding: $spacing-sm;
+    }
+
+    .periodIcon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .periodInfo h4 {
+        font-size: 14px;
+    }
+
+    .periodWait .waitTime {
+        font-size: 22px;
+    }
+
+    .bestBadge {
+        font-size: 9px;
+        padding: 3px 8px;
+    }
+}

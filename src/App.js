@@ -11,6 +11,7 @@ import HomePage from "./Home/appHome";
 import {setFavorites} from "./redux/actions";
 import { setAttractions } from './redux/actions';
 import axios from "axios";
+import ErrorBoundary from './Components/ErrorBoundary';
 import './non-modulaire.scss';
 
 
@@ -60,20 +61,22 @@ const App = () => {
     }, []);
 
     return (
-        <Provider store={store}>
-            <Analytics />
-            <Router>
-                <div>
-                    <Routes>
-                        <Route path="/" element={<HomePage />} /> {/* Retirez les props qui ne sont plus nécessaires */}
-                        <Route path="/hours" element={<Hours />} />
-                        <Route path="/attractions" element={<Attractions />} /> {/* Retirez les props qui ne sont plus nécessaires */}
-                        <Route path="/spectacle" element={<Spectacle />} />
-                        <Route path="/magicAITrip" element={<MagicAITrip />} />
-                    </Routes>
-                </div>
-            </Router>
-        </Provider>
+        <ErrorBoundary>
+            <Provider store={store}>
+                <Analytics />
+                <Router>
+                    <div>
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/hours" element={<Hours />} />
+                            <Route path="/attractions" element={<Attractions />} />
+                            <Route path="/spectacle" element={<Spectacle />} />
+                            <Route path="/magicAITrip" element={<MagicAITrip />} />
+                        </Routes>
+                    </div>
+                </Router>
+            </Provider>
+        </ErrorBoundary>
     );
 };
 

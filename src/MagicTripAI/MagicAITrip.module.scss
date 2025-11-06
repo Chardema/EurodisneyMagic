@@ -1,56 +1,426 @@
-// MagicAITrip.module.scss
+@import '../Styles/disneyTheme';
+
 .magicAiTripContainer {
-  text-align: center;
-  padding: 0;
-  padding: 20px;
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: $spacing-xl;
+  padding-bottom: 100px;
 
-.content {
-  margin-top: 30px;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 20px;
-}
-
-.castleImage {
-  width: 100%;
-  height: auto;
-  display: block;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Ombre légère pour une touche de profondeur
-}
-.content {
-  margin-top: 30px;
-}
-.comingSoon {
-  margin: 0 auto; // Centrer le contenu
-  max-width: 800px; // Largeur maximale pour une meilleure lisibilité sur les grands écrans
-}
-h2 {
-  color: #4a90e2;
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-p {
-  color: #333;
-  font-size: 18px;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.comingSoon {
-  margin-top: 40px;
-  font-size: 22px;
-  color: #d35400;
-  font-weight: bold;
-}
-
-@media (max-width: 768px) {
-  .comingSoon {
-    font-size: 14px;
+  @include mobile {
+    padding: $spacing-md;
+    padding-bottom: 120px;
   }
-  .magicAiTripContainer {
-    margin-bottom: 80px;
+}
+
+.stepContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  animation: slideInUp 0.5s ease-out;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: $spacing-sm;
+    @include gradient-text;
+
+    @include mobile {
+      font-size: 28px;
+    }
+  }
+
+  p {
+    font-size: 18px;
+    color: $text-secondary;
+    margin: 0;
+
+    @include mobile {
+      font-size: 16px;
+    }
+  }
+}
+
+.section {
+  background: white;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-md;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
+
+    @include mobile {
+      font-size: 18px;
+    }
+  }
+}
+
+.optionGroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.optionButton {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  transition: all $transition-normal;
+  font-size: 15px;
+  font-weight: 500;
+
+  .icon {
+    font-size: 32px;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-md;
+    border-color: $disney-blue-primary;
+  }
+
+  &.selected {
+    border-color: $disney-blue-primary;
+    background: linear-gradient(135deg, rgba(0, 99, 178, 0.05), rgba(95, 37, 159, 0.05));
+    box-shadow: 0 0 20px rgba(0, 99, 178, 0.2);
+
+    .icon {
+      animation: pulse 1s infinite;
+    }
+  }
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  font-size: 16px;
+  cursor: pointer;
+  padding: $spacing-md;
+  background: #f8f9ff;
+  border-radius: $radius-md;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: #eef0ff;
+  }
+
+  input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: $disney-blue-primary;
+  }
+
+  span {
+    font-weight: 500;
+    color: $text-primary;
+  }
+}
+
+.themeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: $spacing-md;
+
+  @include mobile {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.themeButton {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  transition: all $transition-normal;
+  font-size: 14px;
+  font-weight: 500;
+
+  .themeIcon {
+    font-size: 28px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $shadow-sm;
+  }
+
+  &.selected {
+    border-color: $disney-purple;
+    background: linear-gradient(135deg, rgba(95, 37, 159, 0.1), rgba(228, 0, 124, 0.1));
+    box-shadow: 0 0 15px rgba(95, 37, 159, 0.3);
+  }
+}
+
+.nextButton,
+.generateButton,
+.restartButton {
+  @include disney-button;
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  margin: $spacing-xl auto 0;
+  padding: $spacing-md $spacing-xl;
+  font-size: 16px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.backButton {
+  flex: 1;
+  background: #f0f0f0;
+  color: $text-primary;
+  border: none;
+  border-radius: $radius-xl;
+  padding: $spacing-md $spacing-xl;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+  }
+}
+
+.generateButton {
+  flex: 2;
+  margin: 0;
+}
+
+.restartButton {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  margin-top: $spacing-xl;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  animation: fadeIn 0.5s ease;
+
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid rgba(0, 99, 178, 0.1);
+    border-top-color: $disney-blue-primary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: $spacing-lg;
+  }
+
+  h2 {
+    font-size: 24px;
+    color: $text-primary;
+    margin-bottom: $spacing-sm;
+    @include gradient-text;
+  }
+
+  p {
+    font-size: 16px;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-xl;
+  margin-top: $spacing-lg;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-md;
+  background: white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  min-width: 120px;
+
+  .statValue {
+    font-size: 32px;
+    font-weight: 700;
+    color: $disney-blue-primary;
+    line-height: 1;
+  }
+
+  .statLabel {
+    font-size: 14px;
+    color: $text-secondary;
+    margin-top: $spacing-sm;
+  }
+}
+
+.attractionsList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.attractionCard {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  transition: all $transition-normal;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateX(8px);
+    box-shadow: $shadow-md;
+    border-color: $disney-blue-light;
+  }
+}
+
+.attractionNumber {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-round;
+  background: $background-gradient-primary;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.attractionInfo {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: $text-primary;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: $text-secondary;
+  }
+}
+
+.attractionWait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+
+  .waitTime {
+    font-size: 24px;
+    font-weight: 700;
+    color: $disney-blue-primary;
+    line-height: 1;
+  }
+
+  .waitLabel {
+    font-size: 12px;
+    color: $text-secondary;
+    margin-top: 2px;
+  }
+}
+
+.tips {
+  background: linear-gradient(135deg, #FFF9E6, #FFF3CC);
+  border: 2px solid $disney-gold;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-top: $spacing-lg;
+
+  h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: $spacing-md;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: $spacing-lg;
+
+    li {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: $spacing-sm;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

@@ -1,0 +1,215 @@
+// Couleurs officielles Disneyland Paris
+$disney-blue-primary: #0063B2;
+$disney-blue-light: #00A3E0;
+$disney-blue-dark: #003D82;
+$disney-purple: #5F259F;
+$disney-pink: #E4007C;
+$disney-gold: #F5C518;
+$disney-yellow: #FFD700;
+$disney-orange: #FF6B35;
+
+// Couleurs de fond
+$background-light: #F8F9FA;
+$background-white: #FFFFFF;
+$background-gradient-primary: linear-gradient(135deg, $disney-blue-primary 0%, $disney-purple 100%);
+$background-gradient-magic: linear-gradient(135deg, $disney-blue-light 0%, $disney-purple 50%, $disney-pink 100%);
+
+// Couleurs de texte
+$text-primary: #2C3E50;
+$text-secondary: #6C757D;
+$text-light: #95A5A6;
+$text-white: #FFFFFF;
+
+// Couleurs de statut (temps d'attente)
+$status-green: #28A745;
+$status-yellow: #FFC107;
+$status-orange: #FF9800;
+$status-red: #DC3545;
+$status-gray: #9E9E9E;
+
+// Ombres
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+$shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.18);
+$shadow-magic: 0 10px 30px rgba(95, 37, 159, 0.3);
+
+// Border radius
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 24px;
+$radius-round: 50%;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// Espacements
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Breakpoints
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1280px;
+
+// Animations Disney
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes magicGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(95, 37, 159, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(95, 37, 159, 0.6);
+    }
+}
+
+// Mixins utiles
+@mixin disney-card {
+    background: $background-white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+    transition: transform $transition-normal, box-shadow $transition-normal;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: $shadow-xl;
+    }
+}
+
+@mixin disney-button {
+    background: $background-gradient-primary;
+    color: $text-white;
+    border: none;
+    border-radius: $radius-xl;
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform $transition-fast, box-shadow $transition-fast;
+    box-shadow: $shadow-md;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+@mixin gradient-text {
+    background: $background-gradient-magic;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@mixin mobile {
+    @media (max-width: $breakpoint-mobile) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (max-width: $breakpoint-tablet) {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media (min-width: $breakpoint-desktop) {
+        @content;
+    }
+}
+
+// Classes utilitaires
+.magic-gradient {
+    background: $background-gradient-magic;
+}
+
+.disney-gradient {
+    background: $background-gradient-primary;
+}
+
+.sparkle-effect {
+    animation: sparkle 2s infinite;
+}
+
+.pulse-effect {
+    animation: pulse 2s infinite;
+}
+
+.slide-in {
+    animation: slideInUp 0.5s ease-out;
+}
+
+.glow-magic {
+    animation: magicGlow 2s infinite;
+}
